@@ -6,7 +6,7 @@ Accepted for implementation as a guarded vertical slice.
 
 ## Product Boundary
 
-AegisOS remains local-first and private by default. Remote model providers are
+ImperaOS remains local-first and private by default. Remote model providers are
 disabled unless an operator explicitly enables provider registry entries,
 configures secret references through environment variables, and passes provider
 policy checks.

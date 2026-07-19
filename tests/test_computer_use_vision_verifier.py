@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from binliquid.computer_use.models import RiskClass
-from binliquid.computer_use.vision_runtime.models import (
+from imperaos.computer_use.models import RiskClass
+from imperaos.computer_use.vision_runtime.models import (
     InputActionType,
     NormalizedBBox,
     SurfaceKind,
@@ -9,7 +9,7 @@ from binliquid.computer_use.vision_runtime.models import (
     VisionObservation,
     VisionVerificationStatus,
 )
-from binliquid.computer_use.vision_runtime.verifier import ConservativeVisionStepVerifier
+from imperaos.computer_use.vision_runtime.verifier import ConservativeVisionStepVerifier
 
 
 def _observation(

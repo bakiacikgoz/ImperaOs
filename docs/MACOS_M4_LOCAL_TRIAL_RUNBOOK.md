@@ -1,6 +1,6 @@
 # macOS M4 Local Trial Runbook
 
-This runbook prepares BinLiquid / AegisOS for a personal Apple Silicon M4 local trial from source. It is not a public desktop release, signing, notarization, production deployment, or unrestricted live computer-use procedure.
+This runbook prepares ImperaOS / ImperaOS for a personal Apple Silicon M4 local trial from source. It is not a public desktop release, signing, notarization, production deployment, or unrestricted live computer-use procedure.
 
 ## Boundaries
 
@@ -43,9 +43,9 @@ corepack pnpm --dir apps/operator-panel install --frozen-lockfile
 ## First Diagnostics
 
 ```bash
-uv run binliquid setup first-run --profile enterprise --mode local-enterprise --json
-uv run binliquid assistant doctor --profile enterprise --json
-uv run binliquid assistant models --profile enterprise --json
+uv run imperaos setup first-run --profile enterprise --mode local-enterprise --json
+uv run imperaos assistant doctor --profile enterprise --json
+uv run imperaos assistant models --profile enterprise --json
 uv run python scripts/run_macos_local_trial_gate.py --profile enterprise --json
 ```
 
@@ -90,8 +90,8 @@ This is optional and is not required for the base local trial gate.
 ```bash
 ollama serve
 ollama list
-uv run binliquid assistant doctor --profile enterprise --json
-uv run binliquid assistant models --profile enterprise --json
+uv run imperaos assistant doctor --profile enterprise --json
+uv run imperaos assistant models --profile enterprise --json
 ```
 
 If no model/provider is ready, the correct local-trial result is `conditional` or `setup_required`. Product mode must not silently fall back to preview fixture answers.
@@ -107,8 +107,8 @@ make macos-bundled-runtime-gate
 This builds and verifies:
 
 ```text
-apps/operator-panel/src-tauri/resources/binliquid-runtime/RUNTIME_MANIFEST.txt
-apps/operator-panel/src-tauri/resources/binliquid-runtime/python/bin/python
+apps/operator-panel/src-tauri/resources/imperaos-runtime/RUNTIME_MANIFEST.txt
+apps/operator-panel/src-tauri/resources/imperaos-runtime/python/bin/python
 ```
 
 Generated runtime contents are build artifacts and should not be committed.
@@ -118,7 +118,7 @@ Generated runtime contents are build artifacts and should not be committed.
 Default local trial must keep live desktop automation closed:
 
 ```bash
-uv run python -m binliquid computer-use doctor --json
+uv run python -m imperaos computer-use doctor --json
 ```
 
 Expected local trial posture:
@@ -131,8 +131,8 @@ Expected local trial posture:
 Optional live macOS computer-use testing is separate from this runbook's default flow. It requires explicit opt-in, Screen Recording, Accessibility, provider readiness, and replay evidence. The required env names are documented here only; this runbook does not generate real tokens:
 
 ```bash
-export BINLIQUID_COMPUTER_USE_LIVE_OPT_IN=<exact-required-token>
-export BINLIQUID_COMPUTER_USE_LIVE_MACOS=1
+export IMPERAOS_COMPUTER_USE_LIVE_OPT_IN=<exact-required-token>
+export IMPERAOS_COMPUTER_USE_LIVE_MACOS=1
 ```
 
 Do not enable live computer-use during the first local trial unless you are intentionally running the separate qualification flow.

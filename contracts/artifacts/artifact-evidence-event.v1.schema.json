@@ -1,0 +1,140 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-evidence-event.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifactRef": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Artifactref"
+    },
+    "contentSha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contentsha256"
+    },
+    "createdAtUtc": {
+      "format": "date-time",
+      "title": "Createdatutc",
+      "type": "string"
+    },
+    "eventHash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Eventhash",
+      "type": "string"
+    },
+    "eventId": {
+      "title": "Eventid",
+      "type": "string"
+    },
+    "eventSequence": {
+      "minimum": 1,
+      "title": "Eventsequence",
+      "type": "integer"
+    },
+    "latencyBucket": {
+      "enum": [
+        "lt10ms",
+        "lt50ms",
+        "lt250ms",
+        "lt1s",
+        "gte1s"
+      ],
+      "title": "Latencybucket",
+      "type": "string"
+    },
+    "operation": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Operation",
+      "type": "string"
+    },
+    "previousEventHash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previouseventhash"
+    },
+    "principalRef": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Principalref",
+      "type": "string"
+    },
+    "reasonCode": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Reasoncode",
+      "type": "string"
+    },
+    "requestRef": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Requestref",
+      "type": "string"
+    },
+    "revisionRef": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revisionref"
+    },
+    "status": {
+      "enum": [
+        "success",
+        "denied",
+        "error"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "workspaceRef": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Workspaceref",
+      "type": "string"
+    }
+  },
+  "required": [
+    "eventSequence",
+    "eventId",
+    "workspaceRef",
+    "operation",
+    "status",
+    "reasonCode",
+    "principalRef",
+    "requestRef",
+    "latencyBucket",
+    "eventHash",
+    "createdAtUtc"
+  ],
+  "title": "ArtifactEvidenceEvent",
+  "type": "object",
+  "x-imperaos-contract": "artifact-evidence-event.v1"
+}

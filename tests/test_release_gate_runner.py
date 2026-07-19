@@ -3,8 +3,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from binliquid.release.gate_models import GateArtifactRequirement, GateCommandSpec, ReleaseGateSpec
-from binliquid.release.gate_runner import run_release_gate
+from imperaos.release.gate_models import GateArtifactRequirement, GateCommandSpec, ReleaseGateSpec
+from imperaos.release.gate_runner import run_release_gate
 
 
 def test_runner_collects_hash_only_artifact(tmp_path: Path) -> None:

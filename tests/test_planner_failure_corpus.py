@@ -3,9 +3,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.core.llm_ollama import StubLLM
-from binliquid.core.planner import Planner
-from binliquid.schemas.reason_codes import ReasonCode
+from imperaos.core.llm_ollama import StubLLM
+from imperaos.core.planner import Planner
+from imperaos.schemas.reason_codes import ReasonCode
 
 
 def test_planner_failure_corpus_cases() -> None:

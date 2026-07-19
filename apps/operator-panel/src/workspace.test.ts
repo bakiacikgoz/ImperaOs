@@ -117,26 +117,26 @@ describe('workspace snapshot', () => {
         job: {
           request: 'Open form and fill it',
           status: 'running',
-          team_id: 'aegis-computer-use',
+          team_id: 'imperaos-computer-use',
         },
         computer_use: {
           lifecycle_state: 'running',
           stage: 'verify',
-          current_url: 'https://preview.aegis.local/form',
+          current_url: 'https://preview.imperaos.local/form',
           active_app: 'browser:safari',
-          active_window: 'safari:Aegis Preview Form',
-          last_verified_effect: 'Open https://preview.aegis.local/form.',
+          active_window: 'safari:ImperaOS Preview Form',
+          last_verified_effect: 'Open https://preview.imperaos.local/form.',
           world_model: {
             active_application_identity: 'browser:safari',
-            current_url: 'https://preview.aegis.local/form',
+            current_url: 'https://preview.imperaos.local/form',
             active_window: {
-              window_identity: 'safari:Aegis Preview Form',
+              window_identity: 'safari:ImperaOS Preview Form',
               app_identity: 'browser:safari',
               surface_kind: 'browser',
               focused: true,
             },
             visible_target_set: ['#name', '#submit'],
-            last_verified_effect: 'Open https://preview.aegis.local/form.',
+            last_verified_effect: 'Open https://preview.imperaos.local/form.',
           },
         },
       },
@@ -183,7 +183,7 @@ describe('workspace snapshot', () => {
         job: {
           request: 'Submit the preview form',
           status: 'blocked',
-          team_id: 'aegis-computer-use',
+          team_id: 'imperaos-computer-use',
         },
         computer_use: {
           session_state: 'awaiting_approval',
@@ -224,7 +224,7 @@ describe('workspace snapshot', () => {
         job: {
           request: 'Stop after checkpoint',
           status: 'failed',
-          team_id: 'aegis-computer-use',
+          team_id: 'imperaos-computer-use',
         },
         computer_use: {
           session_state: 'stopped',
@@ -252,7 +252,7 @@ describe('workspace snapshot', () => {
         job: {
           request: 'Resume after approval',
           status: 'blocked',
-          team_id: 'aegis-computer-use',
+          team_id: 'imperaos-computer-use',
         },
         computer_use: {
           session_state: 'awaiting_approval',
@@ -342,7 +342,7 @@ describe('workspace snapshot', () => {
         job: {
           request: 'Click the submit button',
           status: 'awaiting_approval',
-          team_id: 'aegis-computer-use',
+          team_id: 'imperaos-computer-use',
         },
         computer_use: {
           status: 'awaiting_approval',

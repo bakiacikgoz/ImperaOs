@@ -9,7 +9,7 @@ replay/signature checks, and claim boundaries.
 Export evidence for a run:
 
 ```bash
-uv run binliquid control-plane evidence export \
+uv run imperaos control-plane evidence export \
   --run-id <run-id> \
   --profile enterprise \
   --json
@@ -29,7 +29,7 @@ known local artifact.
 Verify a manifest:
 
 ```bash
-uv run binliquid control-plane evidence verify \
+uv run imperaos control-plane evidence verify \
   --path artifacts/control-plane/evidence/<run-id>/manifest.json \
   --profile enterprise \
   --json

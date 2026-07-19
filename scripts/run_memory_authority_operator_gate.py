@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from binliquid.control_plane.snapshot import build_control_plane_snapshot
+from imperaos.control_plane.snapshot import build_control_plane_snapshot
 
 
 def main() -> None:

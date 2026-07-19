@@ -47,10 +47,10 @@ Expected disabled beta release posture:
 The integration gate verifies these commands:
 
 ```bash
-uv run binliquid --version
-uv run python -m binliquid --version
-uv run binliquid operator capabilities --json
-uv run python -m binliquid operator capabilities --json
+uv run imperaos --version
+uv run python -m imperaos --version
+uv run imperaos operator capabilities --json
+uv run python -m imperaos operator capabilities --json
 ```
 
 They must work from:

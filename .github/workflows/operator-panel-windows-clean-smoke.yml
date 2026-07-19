@@ -53,7 +53,7 @@ jobs:
           pwsh apps/operator-panel/scripts/windows_installer_smoke.ps1 `
             -InstallerPath "$env:WINDOWS_INSTALLER_PATH" `
             -ExpectedInstallerSha256 "${{ inputs.installer_sha256 }}" `
-            -ExpectedProductName "AegisOS Operator Panel" `
+            -ExpectedProductName "ImperaOS Operator Panel" `
             -OutputDir artifacts/windows-installer-smoke `
             -RunInstall `
             -CleanVm `

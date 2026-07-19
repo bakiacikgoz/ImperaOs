@@ -4,8 +4,8 @@ import argparse
 import json
 from pathlib import Path
 
-from binliquid.memory.evaluation import run_memory_retrieval_eval
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.memory.evaluation import run_memory_retrieval_eval
+from imperaos.runtime.config import RuntimeConfig
 
 
 def main() -> None:

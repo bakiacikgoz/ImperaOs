@@ -192,7 +192,7 @@ export function hasContractMismatch(handshakeData: unknown): boolean {
   const capabilities = asRecord(handshake.capabilities);
   const commandCapabilities = asRecord(capabilities.commands);
 
-  if (readString(capabilities, 'contractVersion') !== '2.0') {
+  if (readString(capabilities, 'contractVersion') !== '3.0') {
     return true;
   }
 

@@ -76,4 +76,86 @@ describe('assistant prompt builder', () => {
     expect(result.compiledPrompt).not.toContain('## Artifact summary');
     expect(result.compiledPrompt).not.toContain('## System health');
   });
+
+  it('redacts adversarial canaries and absolute paths from run and event context', () => {
+    const result = buildAssistantPrompt({
+      userMessage: 'inspect the selected run',
+      session: createAssistantSession('session-security'),
+      selectedRunStatus: {
+        message: 'synthetic-provider-secret-canary',
+        path: 'C:/synthetic/private/path',
+      },
+      selectedRunEvents: [{ message: 'failed at C:\\Users\\private\\trace.json' }],
+      selectedArtifacts: {},
+      pendingApproval: null,
+      systemHealth: null,
+    });
+
+    expect(result.compiledPrompt).not.toContain('synthetic-provider-secret-canary');
+    expect(result.compiledPrompt).not.toContain('C:/synthetic/private/path');
+    expect(result.compiledPrompt).not.toContain('C:\\Users\\private\\trace.json');
+    expect(result.compiledPrompt).not.toContain('Users');
+    expect(result.compiledPrompt).not.toContain('private');
+    expect(result.compiledPrompt).not.toContain('trace.json');
+    expect(result.compiledPrompt).toContain('[redacted');
+  });
+
+  it('redacts arbitrary POSIX, UNC, and extended Windows absolute paths', () => {
+    const result = buildAssistantPrompt({
+      userMessage: 'inspect the selected run',
+      session: createAssistantSession('session-path-redaction'),
+      selectedRunStatus: null,
+      selectedRunEvents: [
+        { message: 'failed at /opt/impera/private/trace.json' },
+        { message: 'credential at /root/.ssh/id_rsa' },
+        { message: 'network at \\\\server\\share\\private\\trace.json' },
+        { message: 'extended at \\\\?\\C:\\private\\trace.json' },
+        { message: "quoted at '/opt/impera/private/trace.json'" },
+        { message: "spaced at 'C:\\Program Files\\ImperaOS\\trace.json'" },
+      ],
+      selectedArtifacts: {},
+      pendingApproval: null,
+      systemHealth: null,
+    });
+
+    for (const fragment of [
+      'opt', 'impera', 'root', '.ssh', 'server', 'share', 'trace.json', 'Program Files', 'ImperaOS',
+    ]) {
+      expect(result.compiledPrompt).not.toContain(fragment);
+    }
+    expect(result.compiledPrompt).toContain('[redacted-path]');
+  });
+
+  it('projects artifact metadata and a typed context request without raw content', () => {
+    const result = buildAssistantPrompt({
+      userMessage: 'Update the selected paragraph.',
+      session: createAssistantSession('session-artifact'),
+      selectedRunStatus: null,
+      selectedRunEvents: [],
+      selectedArtifacts: {
+        brief: {
+          artifactId: 'artifact-1',
+          currentRevisionId: 'revision-2',
+          currentRevisionNumber: 2,
+          kind: 'document',
+          blocks: [{ text: 'raw-secret-artifact-body' }],
+        },
+      },
+      artifactContextRequest: {
+        artifactId: 'artifact-1',
+        revisionId: 'revision-2',
+        purpose: 'edit',
+        allowedScopes: ['selection', 'metadata'],
+        selection: { kind: 'document', blockIds: ['block-1'] },
+      },
+      pendingApproval: null,
+      systemHealth: null,
+    });
+
+    expect(result.compiledPrompt).toContain('## Governed artifact context request');
+    expect(result.compiledPrompt).toContain('artifact-1');
+    expect(result.compiledPrompt).toContain('block-1');
+    expect(result.compiledPrompt).not.toContain('raw-secret-artifact-body');
+    expect(result.compiledPrompt).not.toContain('"blocks"');
+  });
 });

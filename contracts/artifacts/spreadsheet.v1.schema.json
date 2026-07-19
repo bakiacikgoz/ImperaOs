@@ -1,0 +1,104 @@
+{
+  "$defs": {
+    "JsonValue": {},
+    "SpreadsheetCell": {
+      "additionalProperties": false,
+      "properties": {
+        "style": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Style",
+          "type": "object"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "SpreadsheetCell",
+      "type": "object"
+    },
+    "SpreadsheetSheet": {
+      "additionalProperties": false,
+      "properties": {
+        "cells": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SpreadsheetCell"
+          },
+          "title": "Cells",
+          "type": "object"
+        },
+        "columns": {
+          "items": {
+            "additionalProperties": {
+              "$ref": "#/$defs/JsonValue"
+            },
+            "type": "object"
+          },
+          "maxItems": 16384,
+          "title": "Columns",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "SpreadsheetSheet",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/spreadsheet.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "calculationMode": {
+      "const": "disabled",
+      "default": "disabled",
+      "title": "Calculationmode",
+      "type": "string"
+    },
+    "kind": {
+      "const": "spreadsheet",
+      "default": "spreadsheet",
+      "title": "Kind",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "sheets": {
+      "items": {
+        "$ref": "#/$defs/SpreadsheetSheet"
+      },
+      "maxItems": 1024,
+      "minItems": 1,
+      "title": "Sheets",
+      "type": "array"
+    }
+  },
+  "required": [
+    "sheets"
+  ],
+  "title": "SpreadsheetContentV1",
+  "type": "object",
+  "x-imperaos-contract": "spreadsheet.v1"
+}

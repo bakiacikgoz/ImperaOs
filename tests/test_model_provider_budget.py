@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from binliquid.model_providers.budget import evaluate_provider_budget
-from binliquid.model_providers.models import ProviderPolicy
+from imperaos.model_providers.budget import evaluate_provider_budget
+from imperaos.model_providers.models import ProviderPolicy
 
 
 def test_budget_disabled_denies_canary() -> None:

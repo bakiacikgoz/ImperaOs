@@ -6,11 +6,11 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.governance.runtime import GovernanceRuntime
-from binliquid.runtime.config import RuntimeConfig
-from binliquid.runtime.platform import current_platform
-from binliquid.schemas.models import OrchestratorResult
+from imperaos.cli import app
+from imperaos.governance.runtime import GovernanceRuntime
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.runtime.platform import current_platform
+from imperaos.schemas.models import OrchestratorResult
 
 runner = CliRunner()
 
@@ -164,7 +164,7 @@ def test_team_validate_and_run(monkeypatch, tmp_path: Path) -> None:
     _write_spec(spec_path)
 
     monkeypatch.setattr(
-        "binliquid.cli._build_orchestrator",
+        "imperaos.cli._build_orchestrator",
         lambda *a, **k: FakeTeamOrchestrator(),
     )
 
@@ -187,7 +187,7 @@ def test_team_validate_and_run(monkeypatch, tmp_path: Path) -> None:
     assert run.exit_code == 0
     payload = json.loads(run.stdout)
     assert payload["job"]["status"] == "completed"
-    checkpoint_db = tmp_path / ".binliquid" / "team" / "checkpoints.sqlite3"
+    checkpoint_db = tmp_path / ".imperaos" / "team" / "checkpoints.sqlite3"
     assert checkpoint_db.exists()
     with sqlite3.connect(checkpoint_db) as conn:
         row = conn.execute(
@@ -254,11 +254,11 @@ def test_team_resume_replays_approved_task_gate(monkeypatch, tmp_path: Path) -> 
     runtime = GovernanceRuntime(config=cfg)
 
     monkeypatch.setattr(
-        "binliquid.cli.resolve_runtime_config",
+        "imperaos.cli.resolve_runtime_config",
         lambda *a, **k: (cfg, {}),
     )
     monkeypatch.setattr(
-        "binliquid.cli._build_orchestrator",
+        "imperaos.cli._build_orchestrator",
         lambda *a, **k: ApprovalAwareFakeTeamOrchestrator(runtime),
     )
 
@@ -278,7 +278,7 @@ def test_team_resume_replays_approved_task_gate(monkeypatch, tmp_path: Path) -> 
     first_payload = json.loads(first_run.stdout)
     assert first_payload["job"]["status"] == "blocked"
 
-    approval_id = runtime.approval_store.list_pending()[0].approval_id
+    approval_id = runtime.approval_store.list_pending(workspace_id="default")[0].approval_id
     approval = runtime.decide_approval(
         approval_id=approval_id,
         approve=True,
@@ -335,9 +335,9 @@ def test_team_resume_rejects_approved_but_not_executed_ticket(monkeypatch, tmp_p
     )
     runtime = GovernanceRuntime(config=cfg)
 
-    monkeypatch.setattr("binliquid.cli.resolve_runtime_config", lambda *a, **k: (cfg, {}))
+    monkeypatch.setattr("imperaos.cli.resolve_runtime_config", lambda *a, **k: (cfg, {}))
     monkeypatch.setattr(
-        "binliquid.cli._build_orchestrator",
+        "imperaos.cli._build_orchestrator",
         lambda *a, **k: ApprovalAwareFakeTeamOrchestrator(runtime),
     )
 
@@ -356,7 +356,7 @@ def test_team_resume_rejects_approved_but_not_executed_ticket(monkeypatch, tmp_p
     assert first_run.exit_code == 0
     first_payload = json.loads(first_run.stdout)
 
-    approval_id = runtime.approval_store.list_pending()[0].approval_id
+    approval_id = runtime.approval_store.list_pending(workspace_id="default")[0].approval_id
     approval = runtime.decide_approval(
         approval_id=approval_id,
         approve=True,
@@ -385,7 +385,7 @@ def test_team_resume_rejects_approved_but_not_executed_ticket(monkeypatch, tmp_p
 
 def test_team_list_returns_jobs_and_since_filter(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)
-    root = tmp_path / ".binliquid" / "team" / "jobs"
+    root = tmp_path / ".imperaos" / "team" / "jobs"
     root.mkdir(parents=True, exist_ok=True)
 
     older = root / "job-old"
@@ -433,7 +433,7 @@ def test_team_list_returns_jobs_and_since_filter(monkeypatch, tmp_path: Path) ->
     listed = runner.invoke(app, ["team", "list", "--root-dir", str(root), "--json"])
     assert listed.exit_code == 0
     listed_payload = json.loads(listed.stdout)
-    assert listed_payload["contract_version"] == "2.0"
+    assert listed_payload["contract_version"] == "3.0"
     assert listed_payload["count"] == 2
     assert [item["job_id"] for item in listed_payload["items"]] == ["job-new", "job-old"]
 
@@ -461,7 +461,7 @@ def test_team_replay_verify_reports_verified(monkeypatch, tmp_path: Path) -> Non
     _write_spec(spec_path)
 
     monkeypatch.setattr(
-        "binliquid.cli._build_orchestrator",
+        "imperaos.cli._build_orchestrator",
         lambda *a, **k: FakeTeamOrchestrator(),
     )
 
@@ -486,7 +486,7 @@ def test_team_replay_verify_reports_verified(monkeypatch, tmp_path: Path) -> Non
     )
     assert replay.exit_code == 0
     replay_payload = json.loads(replay.stdout)
-    assert replay_payload["contract_version"] == "2.0"
+    assert replay_payload["contract_version"] == "3.0"
     assert replay_payload["verified"] is True
     assert replay_payload["checks"]["event_count"] >= 1
     assert isinstance(replay_payload["trace_refs"], list)
@@ -531,7 +531,7 @@ def test_team_run_accepts_explicit_job_id(monkeypatch, tmp_path: Path) -> None:
     _write_spec(spec_path)
 
     monkeypatch.setattr(
-        "binliquid.cli._build_orchestrator",
+        "imperaos.cli._build_orchestrator",
         lambda *a, **k: FakeTeamOrchestrator(),
     )
 
@@ -552,14 +552,14 @@ def test_team_run_accepts_explicit_job_id(monkeypatch, tmp_path: Path) -> None:
     assert run.exit_code == 0
     payload = json.loads(run.stdout)
     assert payload["job"]["job_id"] == "job-ui-custom"
-    assert (tmp_path / ".binliquid" / "team" / "jobs" / "job-ui-custom" / "status.json").exists()
+    assert (tmp_path / ".imperaos" / "team" / "jobs" / "job-ui-custom" / "status.json").exists()
 
 
 def test_operator_capabilities_exposes_workspace_parity_flags() -> None:
     result = runner.invoke(app, ["operator", "capabilities", "--json"])
     assert result.exit_code == 0
     payload = json.loads(result.stdout)
-    assert payload["contractVersion"] == "2.0"
+    assert payload["contractVersion"] == "3.0"
     assert payload["features"]["operatorWorkflowParity"] is True
     assert payload["features"]["enterpriseOpsParity"] is True
     computer_use = payload["features"]["computerUsePilot"]

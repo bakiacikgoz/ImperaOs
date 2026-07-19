@@ -8,21 +8,21 @@ from typing import Any
 
 import psutil
 
-from binliquid.core.llm_ollama import OllamaLLM
-from binliquid.core.orchestrator import Orchestrator
-from binliquid.core.planner import Planner
-from binliquid.experts.code_expert import CodeExpert
-from binliquid.experts.memory_plan_expert import MemoryPlanExpert
-from binliquid.experts.research_expert import ResearchExpert
-from binliquid.memory.manager import MemoryManager
-from binliquid.memory.persistent_store import PersistentMemoryStore
-from binliquid.memory.salience_gate import SalienceGate
-from binliquid.router.rule_router import RuleRouter
-from binliquid.router.sltc_router import SLTCRouter
-from binliquid.runtime.config import RuntimeConfig
-from binliquid.schemas.models import ExpertName
-from binliquid.schemas.reason_codes import ReasonCode
-from binliquid.telemetry.tracer import Tracer
+from imperaos.core.llm_ollama import OllamaLLM
+from imperaos.core.orchestrator import Orchestrator
+from imperaos.core.planner import Planner
+from imperaos.experts.code_expert import CodeExpert
+from imperaos.experts.memory_plan_expert import MemoryPlanExpert
+from imperaos.experts.research_expert import ResearchExpert
+from imperaos.memory.manager import MemoryManager
+from imperaos.memory.persistent_store import PersistentMemoryStore
+from imperaos.memory.salience_gate import SalienceGate
+from imperaos.router.rule_router import RuleRouter
+from imperaos.router.sltc_router import SLTCRouter
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.schemas.models import ExpertName
+from imperaos.schemas.reason_codes import ReasonCode
+from imperaos.telemetry.tracer import Tracer
 
 
 def run_smoke_benchmark(

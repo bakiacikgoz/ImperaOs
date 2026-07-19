@@ -47,7 +47,7 @@ Raw JSON remains a debug/advanced surface and is not the primary trust signal.
 ## Runbook
 
 1. Run `make provider-native-gate`.
-2. Run `uv run binliquid control-plane snapshot --profile enterprise --json`.
+2. Run `uv run imperaos control-plane snapshot --profile enterprise --json`.
 3. Generate the Design Partner RC pack.
 4. Review `providerGovernance` in `artifacts/design-partner-rc/manifest.json`.
 5. Confirm computer-use live execution and public desktop installer boundaries

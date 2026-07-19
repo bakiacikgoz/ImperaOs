@@ -5,7 +5,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
+from imperaos.cli import app
 
 runner = CliRunner()
 SPEC = "examples/pilot_workflows/enterprise_governed_memory_provider.yaml"

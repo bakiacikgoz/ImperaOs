@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import {
   boundaryBucket,
   computeVerdict,
@@ -33,7 +34,7 @@ interface CommandRun {
   parse_error?: string;
 }
 
-const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const REPO_ROOT = findRepoRoot(APP_ROOT);
 const DEFAULT_OUTPUT_ROOT = path.join(REPO_ROOT, 'artifacts', 'code-intelligence', 'fallow');

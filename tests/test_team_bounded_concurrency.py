@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.governance.runtime import GovernanceRuntime
-from binliquid.memory.manager import MemoryManager
-from binliquid.memory.persistent_store import PersistentMemoryStore
-from binliquid.memory.salience_gate import SalienceGate
-from binliquid.runtime.config import RuntimeConfig
-from binliquid.schemas.models import OrchestratorResult
-from binliquid.team.execution_contract import build_execution_contract_hash, build_resume_token_ref
-from binliquid.team.models import TeamSpec
-from binliquid.team.supervisor import TeamSupervisor
+from imperaos.governance.runtime import GovernanceRuntime
+from imperaos.memory.manager import MemoryManager
+from imperaos.memory.persistent_store import PersistentMemoryStore
+from imperaos.memory.salience_gate import SalienceGate
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.schemas.models import OrchestratorResult
+from imperaos.team.execution_contract import build_execution_contract_hash, build_resume_token_ref
+from imperaos.team.models import TeamSpec
+from imperaos.team.supervisor import TeamSupervisor
 
 
 class ApprovalAwareConcurrencyOrchestrator:

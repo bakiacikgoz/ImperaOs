@@ -46,7 +46,7 @@ test('pilot readiness flow exposes governed run, approval, evidence, reports, an
   await openPrimaryView(page, 'Yürütmeler', 'Operations');
   await page.getByRole('button', { name: 'Support', exact: true }).click();
   await page.getByRole('button', { name: 'Export support bundle', exact: true }).click();
-  await expect(operationOutput(page)).toContainText('aegisos-support.zip');
+  await expect(operationOutput(page)).toContainText('imperaos-support.zip');
 
   await openPrimaryView(page, 'Execution Surfaces', 'Execution Surfaces');
   await expect(page.getByTestId('page-primary-region')).toContainText('Computer-use');

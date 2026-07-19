@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.control_plane.target_evidence import (
+from imperaos.control_plane.target_evidence import (
     REQUIRED_BLOCKED_CLAIMS,
     prepare_target_evidence_session,
 )

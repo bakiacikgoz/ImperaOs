@@ -1,0 +1,62 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-import-evidence-command.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifactId": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Artifactid"
+    },
+    "evidenceId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Evidenceid",
+      "type": "string"
+    },
+    "expectedSha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Expectedsha256",
+      "type": "string"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Idempotencykey",
+      "type": "string"
+    },
+    "title": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Title"
+    }
+  },
+  "required": [
+    "evidenceId",
+    "expectedSha256",
+    "idempotencyKey"
+  ],
+  "title": "ImportEvidenceArtifactCommand",
+  "type": "object",
+  "x-imperaos-contract": "artifact-import-evidence-command.v1"
+}

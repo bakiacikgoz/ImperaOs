@@ -8,6 +8,7 @@ import {
   isOperatorIdValid,
   loadSettings,
   resolveLocale,
+  saveSettings,
   validateAssistantRuntimeSettings,
 } from './settings';
 
@@ -16,6 +17,19 @@ beforeEach(() => {
 });
 
 describe('operator id validation', () => {
+  it('uses only the canonical ImperaOS browser settings namespace', () => {
+    const formerKey = ['ae', 'gis', 'os.operator.settings.v1'].join('');
+    localStorage.setItem(formerKey, JSON.stringify({ ...DEFAULT_SETTINGS, profile: 'strict' }));
+
+    expect(SETTINGS_KEY).toBe('imperaos.operator.settings.v1');
+    expect(loadSettings().profile).toBe(DEFAULT_SETTINGS.profile);
+
+    const nextSettings = { ...DEFAULT_SETTINGS, profile: 'fast' };
+    saveSettings(nextSettings);
+    expect(JSON.parse(localStorage.getItem('imperaos.operator.settings.v1') ?? '{}')).toEqual(nextSettings);
+    expect(localStorage.getItem(formerKey)).not.toBeNull();
+  });
+
   it('accepts expected format', () => {
     expect(isOperatorIdValid('ops-team_01')).toBe(true);
   });
@@ -31,25 +45,25 @@ describe('operator id validation', () => {
     expect(isOperatorIdValid(DEFAULT_SETTINGS.operatorId)).toBe(true);
   });
 
-  it('migrates missing or blank legacy operator id settings to the local default', () => {
+  it('keeps an explicitly cleared operator id fail-closed while defaulting a missing legacy field', () => {
     localStorage.setItem(
       SETTINGS_KEY,
       JSON.stringify({
         mode: 'auto',
         profile: 'balanced',
-        rootDir: '.binliquid/team/jobs',
+        rootDir: '.imperaos/team/jobs',
         operatorId: '',
       }),
     );
 
-    expect(loadSettings().operatorId).toBe(DEFAULT_OPERATOR_ID);
+    expect(loadSettings().operatorId).toBe('');
 
     localStorage.setItem(
       SETTINGS_KEY,
       JSON.stringify({
         mode: 'auto',
         profile: 'balanced',
-        rootDir: '.binliquid/team/jobs',
+        rootDir: '.imperaos/team/jobs',
       }),
     );
 
@@ -84,7 +98,7 @@ describe('assistant runtime settings', () => {
       JSON.stringify({
         mode: 'auto',
         profile: 'balanced',
-        rootDir: '.binliquid/team/jobs',
+        rootDir: '.imperaos/team/jobs',
       }),
     );
 
@@ -94,13 +108,11 @@ describe('assistant runtime settings', () => {
         assistantFallbackProvider: '',
         assistantModel: '',
         assistantHfModelId: '',
-        assistantOpenAiApiKey: '',
-        assistantDeepSeekApiKey: '',
       }),
     );
   });
 
-  it('preserves assistant API keys from stored settings', () => {
+  it('scrubs legacy assistant API keys from renderer storage', () => {
     localStorage.setItem(
       SETTINGS_KEY,
       JSON.stringify({
@@ -110,12 +122,11 @@ describe('assistant runtime settings', () => {
       }),
     );
 
-    expect(loadSettings()).toEqual(
-      expect.objectContaining({
-        assistantOpenAiApiKey: 'sk-openai',
-        assistantDeepSeekApiKey: 'sk-deepseek',
-      }),
-    );
+    const loaded = loadSettings();
+    expect(loaded).not.toHaveProperty('assistantOpenAiApiKey');
+    expect(loaded).not.toHaveProperty('assistantDeepSeekApiKey');
+    expect(localStorage.getItem(SETTINGS_KEY)).not.toContain('sk-openai');
+    expect(localStorage.getItem(SETTINGS_KEY)).not.toContain('sk-deepseek');
   });
 
   it('leaves empty assistant runtime overrides undefined for CLI defaults', () => {

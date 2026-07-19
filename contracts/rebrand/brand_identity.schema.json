@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imperaos.com/contracts/rebrand/brand_identity.schema.json",
+  "title": "ImperaOS Brand Identity",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "displayName",
+    "slug",
+    "pythonDistribution",
+    "pythonPackage",
+    "cliName",
+    "envPrefix",
+    "stateRoot",
+    "operatorProductName",
+    "operatorBundleId",
+    "runtimeResourceDir",
+    "domain",
+    "repository",
+    "metricPrefix"
+  ],
+  "properties": {
+    "displayName": {
+      "const": "ImperaOS"
+    },
+    "slug": {
+      "const": "imperaos"
+    },
+    "pythonDistribution": {
+      "const": "imperaos"
+    },
+    "pythonPackage": {
+      "const": "imperaos"
+    },
+    "cliName": {
+      "const": "imperaos"
+    },
+    "envPrefix": {
+      "const": "IMPERAOS"
+    },
+    "stateRoot": {
+      "const": ".imperaos"
+    },
+    "operatorProductName": {
+      "const": "ImperaOS Operator Panel"
+    },
+    "operatorBundleId": {
+      "const": "com.imperaos.operatorpanel"
+    },
+    "runtimeResourceDir": {
+      "const": "imperaos-runtime"
+    },
+    "domain": {
+      "const": "imperaos.com"
+    },
+    "repository": {
+      "const": "bakiacikgoz/ImperaOS"
+    },
+    "metricPrefix": {
+      "const": "imperaos_"
+    }
+  }
+}

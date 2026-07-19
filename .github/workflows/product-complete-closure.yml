@@ -8,6 +8,9 @@ on:
   workflow_dispatch:
 
 jobs:
+  artifact-workspace-release:
+    uses: ./.github/workflows/artifact-workspace-ci.yml
+
   backend-product-complete:
     runs-on: ubuntu-latest
     steps:
@@ -22,8 +25,8 @@ jobs:
       - name: Product-complete Python tests
         run: |
           uv run --extra dev ruff check \
-            binliquid/cli.py \
-            binliquid/release/product_complete.py \
+            imperaos/cli.py \
+            imperaos/release/product_complete.py \
             scripts/run_product_complete_scope_gate.py \
             scripts/run_assistant_real_runtime_gate.py \
             scripts/run_first_run_readiness_gate.py \
@@ -42,6 +45,8 @@ jobs:
 
   operator-panel-product-complete:
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -64,6 +69,7 @@ jobs:
   product-complete-closure-report:
     runs-on: ubuntu-latest
     needs:
+      - artifact-workspace-release
       - backend-product-complete
       - operator-panel-product-complete
     steps:

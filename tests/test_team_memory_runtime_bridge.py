@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from binliquid.memory.authority import build_memory_authority, proposal_from_cli
-from binliquid.memory.runtime_bridge import MemoryRuntimeBridge
-from binliquid.runtime.config import RuntimeConfig
-from binliquid.team.memory_scope import read_scoped_memory
+from imperaos.memory.authority import build_memory_authority, proposal_from_cli
+from imperaos.memory.runtime_bridge import MemoryRuntimeBridge
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.team.memory_scope import read_scoped_memory
 
 
 def test_team_read_scoped_memory_uses_runtime_bridge(tmp_path: Path) -> None:

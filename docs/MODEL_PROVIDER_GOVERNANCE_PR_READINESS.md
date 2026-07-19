@@ -30,7 +30,7 @@ Status: staged and ready for review grouping.
 
 - Do not use `git reset --hard`.
 - The staged backup patch can restore the review snapshot if commit grouping needs to be redone.
-- Native Adapter V2 files are isolated under `binliquid/model_providers/native/` and can be reverted without changing legacy `ollama`, `transformers`, or `openai_compatible` paths.
+- Native Adapter V2 files are isolated under `imperaos/model_providers/native/` and can be reverted without changing legacy `ollama`, `transformers`, or `openai_compatible` paths.
 
 ## Review Notes
 

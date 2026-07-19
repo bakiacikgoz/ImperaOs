@@ -203,10 +203,6 @@ export class BridgeError extends Error {
 }
 
 function toBridgeConfig(settings: PanelSettings, timeoutMs = 15000): BridgeConfig {
-  const openAiApiKey = settings.assistantOpenAiApiKey.trim();
-  const deepSeekApiKey = settings.assistantDeepSeekApiKey.trim();
-  const remoteProvidersEnabled = Boolean(openAiApiKey || deepSeekApiKey);
-
   return {
     mode: settings.mode,
     cliPath: settings.cliPath.trim() || undefined,
@@ -214,11 +210,8 @@ function toBridgeConfig(settings: PanelSettings, timeoutMs = 15000): BridgeConfi
     profile: settings.profile,
     rootDir: settings.rootDir,
     env: {
-      BINLIQUID_PROFILE_NAME: settings.profile,
-      BINLIQUID_TEAM_ARTIFACT_DIR: settings.rootDir,
-      ...(remoteProvidersEnabled ? { BINLIQUID_REMOTE_PROVIDERS_ENABLED: 'true' } : {}),
-      ...(openAiApiKey ? { OPENAI_API_KEY: openAiApiKey } : {}),
-      ...(deepSeekApiKey ? { DEEPSEEK_API_KEY: deepSeekApiKey } : {}),
+      IMPERAOS_PROFILE_NAME: settings.profile,
+      IMPERAOS_TEAM_ARTIFACT_DIR: settings.rootDir,
     },
     timeoutMs,
   };
@@ -445,7 +438,7 @@ export async function decideApproval(
 ): Promise<unknown> {
   if (isBridgePreviewMode()) {
     return {
-      contract_version: '2.0',
+      contract_version: '3.0',
       approval_id: approvalId,
       error_code: null,
       ticket: {
@@ -473,7 +466,7 @@ export async function executeApproval(
 ): Promise<unknown> {
   if (isBridgePreviewMode()) {
     return {
-      contract_version: '2.0',
+      contract_version: '3.0',
       approval_id: approvalId,
       actor: operatorId,
       execution_used_path: 'llm_only',
@@ -648,7 +641,7 @@ export async function exportRunArtifacts(
 ): Promise<unknown> {
   if (isBridgePreviewMode()) {
     return {
-      contract_version: '2.0',
+      contract_version: '3.0',
       status: 'ok',
       job_id: jobId,
       export_dir: exportDir,
@@ -762,7 +755,7 @@ export async function fetchKeysStatus(settings: PanelSettings): Promise<unknown>
 export async function verifySignedArtifact(settings: PanelSettings, path: string): Promise<unknown> {
   if (isBridgePreviewMode()) {
     return {
-      contract_version: '2.0',
+      contract_version: '3.0',
       path,
       verified: true,
       signature_verified: true,
@@ -780,7 +773,7 @@ export async function verifySignedArtifact(settings: PanelSettings, path: string
 export async function rotateKeyPlan(settings: PanelSettings, options: KeyRotatePlanOptions): Promise<unknown> {
   if (isBridgePreviewMode()) {
     return {
-      contract_version: '2.0',
+      contract_version: '3.0',
       provider: 'local_file',
       current_key_id: 'enterprise-signing-current',
       next_key_id: options.nextKeyId ?? 'next-signing-key',
@@ -979,7 +972,7 @@ export async function cancelAssistantTurn(
 ): Promise<AssistantCancelTurnResponse> {
   if (isBridgePreviewMode()) {
     return {
-      contractVersion: '2.0',
+      contractVersion: '3.0',
       assistantTurnId,
       sessionId: 'preview-session',
       processId: null,

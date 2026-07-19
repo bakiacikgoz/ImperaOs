@@ -3,12 +3,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.control_plane.pilot_workflow import (
+from imperaos.control_plane.pilot_workflow import (
     load_governed_pilot_workflow_spec,
     run_governed_pilot_workflow,
     validate_governed_pilot_workflow_spec,
 )
-from binliquid.control_plane.pilot_workflow_verifier import (
+from imperaos.control_plane.pilot_workflow_verifier import (
     verify_governed_pilot_workflow_report,
 )
 

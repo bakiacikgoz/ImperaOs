@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 import pytest
 from pydantic import ValidationError
 
-from binliquid.control_plane.enterprise_workspace import (
+from imperaos.control_plane.enterprise_workspace import (
     EnterpriseDevice,
     EnterpriseOrganization,
     EnterprisePrincipal,

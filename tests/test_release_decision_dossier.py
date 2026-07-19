@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.release_decision.dossier import (
+from imperaos.release_decision.dossier import (
     build_release_decision_dossier,
     verify_release_decision_dossier,
     write_release_decision_pack,
 )
-from binliquid.release_decision.models import (
+from imperaos.release_decision.models import (
     HumanSignoffVerificationReport,
     NoShipRegister,
     RcFreezeReconciliationReport,

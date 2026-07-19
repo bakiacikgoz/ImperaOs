@@ -10,9 +10,18 @@ import type {
 } from './assistantTypes';
 
 type RecordValue = Record<string, unknown>;
+const OPERATOR_PANEL_CONTRACT_VERSION = '3.0';
 
 function asRecord(value: unknown): RecordValue {
   return typeof value === 'object' && value !== null ? (value as RecordValue) : {};
+}
+
+function unwrapTraceData(value: unknown): RecordValue {
+  const outer = asRecord(value);
+  if (typeof outer.stage !== 'string' || typeof outer.data !== 'object' || outer.data === null) {
+    return outer;
+  }
+  return { ...outer, ...asRecord(outer.data) };
 }
 
 function readString(source: RecordValue, key: string, fallback = ''): string {
@@ -23,6 +32,15 @@ function readString(source: RecordValue, key: string, fallback = ''): string {
 function readArray(source: RecordValue, key: string): unknown[] {
   const value = source[key];
   return Array.isArray(value) ? value : [];
+}
+
+function readPositiveInt(source: RecordValue, key: string): number | null {
+  const value = source[key];
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 ? value : null;
+}
+
+function readProposalStatus(value: unknown): 'pending' | 'approved' | 'rejected' | 'applied' | 'failed' {
+  return value === 'approved' || value === 'rejected' || value === 'applied' || value === 'failed' ? value : 'pending';
 }
 
 function readRisk(value: unknown): 'low' | 'medium' | 'high' {
@@ -91,6 +109,7 @@ export function createAssistantTurn(input: {
       approval: null,
       referencedRuns: [],
       referencedArtifacts: [],
+      parts: [],
       metrics: null,
       warning: null,
       error: null,
@@ -121,40 +140,64 @@ function appendTimeline(turn: AssistantTurn, event: AssistantStreamEvent, item: 
   ];
 }
 
-function normalizeEventName(value: unknown): AssistantStreamEventType {
-  const raw = typeof value === 'string' ? value : 'status';
+function normalizeEventName(value: unknown): AssistantStreamEventType | null {
+  const raw = typeof value === 'string' ? value : '';
   const allowed: AssistantStreamEventType[] = [
     'status',
     'token',
+    'delta',
+    'text_delta',
     'router_decision',
     'policy_decision',
     'approval_pending',
     'expert_start',
     'expert_end',
+    'artifact_proposed',
+    'artifact_committed',
+    'artifact_patch_proposed',
+    'artifact_patch_applied',
+    'form_requested',
+    'form_submitted',
+    'tool_result',
     'audit_artifact',
     'final',
     'warning',
     'error',
     'cancelled',
   ];
-  return allowed.includes(raw as AssistantStreamEventType) ? (raw as AssistantStreamEventType) : 'status';
+  return allowed.includes(raw as AssistantStreamEventType) ? (raw as AssistantStreamEventType) : null;
 }
 
-export function normalizeAssistantStreamEvent(value: unknown): AssistantStreamEvent {
+export function normalizeAssistantStreamEvent(value: unknown): AssistantStreamEvent | null {
   const record = asRecord(value);
+  const contractVersion = readString(record, 'contractVersion');
+  if (contractVersion !== OPERATOR_PANEL_CONTRACT_VERSION) {
+    return null;
+  }
+  const event = normalizeEventName(record.event);
+  if (event === null) return null;
   return {
-    contractVersion: readString(record, 'contractVersion', '2.0'),
+    contractVersion,
+    eventId: readString(record, 'eventId') || undefined,
     assistantTurnId: readString(record, 'assistantTurnId'),
     sessionId: readString(record, 'sessionId'),
-    event: normalizeEventName(record.event),
+    event,
     sequence: typeof record.sequence === 'number' ? record.sequence : 0,
     timestampUtc: readString(record, 'timestampUtc', nowUtc()),
+    traceId: readString(record, 'traceId') || undefined,
+    dataClass:
+      record.dataClass === 'public' ||
+      record.dataClass === 'internal' ||
+      record.dataClass === 'confidential' ||
+      record.dataClass === 'regulated'
+        ? record.dataClass
+        : undefined,
     data: record.data ?? {},
   };
 }
 
 export function extractApprovalIdFromEvent(event: AssistantStreamEvent): string | null {
-  const data = asRecord(event.data);
+  const data = unwrapTraceData(event.data);
   const approvalId =
     readString(data, 'approval_id') ||
     readString(data, 'approvalId') ||
@@ -164,10 +207,13 @@ export function extractApprovalIdFromEvent(event: AssistantStreamEvent): string 
 }
 
 export function mapCliAssistantEvent(
-  rawEvent: AssistantStreamEvent,
+  rawEvent: unknown,
   previous: AssistantSessionState,
 ): AssistantSessionState {
   const event = normalizeAssistantStreamEvent(rawEvent);
+  if (event === null) {
+    return previous;
+  }
   const activeTurnId = previous.activeTurnId ?? event.assistantTurnId;
   const turnIndex = previous.turns.findIndex((item) => item.id === activeTurnId || item.id === event.assistantTurnId);
   if (turnIndex < 0) {
@@ -183,14 +229,19 @@ export function mapCliAssistantEvent(
       timeline: [...item.assistantMessage.timeline],
       referencedRuns: [...item.assistantMessage.referencedRuns],
       referencedArtifacts: [...item.assistantMessage.referencedArtifacts],
+      parts: [...item.assistantMessage.parts],
     },
   }));
   const turn = turns[turnIndex];
   if (event.sequence <= turn.eventSequence) {
     return previous;
   }
+  if (event.event !== 'cancelled' && turn.eventSequence > 0 && event.sequence > turn.eventSequence + 1) {
+    turn.assistantMessage.warning = 'Assistant event sequence gap detected.';
+    return { ...previous, turns, error: null };
+  }
 
-  const data = asRecord(event.data);
+  const data = unwrapTraceData(event.data);
   turn.eventSequence = event.sequence;
 
   switch (event.event) {
@@ -204,7 +255,9 @@ export function mapCliAssistantEvent(
       });
       return { ...previous, turns, status: 'streaming', error: null };
     }
-    case 'token': {
+    case 'token':
+    case 'delta':
+    case 'text_delta': {
       const token = readString(data, 'text') || readString(data, 'token') || readString(data, 'delta');
       turn.status = 'streaming';
       turn.assistantMessage.text += token;
@@ -278,17 +331,129 @@ export function mapCliAssistantEvent(
         error: null,
       };
     }
+    case 'artifact_proposed':
+    case 'artifact_committed':
+    case 'artifact_patch_proposed':
+    case 'artifact_patch_applied': {
+      const artifactId = readString(data, 'artifactId') || readString(data, 'artifact_id');
+      const revisionId = readString(data, 'revisionId') || readString(data, 'revision_id');
+      const kind = readString(data, 'kind');
+      const artifact = {
+        name: readString(data, 'title', artifactId || kind || 'artifact'),
+        artifactId: artifactId || undefined,
+        revisionId: revisionId || undefined,
+        kind: kind || undefined,
+        openable: event.event === 'artifact_committed' || event.event === 'artifact_patch_applied',
+        summary: readString(data, 'summary', event.event.replaceAll('_', ' ')),
+      };
+      turn.assistantMessage.referencedArtifacts.push(artifact);
+      if (artifactId) {
+        turn.assistantMessage.parts.push({
+          type: 'artifact',
+          artifactId,
+          revisionId: revisionId || null,
+          kind: kind || 'unknown',
+          title: artifact.name,
+          summary: artifact.summary,
+          openable: artifact.openable,
+        });
+      }
+      if (event.event === 'artifact_patch_proposed') {
+        const proposalId = readString(data, 'proposalId') || readString(data, 'proposal_id');
+        const approvalId = readString(data, 'approvalId') || readString(data, 'approval_id');
+        const actionHash = readString(data, 'actionHash') || readString(data, 'action_hash');
+        const baseRevisionNumber = readPositiveInt(data, 'baseRevisionNumber') ?? readPositiveInt(data, 'base_revision_number');
+        if (artifactId && proposalId && approvalId && /^[a-f0-9]{64}$/.test(actionHash) && baseRevisionNumber !== null) {
+          const error = readString(data, 'error');
+          turn.assistantMessage.parts.push({
+            type: 'artifact-proposal',
+            proposalId,
+            artifactId,
+            approvalId,
+            actionHash,
+            baseRevisionNumber,
+            title: artifact.name,
+            kind: kind || 'unknown',
+            summary: artifact.summary,
+            status: readProposalStatus(data.status),
+            error: error ? error.slice(0, 500) : null,
+          });
+        }
+      }
+      appendTimeline(turn, event, {
+        tone: event.event.endsWith('committed') || event.event.endsWith('applied') ? 'success' : 'info',
+        title: event.event.replaceAll('_', ' '),
+        subtitle: artifactId || artifact.name,
+        timestampUtc: event.timestampUtc,
+      });
+      return {
+        ...previous,
+        turns,
+        referencedArtifacts: [...previous.referencedArtifacts, artifact],
+        error: null,
+      };
+    }
+    case 'form_requested':
+    case 'form_submitted': {
+      const artifactId = readString(data, 'artifactId') || readString(data, 'artifact_id');
+      const revisionId = readString(data, 'revisionId') || readString(data, 'revision_id');
+      const artifact = {
+        name: readString(data, 'title', artifactId || 'form'),
+        artifactId: artifactId || undefined,
+        revisionId: revisionId || undefined,
+        kind: 'form',
+        openable: Boolean(artifactId),
+        summary: event.event.replaceAll('_', ' '),
+      };
+      turn.assistantMessage.referencedArtifacts.push(artifact);
+      if (artifactId && revisionId) {
+        turn.assistantMessage.parts.push({
+          type: 'form',
+          artifactId,
+          revisionId,
+          title: artifact.name,
+          status: event.event === 'form_requested'
+            ? 'requested'
+            : (data.status === 'accepted' || data.status === 'rejected' || data.status === 'pending_continuation'
+                ? data.status
+                : 'rejected'),
+        });
+      }
+      appendTimeline(turn, event, {
+        tone: event.event === 'form_submitted' ? 'success' : 'info',
+        title: event.event.replaceAll('_', ' '),
+        subtitle: artifactId || 'form',
+        timestampUtc: event.timestampUtc,
+      });
+      return {
+        ...previous,
+        turns,
+        referencedArtifacts: [...previous.referencedArtifacts, artifact],
+        error: null,
+      };
+    }
+    case 'tool_result': {
+      appendTimeline(turn, event, {
+        tone: readString(data, 'status') === 'failed' ? 'error' : 'info',
+        title: readString(data, 'toolName', 'tool result'),
+        subtitle: readString(data, 'status', 'completed'),
+        timestampUtc: event.timestampUtc,
+      });
+      return { ...previous, turns, status: 'streaming', error: null };
+    }
     case 'final': {
-      const finalText = readString(data, 'final_text') || readString(data, 'text') || readString(data, 'content');
+      const finalText = readString(data, 'finalText') || readString(data, 'final_text') || readString(data, 'text') || readString(data, 'content');
       if (finalText) {
         turn.assistantMessage.text = finalText;
       }
       turn.status = 'completed';
       turn.completedAtUtc = event.timestampUtc;
       turn.assistantMessage.metrics = {
-        traceId: readString(data, 'trace_id'),
-        usedPath: readString(data, 'used_path'),
-        fallbackEvents: readArray(data, 'fallback_events').filter((item): item is string => typeof item === 'string'),
+        traceId: readString(data, 'traceId') || readString(data, 'trace_id'),
+        usedPath: readString(data, 'usedPath') || readString(data, 'used_path'),
+        fallbackEvents: (readArray(data, 'fallbackEvents').length
+          ? readArray(data, 'fallbackEvents')
+          : readArray(data, 'fallback_events')).filter((item): item is string => typeof item === 'string'),
       };
       return { ...previous, turns, status: 'completed', activeTurnId: null, error: null };
     }

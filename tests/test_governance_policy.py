@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.governance.models import GovernanceAction
-from binliquid.governance.policy import (
+from imperaos.governance.models import GovernanceAction
+from imperaos.governance.policy import (
     evaluate_handoff,
     evaluate_memory_scope_write,
     evaluate_task,

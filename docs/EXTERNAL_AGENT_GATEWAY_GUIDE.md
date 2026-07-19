@@ -3,7 +3,7 @@
 Register the sample external stdio agent:
 
 ```bash
-uv run binliquid control-plane agent register \
+uv run imperaos control-plane agent register \
   --spec examples/control_plane/agent_external_gateway.yaml \
   --profile lite \
   --json
@@ -21,12 +21,12 @@ Gateway v1.1 adds workflow-aware action lists, idempotency keys and replay
 verification. The pilot examples live in `examples/external_agents/v1_1/`.
 
 ```bash
-uv run binliquid control-plane gateway submit-v1-1 \
+uv run imperaos control-plane gateway submit-v1-1 \
   --input examples/external_agents/v1_1/read_only_inspector.json \
   --profile enterprise \
   --json
 
-uv run binliquid control-plane gateway replay-v1-1 \
+uv run imperaos control-plane gateway replay-v1-1 \
   --request-id v1-1-read-only-inspector \
   --expected-request-hash <requestHash> \
   --profile enterprise \

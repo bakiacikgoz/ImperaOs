@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.memory.manager import MemoryManager
-from binliquid.memory.persistent_store import PersistentMemoryStore
-from binliquid.memory.salience_gate import SalienceGate
+from imperaos.memory.manager import MemoryManager
+from imperaos.memory.persistent_store import PersistentMemoryStore
+from imperaos.memory.salience_gate import SalienceGate
 
 
 def test_memory_manager_reports_tuning_metrics(tmp_path: Path) -> None:

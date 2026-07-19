@@ -1,4 +1,4 @@
-from binliquid.memory.semantic.models import (
+from imperaos.memory.semantic.models import (
     MemorySemanticIndexSnapshot,
     SemanticIndexManifest,
 )

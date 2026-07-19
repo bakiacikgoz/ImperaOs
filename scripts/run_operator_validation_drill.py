@@ -10,8 +10,10 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-SCHEMA_VERSION = "binliquid-operator-validation-drill/v1"
-ATTESTATION_SCHEMA_VERSION = "binliquid-non-developer-operator-attestation/v1"
+from imperaos.runtime.paths import TEAM_ARTIFACT_ROOT
+
+SCHEMA_VERSION = "imperaos-operator-validation-drill/v2"
+ATTESTATION_SCHEMA_VERSION = "imperaos-non-developer-operator-attestation/v2"
 
 
 @dataclass(frozen=True)
@@ -46,7 +48,7 @@ def _write_json(path: Path, payload: dict[str, Any]) -> None:
 
 def _default_commands() -> list[CommandSpec]:
     python_bin = sys.executable
-    base = [python_bin, "-m", "binliquid"]
+    base = [python_bin, "-m", "imperaos"]
     return [
         CommandSpec("version", [*base, "--version"], expect_json=False),
         CommandSpec(
@@ -57,7 +59,7 @@ def _default_commands() -> list[CommandSpec]:
         CommandSpec("operator_capabilities", [*base, "operator", "capabilities", "--json"]),
         CommandSpec(
             "team_list",
-            [*base, "team", "list", "--root-dir", ".binliquid/team/jobs", "--json"],
+            [*base, "team", "list", "--root-dir", TEAM_ARTIFACT_ROOT, "--json"],
         ),
         CommandSpec(
             "computer_use_doctor_all",

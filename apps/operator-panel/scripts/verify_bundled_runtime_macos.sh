@@ -4,9 +4,10 @@ set -euo pipefail
 ARCH="${1:-$(uname -m)}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
-RUNTIME_DIR="${REPO_ROOT}/apps/operator-panel/src-tauri/resources/binliquid-runtime"
+RUNTIME_DIR="${REPO_ROOT}/apps/operator-panel/src-tauri/resources/imperaos-runtime"
 MANIFEST="${RUNTIME_DIR}/RUNTIME_MANIFEST.txt"
 RUNTIME_PYTHON="${RUNTIME_DIR}/python/bin/python"
+MANIFEST_VALIDATOR="${SCRIPT_DIR}/validate_runtime_manifest.py"
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
   echo "[runtime-verify] macOS only" >&2
@@ -20,25 +21,27 @@ fi
 
 test -f "${MANIFEST}"
 test -x "${RUNTIME_PYTHON}"
+test -f "${MANIFEST_VALIDATOR}"
 test -f "${RUNTIME_DIR}/config/balanced.toml"
 test -f "${RUNTIME_DIR}/config/providers.example.toml"
 
-"${RUNTIME_PYTHON}" -m binliquid --version >/dev/null
+RUNTIME_VERSION="$("${RUNTIME_PYTHON}" -m imperaos --version)"
 (
   cd /
-  BINLIQUID_CONFIG_ROOT="${RUNTIME_DIR}/config" \
-    BINLIQUID_PROVIDER_REGISTRY_PATH="${RUNTIME_DIR}/config/providers.example.toml" \
-    "${RUNTIME_PYTHON}" -m binliquid operator capabilities --json >/dev/null
+  IMPERAOS_CONFIG_ROOT="${RUNTIME_DIR}/config" \
+    IMPERAOS_PROVIDER_REGISTRY_PATH="${RUNTIME_DIR}/config/providers.example.toml" \
+    "${RUNTIME_PYTHON}" -m imperaos operator capabilities --json >/dev/null
 )
 file "${RUNTIME_PYTHON}"
 
-grep -q "^platform=macos$" "${MANIFEST}"
-grep -q "^arch=${ARCH}$" "${MANIFEST}"
+"${RUNTIME_PYTHON}" "${MANIFEST_VALIDATOR}" \
+  --manifest "${MANIFEST}" \
+  --platform macos \
+  --arch "${ARCH}" \
+  "--runtime-version" "${RUNTIME_VERSION}"
+
 grep -q "^python=Python " "${MANIFEST}"
-grep -q "^binliquid_version=" "${MANIFEST}"
 grep -q "^wheel_sha256=[0-9a-f]\\{64\\}$" "${MANIFEST}"
-grep -q "^git_head=" "${MANIFEST}"
-grep -q "^built_at_utc=" "${MANIFEST}"
 
 if grep -q "${HOME}" "${MANIFEST}"; then
   echo "[runtime-verify] manifest leaks user home path" >&2
@@ -57,4 +60,5 @@ if [[ -n "${RUNTIME_STATUS}" ]]; then
   exit 6
 fi
 
+echo "[runtime-verify] imperaos_version=${RUNTIME_VERSION}"
 echo "[runtime-verify] bundled runtime verified for ${ARCH}"

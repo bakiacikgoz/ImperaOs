@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.cli import _build_memory_manager
-from binliquid.runtime.config import (
+from imperaos.cli import _build_memory_manager
+from imperaos.runtime.config import (
     ComputerUseRuntimeConfig,
     RuntimeConfig,
     resolve_runtime_config,
 )
-from binliquid.telemetry.tracer import Tracer
-from binliquid.tools.sandbox_runner import SandboxRunner
+from imperaos.telemetry.tracer import Tracer
+from imperaos.tools.sandbox_runner import SandboxRunner
 from scripts.run_provider_governance_gate import run_gate
 
 

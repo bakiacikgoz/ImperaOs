@@ -63,10 +63,10 @@ Do not reuse the same paths between staging and production.
 ## Preflight Commands
 
 ```bash
-uv run binliquid config resolve --profile enterprise --json
-uv run binliquid security baseline --profile enterprise --json
-uv run binliquid metrics snapshot --profile enterprise --json
-uv run binliquid ga readiness --profile enterprise --report artifacts/ga_readiness_report.json --json
+uv run imperaos config resolve --profile enterprise --json
+uv run imperaos security baseline --profile enterprise --json
+uv run imperaos metrics snapshot --profile enterprise --json
+uv run imperaos ga readiness --profile enterprise --report artifacts/ga_readiness_report.json --json
 ```
 # Product-Complete Deployment Gate
 

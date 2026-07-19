@@ -1,0 +1,47 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-restore-command.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifactId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "changeSummary": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Changesummary",
+      "type": "string"
+    },
+    "expectedRevisionNumber": {
+      "minimum": 1,
+      "title": "Expectedrevisionnumber",
+      "type": "integer"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Idempotencykey",
+      "type": "string"
+    },
+    "sourceRevisionId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Sourcerevisionid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifactId",
+    "sourceRevisionId",
+    "expectedRevisionNumber",
+    "idempotencyKey"
+  ],
+  "title": "RestoreArtifactCommand",
+  "type": "object",
+  "x-imperaos-contract": "artifact-restore-command.v1"
+}

@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from binliquid.memory.authority import build_memory_authority, proposal_from_cli
-from binliquid.memory.sync_importer import import_memory_sync_pack
-from binliquid.memory.sync_pack import export_memory_sync_pack
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.memory.authority import build_memory_authority, proposal_from_cli
+from imperaos.memory.sync_importer import import_memory_sync_pack
+from imperaos.memory.sync_pack import export_memory_sync_pack
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_sync_import_dry_run_and_apply_approval_gate(tmp_path: Path) -> None:

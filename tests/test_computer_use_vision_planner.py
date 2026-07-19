@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from binliquid.computer_use.models import RiskClass
-from binliquid.computer_use.vision_runtime.models import (
+from imperaos.computer_use.models import RiskClass
+from imperaos.computer_use.vision_runtime.models import (
     InputActionType,
     NormalizedBBox,
     StopDecision,
@@ -9,7 +9,7 @@ from binliquid.computer_use.vision_runtime.models import (
     VisionAction,
     VisionInterpretation,
 )
-from binliquid.computer_use.vision_runtime.planner import CandidateActionPlanner
+from imperaos.computer_use.vision_runtime.planner import CandidateActionPlanner
 
 _DEFAULT_BBOX = object()
 

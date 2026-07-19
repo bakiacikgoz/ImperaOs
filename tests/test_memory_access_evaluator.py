@@ -1,14 +1,14 @@
 from pathlib import Path
 
-from binliquid.memory.access_evaluator import MemoryAccessEvaluator
-from binliquid.memory.workspace_models import (
+from imperaos.memory.access_evaluator import MemoryAccessEvaluator
+from imperaos.memory.workspace_models import (
     MemoryAccessRequest,
     MemoryPrincipal,
     MemoryScopeAclRule,
     MemoryWorkspace,
     MemoryWorkspaceMembership,
 )
-from binliquid.memory.workspace_store import WorkspaceMemoryStore
+from imperaos.memory.workspace_store import WorkspaceMemoryStore
 
 
 def _store(tmp_path: Path) -> WorkspaceMemoryStore:

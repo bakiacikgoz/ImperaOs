@@ -3,7 +3,7 @@
 ## Real Acceptance Prereqs
 
 - macOS with Safari installed
-- `AEGISOS_ENABLE_REAL_COMPUTER_USE_TESTS=1`
+- `IMPERAOS_ENABLE_REAL_COMPUTER_USE_TESTS=1`
 - Terminal / Codex app allowed to automate Safari and System Events
 - Accessibility permission granted for UI scripting
 - Safari Developer setting `Allow JavaScript from Apple Events` enabled manually
@@ -17,9 +17,9 @@ pnpm --dir apps/operator-panel lint
 pnpm --dir apps/operator-panel build
 cargo fmt --check
 cargo check
-uv run ruff check binliquid/computer_use apps/operator-panel/src-tauri/src tests/test_computer_use.py tests/test_computer_use_world_model.py tests/test_computer_use_runtime.py tests/test_computer_use_acceptance.py tests/test_operator_contracts.py tests/test_team_cli.py
+uv run ruff check imperaos/computer_use apps/operator-panel/src-tauri/src tests/test_computer_use.py tests/test_computer_use_world_model.py tests/test_computer_use_runtime.py tests/test_computer_use_acceptance.py tests/test_operator_contracts.py tests/test_team_cli.py
 uv run pytest tests/test_computer_use.py tests/test_computer_use_world_model.py tests/test_computer_use_runtime.py tests/test_operator_contracts.py tests/test_team_cli.py -q
-AEGISOS_ENABLE_REAL_COMPUTER_USE_TESTS=1 uv run pytest tests/test_computer_use_acceptance.py -q
+IMPERAOS_ENABLE_REAL_COMPUTER_USE_TESTS=1 uv run pytest tests/test_computer_use_acceptance.py -q
 ```
 
 ## 2026-03-14 Qualification Result
@@ -29,7 +29,7 @@ AEGISOS_ENABLE_REAL_COMPUTER_USE_TESTS=1 uv run pytest tests/test_computer_use_a
   - Developer menu visible
   - `Allow JavaScript from Apple Events` enabled
   - Automation / Accessibility permissions granted
-- Full real Safari acceptance completed with `AEGISOS_ENABLE_REAL_COMPUTER_USE_TESTS=1`
+- Full real Safari acceptance completed with `IMPERAOS_ENABLE_REAL_COMPUTER_USE_TESTS=1`
 - Result: `5 passed`
 
 Executed real scenarios:

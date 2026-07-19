@@ -3,7 +3,7 @@
 Run safe diagnostics:
 
 ```bash
-uv run binliquid setup first-run --profile enterprise --mode local-enterprise --json
+uv run imperaos setup first-run --profile enterprise --mode local-enterprise --json
 ```
 
 The command performs no destructive mutation unless a future explicit `--apply`

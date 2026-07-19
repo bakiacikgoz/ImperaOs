@@ -33,9 +33,9 @@ Events contain hashes, status, action, reason codes, and counters only. They do 
 ## CLI
 
 ```bash
-uv run binliquid memory runtime policy doctor --profile balanced
-uv run binliquid memory runtime policy simulate --operation read --query "provider governance"
-uv run binliquid memory runtime policy evaluate \
+uv run imperaos memory runtime policy doctor --profile balanced
+uv run imperaos memory runtime policy simulate --operation read --query "provider governance"
+uv run imperaos memory runtime policy evaluate \
   --suite benchmarks/tasks/memory/runtime_policy_cases.jsonl \
   --output artifacts/memory-runtime-policy/evaluation.json \
   --profile enterprise

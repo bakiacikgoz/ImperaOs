@@ -13,7 +13,7 @@ Default posture:
 
 Main surfaces:
 
-- CLI: `binliquid memory doctor`, `memory propose`, `memory retrieve`, `memory stats`, `memory index status`, `memory eval`.
+- CLI: `imperaos memory doctor`, `memory propose`, `memory retrieve`, `memory stats`, `memory index status`, `memory eval`.
 - Control Plane snapshot: `memoryGovernance`.
 - Operator Panel route: `Memory Governance`.
 - Gates: `make governed-memory-v1-gate`.

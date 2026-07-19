@@ -4,10 +4,10 @@ Status: implemented behind disabled-by-default feature flags.
 
 Branch contents:
 
-- Runtime policy gateway: `binliquid/memory/runtime_policy.py`
-- Principal resolver: `binliquid/memory/principal_resolver.py`
-- Semantic runtime adapter: `binliquid/memory/semantic/runtime_adapter.py`
-- Control Plane snapshot: `binliquid/memory/runtime_policy_snapshot.py`
+- Runtime policy gateway: `imperaos/memory/runtime_policy.py`
+- Principal resolver: `imperaos/memory/principal_resolver.py`
+- Semantic runtime adapter: `imperaos/memory/semantic/runtime_adapter.py`
+- Control Plane snapshot: `imperaos/memory/runtime_policy_snapshot.py`
 - Contract schemas and fixtures: `contracts/memory/`
 - Gate suite: `benchmarks/tasks/memory/runtime_policy_cases.jsonl`
 - CLI: `memory runtime policy doctor|simulate|evaluate`

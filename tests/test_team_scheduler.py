@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from binliquid.team.models import TaskDefinition, TaskRun, TaskStatus
-from binliquid.team.scheduler import ParallelScheduler
+from imperaos.team.models import TaskDefinition, TaskRun, TaskStatus
+from imperaos.team.scheduler import ParallelScheduler
 
 
 def test_parallel_scheduler_detects_deadlock() -> None:

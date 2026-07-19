@@ -3,6 +3,7 @@ import { StatusDot } from '../primitives/StatusDot';
 import { routeGroups, type RouteId } from '../../routeRegistry';
 import type { ThemeMode } from '../../settings';
 import type { UiLocale } from '../../i18n';
+import { PRODUCT_IDENTITY } from '../../productIdentity';
 
 export type ShellViewKey = RouteId;
 
@@ -140,7 +141,7 @@ export function Sidebar({
           <Icon name="hex" />
         </div>
         <div>
-          <h1>AegisOS</h1>
+          <h1>{PRODUCT_IDENTITY.displayName}</h1>
           <p>Agent Control Plane</p>
         </div>
         <button

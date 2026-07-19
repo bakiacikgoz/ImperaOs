@@ -64,7 +64,7 @@ uv run python scripts/run_provider_native_adapter_gate.py --profile enterprise -
 Run only the Anthropic conformance matrix:
 
 ```bash
-uv run python -m binliquid provider native conformance run \
+uv run python -m imperaos provider native conformance run \
   --profile enterprise \
   --provider-kind anthropic_messages \
   --offline \
@@ -74,7 +74,7 @@ uv run python -m binliquid provider native conformance run \
 Verify the Anthropic evidence:
 
 ```bash
-uv run python -m binliquid provider native conformance verify \
+uv run python -m imperaos provider native conformance verify \
   --input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json \
   --json
 ```

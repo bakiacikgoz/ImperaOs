@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "imperaos.reviewed-binary-assets/v1",
+  "assets": [
+    {
+      "path": "apps/operator-panel/src-tauri/icons/128x128.png",
+      "sha256": "adc8a69d063baa4d5a5ff3cb3e8ab7bd957d0283ad6db498a065094aae34951a"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/128x128@2x.png",
+      "sha256": "edb7e22903b4024d591821053e26d9fc2c0121ac7b1fa305e93baba20a3e7e63"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/32x32.png",
+      "sha256": "dff0c76a0da887888bd998a61a023ee2dfb679a6295aa350f70fee5396317d60"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/Square107x107Logo.png",
+      "sha256": "4269ebe64456b6232eb72db77c612f9f407ce6ad647100f5d7c36f4bac7a6195"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/Square142x142Logo.png",
+      "sha256": "bcdd4ecd9c8cb42b61ba7bf1760981b6b02960944a769f7b16fd5e2f6559ac38"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/Square150x150Logo.png",
+      "sha256": "76dc215ecdfdc1a8587d691bad60a9210559fad51f74f5f580a851462a11177e"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/Square284x284Logo.png",
+      "sha256": "4013491dfd8cdcedb0250566bc8286279634f9623a7672b12c5d7ce25962f147"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/Square30x30Logo.png",
+      "sha256": "07cd418f25aca3496723d0e734a49f7a1ea9f8709f91cc65404e19b8da8e09e0"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/Square310x310Logo.png",
+      "sha256": "80302073a67b00626832935c75154be969cef03da19a380ba4e7ec65777b8bd8"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/Square44x44Logo.png",
+      "sha256": "b53ee838771ccac47e213c0770321bccc64a06139b76897595e252292ea8f736"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/Square71x71Logo.png",
+      "sha256": "d28b467520dbc893643e28e9530c93ee437c270e4263b6677318b62b1e4b36ce"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/Square89x89Logo.png",
+      "sha256": "7c2344f14d86e2df23fbd5e2f916f0aff49c0c82c168a54bcd056010d99c7c33"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/StoreLogo.png",
+      "sha256": "bf78f0e05e2e7a8141619b1133097ffc2b6a42a2dff4e1cb8efef7593ec1e487"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/icon.icns",
+      "sha256": "45b106900fd3f2dda6a45ea7916dc428bd9e943c276c60f04428bf04f9da900d"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/icon.ico",
+      "sha256": "0c23c257876a6516a508e7997bb5b1a299be19cfd8af70001217d413313aca28"
+    },
+    {
+      "path": "apps/operator-panel/src-tauri/icons/icon.png",
+      "sha256": "91411e8c0414d73f241cf5cd2777e93efb29fe4221df23a7816bc4f51483ef4d"
+    }
+  ]
+}

@@ -5,7 +5,7 @@ Scope: Model Provider Governance V1.1 canary and policy-aware routing shadow mod
 Security claims:
 
 - Remote providers remain disabled by default.
-- Live canaries require both CLI `--allow-live` and `BINLIQUID_PROVIDER_LIVE_CANARY=1`.
+- Live canaries require both CLI `--allow-live` and `IMPERAOS_PROVIDER_LIVE_CANARY=1`.
 - Default CI uses offline fixtures only and performs no external provider calls.
 - Public cloud providers cannot receive confidential, regulated, secret, credential,
   payment, or raw PII data classes.
@@ -29,16 +29,16 @@ Primary commands:
 ```bash
 uv run python scripts/run_provider_governance_gate.py --profile enterprise --json
 uv run python scripts/run_provider_canary_fixture.py --profile enterprise --json
-uv run python -m binliquid provider canary verify \
+uv run python -m imperaos provider canary verify \
   --evidence-root artifacts/model-provider-governance/canary \
   --json
 uv run python scripts/run_provider_native_adapter_gate.py --profile enterprise --json
-uv run python -m binliquid provider native conformance run \
+uv run python -m imperaos provider native conformance run \
   --profile enterprise \
   --provider-kind anthropic_messages \
   --offline \
   --json
-uv run python -m binliquid provider native conformance verify \
+uv run python -m imperaos provider native conformance verify \
   --input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json \
   --json
 ```

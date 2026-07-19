@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "JsonValue": {},
+    "SpreadsheetClearCellOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "maxLength": 10,
+          "minLength": 2,
+          "title": "Address",
+          "type": "string"
+        },
+        "op": {
+          "const": "clear",
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "op",
+        "address"
+      ],
+      "title": "SpreadsheetClearCellOperation",
+      "type": "object"
+    },
+    "SpreadsheetSetCellOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "maxLength": 10,
+          "minLength": 2,
+          "title": "Address",
+          "type": "string"
+        },
+        "op": {
+          "const": "set",
+          "title": "Op",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "op",
+        "address",
+        "value"
+      ],
+      "title": "SpreadsheetSetCellOperation",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-spreadsheet-cell-patch-command.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifactId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "changeSummary": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Changesummary",
+      "type": "string"
+    },
+    "expectedRevisionNumber": {
+      "minimum": 1,
+      "title": "Expectedrevisionnumber",
+      "type": "integer"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Idempotencykey",
+      "type": "string"
+    },
+    "operations": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "clear": "#/$defs/SpreadsheetClearCellOperation",
+            "set": "#/$defs/SpreadsheetSetCellOperation"
+          },
+          "propertyName": "op"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/SpreadsheetSetCellOperation"
+          },
+          {
+            "$ref": "#/$defs/SpreadsheetClearCellOperation"
+          }
+        ]
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "title": "Operations",
+      "type": "array"
+    },
+    "sheetId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Sheetid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifactId",
+    "expectedRevisionNumber",
+    "sheetId",
+    "operations",
+    "idempotencyKey"
+  ],
+  "title": "PatchSpreadsheetCellsCommand",
+  "type": "object",
+  "x-imperaos-contract": "artifact-spreadsheet-cell-patch-command.v1"
+}

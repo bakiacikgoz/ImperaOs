@@ -1,0 +1,45 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/slides.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "const": "slides",
+      "default": "slides",
+      "title": "Kind",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "slides": {
+      "items": {
+        "additionalProperties": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "type": "object"
+      },
+      "maxItems": 200,
+      "title": "Slides",
+      "type": "array"
+    },
+    "theme": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Theme",
+      "type": "object"
+    }
+  },
+  "required": [
+    "slides"
+  ],
+  "title": "SlidesContentV1",
+  "type": "object",
+  "x-imperaos-contract": "slides.v1"
+}

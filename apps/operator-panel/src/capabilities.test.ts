@@ -177,7 +177,7 @@ describe('capability handshake validation', () => {
     expect(
       hasContractMismatch({
         capabilities: {
-          contractVersion: '2.0',
+          contractVersion: '3.0',
           commands: baseCommands,
         },
       }),
@@ -195,11 +195,22 @@ describe('capability handshake validation', () => {
     ).toBe(true);
   });
 
+  it('rejects the former Operator Panel contract version', () => {
+    expect(
+      hasContractMismatch({
+        capabilities: {
+          contractVersion: ['2', '0'].join('.'),
+          commands: baseCommands,
+        },
+      }),
+    ).toBe(true);
+  });
+
   it('rejects when required command flags are missing', () => {
     expect(
       hasContractMismatch({
         capabilities: {
-          contractVersion: '2.0',
+          contractVersion: '3.0',
           commands: {
             ...baseCommands,
             approvalExecute: false,
@@ -213,7 +224,7 @@ describe('capability handshake validation', () => {
     expect(
       hasContractMismatch({
         capabilities: {
-          contractVersion: '2.0',
+          contractVersion: '3.0',
           commands: {
             ...baseCommands,
             supportBundleExportJson: false,

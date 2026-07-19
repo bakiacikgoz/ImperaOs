@@ -11,9 +11,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.claim_guard import ClaimGuard  # noqa: E402
-from binliquid.control_plane.readiness import build_readiness_report  # noqa: E402
-from binliquid.runtime.config import RuntimeConfig  # noqa: E402
+from imperaos.control_plane.claim_guard import ClaimGuard  # noqa: E402
+from imperaos.control_plane.readiness import build_readiness_report  # noqa: E402
+from imperaos.runtime.config import RuntimeConfig  # noqa: E402
 
 
 def main() -> None:

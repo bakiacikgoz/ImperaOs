@@ -3,8 +3,8 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Literal
 
-from binliquid.control_plane.design_partner_rc import build_design_partner_rc_status
-from binliquid.control_plane.models import (
+from imperaos.control_plane.design_partner_rc import build_design_partner_rc_status
+from imperaos.control_plane.models import (
     AlertSummary,
     DataSourceState,
     DesignPartnerBetaStatus,

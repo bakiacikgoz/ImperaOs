@@ -5,8 +5,8 @@ import sqlite3
 import tempfile
 from pathlib import Path
 
-from binliquid.memory.migration_planner import plan_legacy_memory_migration
-from binliquid.memory.workspace_models import LegacyMemoryMigrationPlanRequest
+from imperaos.memory.migration_planner import plan_legacy_memory_migration
+from imperaos.memory.workspace_models import LegacyMemoryMigrationPlanRequest
 
 
 def main() -> None:

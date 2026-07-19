@@ -4,7 +4,7 @@ import importlib.util
 import json
 from pathlib import Path
 
-from binliquid.enterprise.signing import verify_signed_artifact
+from imperaos.enterprise.signing import verify_signed_artifact
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = ROOT / "scripts" / "run_managed_kms_adapter_drill.py"

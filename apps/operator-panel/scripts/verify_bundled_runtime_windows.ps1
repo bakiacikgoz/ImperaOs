@@ -57,6 +57,7 @@ function Assert-Sha256 {
 $ResolvedRuntimeDir = (Resolve-Path -LiteralPath $RuntimeDir).Path
 $ManifestPath = Join-Path $ResolvedRuntimeDir "RUNTIME_MANIFEST.txt"
 $RuntimePython = Join-Path $ResolvedRuntimeDir "python\Scripts\python.exe"
+$ManifestValidator = Join-Path $PSScriptRoot "validate_runtime_manifest.py"
 
 if (-not (Test-Path -LiteralPath $ManifestPath -PathType Leaf)) {
   throw "[verify] missing manifest: $ManifestPath"
@@ -64,28 +65,25 @@ if (-not (Test-Path -LiteralPath $ManifestPath -PathType Leaf)) {
 if (-not (Test-Path -LiteralPath $RuntimePython -PathType Leaf)) {
   throw "[verify] missing runtime Python: $RuntimePython"
 }
+if (-not (Test-Path -LiteralPath $ManifestValidator -PathType Leaf)) {
+  throw "[verify] missing manifest validator: $ManifestValidator"
+}
+
+$VersionOutput = @(& $RuntimePython -m imperaos --version)
+if ($LASTEXITCODE -ne 0 -or $VersionOutput.Count -eq 0) {
+  throw "[verify] runtime validation failed: $RuntimePython -m imperaos --version"
+}
+$ActualVersion = ($VersionOutput -join "`n").Trim()
+if ([string]::IsNullOrWhiteSpace($ActualVersion)) {
+  throw "[verify] runtime returned a blank version"
+}
+
+& $RuntimePython $ManifestValidator "--manifest" $ManifestPath "--platform" "windows" "--arch" "x86_64" "--runtime-version" $ActualVersion
+if ($LASTEXITCODE -ne 0) {
+  throw "[verify] runtime manifest validation failed"
+}
 
 $Manifest = Read-RuntimeManifest -Path $ManifestPath
-
-@(
-  "platform",
-  "arch",
-  "python",
-  "binliquid_version",
-  "created_at_utc",
-  "source_wheel",
-  "source_wheel_sha256",
-  "python_exe_sha256",
-  "uv_lock_sha256",
-  "git_sha"
-) | ForEach-Object { Assert-ManifestValue -Manifest $Manifest -Key $_ }
-
-if ($Manifest["platform"] -ne "windows") {
-  throw "[verify] expected platform=windows, got $($Manifest["platform"])"
-}
-if ($Manifest["arch"] -ne "x86_64") {
-  throw "[verify] expected arch=x86_64, got $($Manifest["arch"])"
-}
 if ($Manifest["python"] -ne "python/Scripts/python.exe") {
   throw "[verify] expected python=python/Scripts/python.exe, got $($Manifest["python"])"
 }
@@ -101,12 +99,7 @@ if ($ActualPythonHash -ne ([string]$Manifest["python_exe_sha256"]).ToLowerInvari
   throw "[verify] python_exe_sha256 mismatch: expected $($Manifest["python_exe_sha256"]), got $ActualPythonHash"
 }
 
-$Version = (& $RuntimePython -m binliquid --version)
-if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($Version)) {
-  throw "[verify] runtime validation failed: $RuntimePython -m binliquid --version"
-}
-
 Write-Output "[verify] runtime_dir=$ResolvedRuntimeDir"
-Write-Output "[verify] binliquid_version=$($Version.Trim())"
+Write-Output "[verify] imperaos_version=$ActualVersion"
 Write-Output "[verify] python_exe_sha256=$ActualPythonHash"
 Write-Output "[verify] manifest=pass"

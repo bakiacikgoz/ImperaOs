@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.control_plane.agent_registry_v2 import build_agent_registry_v2
-from binliquid.control_plane.registry import AgentRegistry, load_agent_spec
+from imperaos.control_plane.agent_registry_v2 import build_agent_registry_v2
+from imperaos.control_plane.registry import AgentRegistry, load_agent_spec
 
 
 def test_agent_registry_v2_exposes_enterprise_workspace_binding(tmp_path: Path) -> None:

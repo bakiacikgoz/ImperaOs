@@ -2,7 +2,7 @@ import { expect, type Page } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const SETTINGS_KEY = 'aegisos.operator.settings.v1';
+const SETTINGS_KEY = 'imperaos.operator.settings.v1';
 const REPO_ROOT = findRepoRoot(process.cwd());
 
 type E2eSettings = {
@@ -42,7 +42,7 @@ const defaultSettings: E2eSettings = {
   cliPath: '',
   bundledPythonPath: '',
   profile: 'balanced',
-  rootDir: '.binliquid/e2e-preview/jobs',
+  rootDir: '.imperaos/e2e-preview/jobs',
   operatorId: '',
   locale: 'en',
   remoteTelemetry: false,
@@ -94,15 +94,18 @@ export async function gotoOperatorPanel(page: Page, settings: Partial<E2eSetting
 
   await page.addInitScript(
     ({ key, value }) => {
-      if (!localStorage.getItem(key)) {
+      // Each scenario defines its own operator authority. Do not inherit a
+      // persisted identity from another scenario, but preserve a setting that
+      // the current scenario saves before it reloads the page.
+      if (localStorage.getItem(key) === null) {
         localStorage.setItem(key, JSON.stringify(value));
       }
     },
     { key: SETTINGS_KEY, value: seededSettings },
   );
 
-  await page.goto('/');
-  await expect(page).toHaveTitle('operator-panel');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await expect(page).toHaveTitle('ImperaOS Operator Panel');
   await expect(page.locator('#root')).toContainText('Mission Control');
   await expect(page.locator('.pill-preview')).toHaveText('Preview');
   await expectFrameworkOverlayAbsent(page);

@@ -7,9 +7,9 @@ import time
 from pathlib import Path
 from types import SimpleNamespace
 
-from binliquid.computer_use.adapters import BrowserAdapter, FileDialogAdapter, WindowMetadata
-from binliquid.computer_use.adapters._macos import MacOSAutomationError
-from binliquid.computer_use.models import (
+from imperaos.computer_use.adapters import BrowserAdapter, FileDialogAdapter, WindowMetadata
+from imperaos.computer_use.adapters._macos import MacOSAutomationError
+from imperaos.computer_use.models import (
     BrowserTaskFamily,
     ComputerUseMode,
     ComputerUseReadinessStatus,
@@ -24,15 +24,15 @@ from binliquid.computer_use.models import (
     TargetDescriptor,
     VerificationResult,
 )
-from binliquid.computer_use.perception import build_perception_fingerprint
-from binliquid.computer_use.prompt_parser import parse_prompt_to_actions
-from binliquid.computer_use.runtime import (
+from imperaos.computer_use.perception import build_perception_fingerprint
+from imperaos.computer_use.prompt_parser import parse_prompt_to_actions
+from imperaos.computer_use.runtime import (
     ComputerUseRunner,
     RuntimeAdapters,
     SessionCommand,
     SessionControlBus,
 )
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.runtime.config import RuntimeConfig
 
 
 def _wait_until(predicate, timeout_s: float = 5.0) -> None:
@@ -433,7 +433,7 @@ def test_prompt_parser_builds_an_automation_sequence() -> None:
         prompt=(
             'launch "Safari"\n'
             'open "https://ops.example.internal/queue"\n'
-            'type "Aegis" into "#name"'
+            'type "ImperaOS" into "#name"'
         ),
         mode=ComputerUseMode.EXECUTE,
     )
@@ -441,7 +441,7 @@ def test_prompt_parser_builds_an_automation_sequence() -> None:
     assert family == BrowserTaskFamily.AUTOMATION_SEQUENCE
     assert [item.action_id for item in actions] == ["launch_app", "open_url", "type_text"]
     assert actions[1].verification_kind == "url"
-    assert actions[2].parameters["text"] == "Aegis"
+    assert actions[2].parameters["text"] == "ImperaOS"
 
 
 def test_prompt_parser_builds_local_desktop_actions() -> None:
@@ -497,7 +497,7 @@ def test_computer_use_runner_executes_a_real_runtime_slice_with_fake_adapters(
     )
 
     payload = runner.run(
-        prompt='open "https://ops.example.internal/queue"\ntype "Aegis Operator" into "#name"',
+        prompt='open "https://ops.example.internal/queue"\ntype "ImperaOS Operator" into "#name"',
         job_id="job-runtime-complete",
         mode=ComputerUseMode.EXECUTE,
     )
@@ -714,7 +714,7 @@ def test_computer_use_runner_fails_closed_on_wrong_tab_drift(tmp_path: Path) -> 
     )
 
     payload = runner.run(
-        prompt='open "https://ops.example.internal/queue"\ntype "Aegis Operator" into "#name"',
+        prompt='open "https://ops.example.internal/queue"\ntype "ImperaOS Operator" into "#name"',
         job_id="job-runtime-wrong-tab",
         mode=ComputerUseMode.EXECUTE,
     )
@@ -760,7 +760,7 @@ def test_computer_use_runner_fails_closed_on_wrong_foreground_app(tmp_path: Path
     )
 
     payload = runner.run(
-        prompt='type "Aegis Operator" into "#name"',
+        prompt='type "ImperaOS Operator" into "#name"',
         job_id="job-runtime-wrong-app",
         mode=ComputerUseMode.EXECUTE,
     )
@@ -788,7 +788,7 @@ def test_computer_use_runner_fails_closed_on_unexpected_modal(tmp_path: Path) ->
     )
 
     payload = runner.run(
-        prompt='type "Aegis Operator" into "#name"',
+        prompt='type "ImperaOS Operator" into "#name"',
         job_id="job-runtime-modal",
         mode=ComputerUseMode.EXECUTE,
     )
@@ -818,7 +818,7 @@ def test_computer_use_runner_fails_closed_on_missing_expected_selector(tmp_path:
     )
 
     payload = runner.run(
-        prompt='type "Aegis Operator" into "#name"',
+        prompt='type "ImperaOS Operator" into "#name"',
         job_id="job-runtime-missing-selector",
         mode=ComputerUseMode.EXECUTE,
     )
@@ -1066,7 +1066,7 @@ def test_computer_use_runner_honors_pause_and_resume(tmp_path: Path) -> None:
             outcome["payload"] = runner.run(
                 prompt=(
                     'open "https://ops.example.internal/queue"\n'
-                    'type "Aegis Operator" into "#name"'
+                    'type "ImperaOS Operator" into "#name"'
                 ),
                 job_id=job_id,
                 mode=ComputerUseMode.EXECUTE,
@@ -1156,7 +1156,7 @@ def test_computer_use_runner_honors_stop_while_paused(tmp_path: Path) -> None:
             outcome["payload"] = runner.run(
                 prompt=(
                     'open "https://ops.example.internal/queue"\n'
-                    'type "Aegis Operator" into "#name"'
+                    'type "ImperaOS Operator" into "#name"'
                 ),
                 job_id=job_id,
                 mode=ComputerUseMode.EXECUTE,
@@ -1221,7 +1221,7 @@ def test_computer_use_runner_pauses_at_pre_action_checkpoint_and_resumes(
                 prompt=(
                     'open "https://ops.example.internal/queue"\n'
                     'wait "0.5"\n'
-                    'type "Aegis Operator" into "#name"'
+                    'type "ImperaOS Operator" into "#name"'
                 ),
                 job_id=job_id,
                 mode=ComputerUseMode.EXECUTE,
@@ -1293,7 +1293,7 @@ def test_computer_use_runner_stops_at_safe_checkpoint_during_long_action(
                 prompt=(
                     'open "https://ops.example.internal/queue"\n'
                     'wait "1.0"\n'
-                    'type "Aegis Operator" into "#name"'
+                    'type "ImperaOS Operator" into "#name"'
                 ),
                 job_id=job_id,
                 mode=ComputerUseMode.EXECUTE,
@@ -1372,7 +1372,7 @@ def test_computer_use_runner_rejects_invalid_resume_while_running(tmp_path: Path
                 prompt=(
                     'open "https://ops.example.internal/queue"\n'
                     'wait "0.4"\n'
-                    'type "Aegis Operator" into "#name"'
+                    'type "ImperaOS Operator" into "#name"'
                 ),
                 job_id=job_id,
                 mode=ComputerUseMode.EXECUTE,
@@ -1478,7 +1478,7 @@ def test_computer_use_runner_loads_recovery_state_for_paused_session(tmp_path: P
                 prompt=(
                     'open "https://ops.example.internal/queue"\n'
                     'wait "0.5"\n'
-                    'type "Aegis Operator" into "#name"'
+                    'type "ImperaOS Operator" into "#name"'
                 ),
                 job_id=job_id,
                 mode=ComputerUseMode.EXECUTE,
@@ -1536,7 +1536,7 @@ def test_computer_use_runner_marks_active_recovery_as_not_resumable(tmp_path: Pa
                 prompt=(
                     'open "https://ops.example.internal/queue"\n'
                     'wait "0.4"\n'
-                    'type "Aegis Operator" into "#name"'
+                    'type "ImperaOS Operator" into "#name"'
                 ),
                 job_id=job_id,
                 mode=ComputerUseMode.EXECUTE,
@@ -1582,7 +1582,7 @@ def test_computer_use_readiness_report_flags_safari_javascript_blocker(
     )
 
     monkeypatch.setattr(
-        "binliquid.computer_use.runtime.current_platform",
+        "imperaos.computer_use.runtime.current_platform",
         lambda: SimpleNamespace(
             system="Darwin",
             label="macos",
@@ -1591,7 +1591,7 @@ def test_computer_use_readiness_report_flags_safari_javascript_blocker(
         ),
     )
     monkeypatch.setattr(
-        "binliquid.computer_use.runtime.shutil.which",
+        "imperaos.computer_use.runtime.shutil.which",
         lambda name: "/usr/bin/osascript" if name == "osascript" else None,
     )
 
@@ -1600,7 +1600,7 @@ def test_computer_use_readiness_report_flags_safari_javascript_blocker(
         stderr = ""
 
     monkeypatch.setattr(
-        "binliquid.computer_use.runtime.subprocess.run",
+        "imperaos.computer_use.runtime.subprocess.run",
         lambda *args, **kwargs: _Proc(),
     )
 
@@ -1617,7 +1617,7 @@ def test_computer_use_readiness_report_flags_safari_javascript_blocker(
         return ""
 
     monkeypatch.setattr(
-        "binliquid.computer_use.runtime.run_applescript",
+        "imperaos.computer_use.runtime.run_applescript",
         fake_run_applescript,
     )
 
@@ -1646,7 +1646,7 @@ def test_computer_use_doctor_classifies_surface_mismatch(monkeypatch, tmp_path: 
                 "job": {
                     "job_id": job_id,
                     "case_id": f"case-{job_id}",
-                    "team_id": "aegis-computer-use",
+                    "team_id": "imperaos-computer-use",
                     "status": "failed",
                 },
                 "computer_use": {

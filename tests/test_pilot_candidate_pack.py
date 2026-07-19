@@ -3,11 +3,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.control_plane.operator_attestation import build_operator_attestation
-from binliquid.control_plane.pilot_candidate_pack import (
+from imperaos.control_plane.operator_attestation import build_operator_attestation
+from imperaos.control_plane.pilot_candidate_pack import (
     generate_design_partner_pilot_candidate_pack,
 )
-from binliquid.control_plane.target_evidence import (
+from imperaos.control_plane.target_evidence import (
     collect_target_evidence_rehearsal,
     prepare_target_evidence_session,
 )

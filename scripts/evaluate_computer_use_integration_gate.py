@@ -11,38 +11,41 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, Literal
 
-from binliquid import __version__
-from binliquid.computer_use.models import ComputerUseMode, RiskClass
-from binliquid.computer_use.vision_runtime.approval import validate_approval_snapshot
-from binliquid.computer_use.vision_runtime.models import (
+from imperaos import __version__
+from imperaos.computer_use.models import ComputerUseMode, RiskClass
+from imperaos.computer_use.vision_runtime.approval import validate_approval_snapshot
+from imperaos.computer_use.vision_runtime.models import (
     InputActionType,
     NormalizedBBox,
     SurfaceKind,
     VisionAction,
     VisionObservation,
 )
-from binliquid.computer_use.vision_runtime.policy import UniversalComputerUsePolicy
-from binliquid.computer_use.vision_runtime.replay import verify_replay
-from binliquid.contracts import OperatorCapabilitiesPayload
-from binliquid.runtime.config import ComputerUseRuntimeConfig, resolve_runtime_config
-from binliquid.runtime.platform import current_platform
+from imperaos.computer_use.vision_runtime.policy import UniversalComputerUsePolicy
+from imperaos.computer_use.vision_runtime.replay import verify_replay
+from imperaos.contracts import OperatorCapabilitiesPayload
+from imperaos.runtime.config import ComputerUseRuntimeConfig, resolve_runtime_config
+from imperaos.runtime.platform import current_platform
 
 SCHEMA_VERSION = "computer-use-integration-gate/v1"
 WINDOWS_NOT_QUALIFIED = "WINDOWS_COMPUTER_USE_NOT_QUALIFIED"
 ENTRYPOINT_COMMANDS = (
-    ("console_version", ("uv", "run", "binliquid", "--version")),
-    ("module_version", ("uv", "run", "python", "-m", "binliquid", "--version")),
+    ("console_version", ("uv", "run", "imperaos", "--version")),
+    ("module_version", ("uv", "run", "python", "-m", "imperaos", "--version")),
     (
         "console_capabilities",
-        ("uv", "run", "binliquid", "operator", "capabilities", "--json"),
+        ("uv", "run", "imperaos", "operator", "capabilities", "--json"),
     ),
     (
         "module_capabilities",
-        ("uv", "run", "python", "-m", "binliquid", "operator", "capabilities", "--json"),
+        ("uv", "run", "python", "-m", "imperaos", "operator", "capabilities", "--json"),
     ),
 )
+LEGACY_STATE_ROOT_NAME = "." + "bin" + "liquid"
+CURRENT_STATE_ROOT_NAME = ".imperaos"
 IGNORED_COPY_NAMES = {
-    ".binliquid",
+    LEGACY_STATE_ROOT_NAME,
+    CURRENT_STATE_ROOT_NAME,
     ".git",
     ".mypy_cache",
     ".pytest_cache",
@@ -87,7 +90,7 @@ def repo_root() -> Path:
 
 
 def _gate_env() -> dict[str, str]:
-    env = {key: value for key, value in os.environ.items() if not key.startswith("BINLIQUID_")}
+    env = {key: value for key, value in os.environ.items() if not key.startswith("IMPERAOS_")}
     env.pop("VIRTUAL_ENV", None)
     env["NO_COLOR"] = "1"
     env["PYTHONIOENCODING"] = "utf-8"
@@ -237,12 +240,12 @@ def _evaluate_entrypoint_path_matrix(
     temp_results: dict[str, Any] = {}
 
     if mode == "all":
-        with tempfile.TemporaryDirectory(prefix="binliquid_gate_") as temp_dir:
+        with tempfile.TemporaryDirectory(prefix="imperaos_gate_") as temp_dir:
             temp_root = Path(temp_dir)
             temp_root_report = str(temp_root)
             copy_targets = [
-                ("temp_ascii", temp_root / "binliquid-gate-ascii"),
-                ("temp_space", temp_root / "BinLiquid Gate Space"),
+                ("temp_ascii", temp_root / "imperaos-gate-ascii"),
+                ("temp_space", temp_root / "ImperaOS Gate Space"),
                 ("temp_unicode", temp_root / "Masaustu Test Alani"),
                 ("temp_unicode_native", temp_root / "Masa\u00fcst\u00fc Test Alan\u0131"),
             ]
@@ -273,7 +276,7 @@ def _evaluate_entrypoint_path_matrix(
 
 def _evaluate_operator_contract(repo: Path) -> dict[str, Any]:
     probe = run_command(
-        ("uv", "run", "binliquid", "operator", "capabilities", "--json"),
+        ("uv", "run", "imperaos", "operator", "capabilities", "--json"),
         cwd=repo,
         timeout_s=180,
     )

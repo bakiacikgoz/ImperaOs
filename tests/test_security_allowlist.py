@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.tools.sandbox_runner import SandboxRunner
+from imperaos.tools.sandbox_runner import SandboxRunner
 
 
 def test_sandbox_runner_rejects_unauthorized_command(tmp_path: Path) -> None:

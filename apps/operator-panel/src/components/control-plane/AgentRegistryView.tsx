@@ -80,7 +80,7 @@ export function AgentRegistryView({ agents, locale = 'en' }: { agents: unknown; 
                   <strong>{text.noRegisteredAgents}</strong>
                   <span>{text.registerWithCli}</span>
                 </div>
-                <CodeToken>binliquid control-plane agent register</CodeToken>
+                <CodeToken>imperaos control-plane agent register</CodeToken>
               </article>
             ) : null}
           </div>

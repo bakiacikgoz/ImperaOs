@@ -1,3 +1,3 @@
 seed = 42
-dataset = ".binliquid/research/router_dataset.jsonl"
+dataset = ".imperaos/research/router_dataset.jsonl"
 output_dir = "research/sltc_experiments/artifacts"

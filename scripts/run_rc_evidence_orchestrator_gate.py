@@ -104,7 +104,7 @@ def main() -> None:
         [
             "uv",
             "run",
-            "binliquid",
+            "imperaos",
             "release",
             "gates",
             "plan",
@@ -121,7 +121,7 @@ def main() -> None:
         [
             "uv",
             "run",
-            "binliquid",
+            "imperaos",
             "release",
             "gates",
             "run",
@@ -138,7 +138,7 @@ def main() -> None:
         [
             "uv",
             "run",
-            "binliquid",
+            "imperaos",
             "release",
             "gates",
             "verify",
@@ -149,7 +149,7 @@ def main() -> None:
         [
             "uv",
             "run",
-            "binliquid",
+            "imperaos",
             "release",
             "gates",
             "export",
@@ -162,7 +162,7 @@ def main() -> None:
         [
             "uv",
             "run",
-            "binliquid",
+            "imperaos",
             "control-plane",
             "release",
             "gates",

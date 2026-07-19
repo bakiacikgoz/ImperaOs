@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from binliquid.control_plane.enterprise_rbac import (
+from imperaos.control_plane.enterprise_rbac import (
     HIGH_RISK_ROLES,
     ROLE_CATALOG,
     build_canonical_role_catalog,

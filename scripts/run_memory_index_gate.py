@@ -3,9 +3,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.memory.indexes.dense_json import DenseJsonMemoryIndex
-from binliquid.memory.indexes.turbovec_optional import TurboVecOptionalIndex
-from binliquid.memory.models import MemoryIndexRecord, hash_identity, sha256_text
+from imperaos.memory.indexes.dense_json import DenseJsonMemoryIndex
+from imperaos.memory.indexes.turbovec_optional import TurboVecOptionalIndex
+from imperaos.memory.models import MemoryIndexRecord, hash_identity, sha256_text
 
 
 def main() -> None:

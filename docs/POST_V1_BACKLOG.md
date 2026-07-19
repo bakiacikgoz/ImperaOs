@@ -18,7 +18,7 @@
 Detailed operator handoff:
 `docs/HAT_B_DESKTOP_RELEASE_HANDOFF_2026-05-10.md`.
 
-Tracking issue: https://github.com/bakiacikgoz/BinLiquidAI/issues/4.
+Tracking issue: https://github.com/bakiacikgoz/ImperaOS/issues/4.
 
 - GitHub Actions account billing/spending limit was fixed on 2026-05-12:
   macOS run `25755093728` and Windows run `25755177376` both started runners
@@ -53,7 +53,7 @@ Tracking issue: https://github.com/bakiacikgoz/BinLiquidAI/issues/4.
   so the soak is not tied to an interactive terminal session. Refresh the local
   enterprise identity assertion for more than 24 hours first if it has expired.
   2026-05-11: started as LaunchAgent from
-  `/private/tmp/binliquid_soak_rc24h-20260511T153314Z` with run id
+  `/private/tmp/imperaos_soak_rc24h-20260511T153314Z` with run id
   `rc24h-20260511T153314Z`; expected completion is approximately
   `2026-05-12T15:34Z`.
 - Run 72h final pre-GA soak if required by the release policy. **Completed

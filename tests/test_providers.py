@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from binliquid.core.llm_ollama import OllamaLLM, check_provider_chain
+from imperaos.core.llm_ollama import OllamaLLM, check_provider_chain
 
 
 @dataclass
@@ -36,7 +36,7 @@ def test_llm_provider_fallback_uses_secondary(monkeypatch) -> None:
         return _FakeProvider(name="transformers", should_fail=False)
 
     monkeypatch.setattr(
-        "binliquid.core.llm_ollama.OllamaLLM._build_provider",
+        "imperaos.core.llm_ollama.OllamaLLM._build_provider",
         staticmethod(fake_builder),
     )
 
@@ -63,7 +63,7 @@ def test_check_provider_chain_selects_fallback_when_primary_unhealthy(monkeypatc
         return _FakeProvider(name="transformers", should_fail=False)
 
     monkeypatch.setattr(
-        "binliquid.core.llm_ollama.OllamaLLM._build_provider",
+        "imperaos.core.llm_ollama.OllamaLLM._build_provider",
         staticmethod(fake_builder),
     )
 
@@ -91,7 +91,7 @@ def test_check_provider_chain_unrunnable_when_all_providers_unusable(monkeypatch
         return _FakeProvider(name="transformers", should_fail=True)
 
     monkeypatch.setattr(
-        "binliquid.core.llm_ollama.OllamaLLM._build_provider",
+        "imperaos.core.llm_ollama.OllamaLLM._build_provider",
         staticmethod(fake_builder),
     )
 

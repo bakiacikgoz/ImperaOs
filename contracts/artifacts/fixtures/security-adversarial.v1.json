@@ -1,0 +1,20 @@
+{
+  "version": "1",
+  "cases": [
+    { "category": "path_traversal", "sample": "../outside", "expected": "deny" },
+    { "category": "symlink_escape", "sample": "linked/outside", "expected": "deny" },
+    { "category": "prototype_pollution", "sample": "__proto__", "expected": "deny" },
+    { "category": "remote_ref", "sample": "https://example.invalid/schema.json", "expected": "deny" },
+    { "category": "redos", "sample": "^(a+)+$", "expected": "deny" },
+    { "category": "xss", "sample": "<script>alert(1)</script>", "expected": "deny" },
+    { "category": "svg_script", "sample": "<svg><script>alert(1)</script></svg>", "expected": "quarantine" },
+    { "category": "formula_injection", "sample": "=CMD()", "expected": "safe_text" },
+    { "category": "oversize", "sample": "boundary_plus_one", "expected": "deny" },
+    { "category": "event_spoof", "sample": "artifact_patch_applied_without_approval", "expected": "drop" },
+    { "category": "cross_workspace", "sample": "workspace-foreign", "expected": "indistinguishable" },
+    { "category": "approval_bypass", "sample": "renderer_grant_boolean", "expected": "deny" },
+    { "category": "license_bypass", "sample": "renderer_enabled_boolean", "expected": "forced_off" },
+    { "category": "secret_leakage", "sample": "synthetic-provider-secret-canary", "expected": "redacted" },
+    { "category": "path_leakage", "sample": "C:/synthetic/private/path", "expected": "redacted" }
+  ]
+}

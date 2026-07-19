@@ -1,5 +1,6 @@
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import {
   computeVerdict,
   findRepoRoot,
@@ -7,7 +8,7 @@ import {
   type CodeIntelligenceSummary,
 } from './fallow-policy.ts';
 
-const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const REPO_ROOT = findRepoRoot(APP_ROOT);
 const SUMMARY_PATH = path.join(REPO_ROOT, 'artifacts', 'code-intelligence', 'fallow', 'summary.json');

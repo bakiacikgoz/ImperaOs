@@ -1,4 +1,4 @@
-from binliquid.control_plane.snapshot import build_control_plane_snapshot
+from imperaos.control_plane.snapshot import build_control_plane_snapshot
 
 
 def test_control_plane_snapshot_includes_memory_authority() -> None:

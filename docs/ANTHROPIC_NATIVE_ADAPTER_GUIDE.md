@@ -44,8 +44,8 @@ Operators should treat missing native metadata as not approved for native routin
 Do not run a live Anthropic canary unless all of these are true:
 
 - CLI intent is explicit for the run.
-- `BINLIQUID_PROVIDER_LIVE_CANARY=1` is set.
-- `BINLIQUID_ANTHROPIC_LIVE_CANARY=1` is set.
+- `IMPERAOS_PROVIDER_LIVE_CANARY=1` is set.
+- `IMPERAOS_ANTHROPIC_LIVE_CANARY=1` is set.
 - `ANTHROPIC_API_KEY` exists only as an environment variable reference.
 - host allowlist and budget checks pass.
 - output is isolated as canary evidence, not production approval.

@@ -1,0 +1,57 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/canvas.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "assetIds": {
+      "items": {
+        "maxLength": 128,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "title": "Assetids",
+      "type": "array"
+    },
+    "embeds": {
+      "const": "deny",
+      "default": "deny",
+      "title": "Embeds",
+      "type": "string"
+    },
+    "kind": {
+      "const": "canvas",
+      "default": "canvas",
+      "title": "Kind",
+      "type": "string"
+    },
+    "remoteAssets": {
+      "const": "deny",
+      "default": "deny",
+      "title": "Remoteassets",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "snapshot": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Snapshot",
+      "type": "object"
+    }
+  },
+  "required": [
+    "snapshot"
+  ],
+  "title": "CanvasContentV1",
+  "type": "object",
+  "x-imperaos-contract": "canvas.v1"
+}

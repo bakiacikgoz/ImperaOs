@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from binliquid.model_providers.native.conformance import (
+from imperaos.model_providers.native.conformance import (
     run_all_native_conformance,
     verify_native_conformance_evidence,
     write_native_conformance_report,

@@ -43,6 +43,21 @@ export default defineConfig({
   webServer: hasE2eSpecs
     ? {
         command: 'node scripts/start-preview-server.mjs',
+        env: {
+          ...process.env,
+          VITE_OPERATOR_PANEL_PREVIEW: '1',
+          VITE_ARTIFACT_WORKSPACE: '1',
+          VITE_ARTIFACT_DOCUMENT_EDITOR: '1',
+          VITE_ARTIFACT_FORM_EDITOR: '1',
+          VITE_ARTIFACT_CODE_EDITOR: '1',
+          VITE_ARTIFACT_FLOW_EDITOR: '1',
+          VITE_ARTIFACT_SPREADSHEET_EDITOR: '1',
+          VITE_ARTIFACT_CANVAS_EDITOR: '1',
+          VITE_ARTIFACT_SLIDES_EDITOR: '1',
+          VITE_ARTIFACT_EXPORT: '1',
+          VITE_ASSISTANT_UI_RUNTIME: '1',
+          VITE_ASSISTANT_AI_SDK_RUNTIME: '1',
+        },
         url: 'http://127.0.0.1:5173',
         reuseExistingServer: true,
         timeout: 120_000,

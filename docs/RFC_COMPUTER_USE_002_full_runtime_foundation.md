@@ -5,7 +5,7 @@ Accepted as the product-direction successor to the bounded browser pilot.
 
 ## Decision
 
-AegisOS is moving from operator-workflow parity plus bounded browser pilot toward:
+ImperaOS is moving from operator-workflow parity plus bounded browser pilot toward:
 
 > chat-first operator-grade AI workstation with full computer-use runtime ambitions
 

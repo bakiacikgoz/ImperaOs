@@ -1,6 +1,6 @@
 version: "1"
 team:
-  team_id: "aegis-enterprise-qualification"
+  team_id: "imperaos-enterprise-qualification"
   supervisor_policy: "sequential_then_parallel"
   agents:
     - agent_id: "agent-intake"

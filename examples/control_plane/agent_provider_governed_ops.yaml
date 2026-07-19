@@ -2,7 +2,7 @@ version: control-plane.agent/v1
 agent_id: provider-governed-ops
 display_name: Provider Governed Ops Triage
 description: Read-only IT/ops triage agent that drafts remediation proposals through governed provider dry-run evidence.
-runtime_kind: binliquid_core
+runtime_kind: imperaos_core
 profile: enterprise
 owner:
   team: operations

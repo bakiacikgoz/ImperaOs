@@ -11,7 +11,7 @@ The operator must grant permissions manually in macOS settings:
 - Screen Recording
 - Accessibility
 
-BinLiquid must never edit TCC databases, run `sudo`, ask for an admin password, or use private APIs to bypass consent.
+ImperaOS must never edit TCC databases, run `sudo`, ask for an admin password, or use private APIs to bypass consent.
 
 ## Config
 
@@ -38,13 +38,13 @@ sensitive_surface_policy = "stop"
 Run the doctor first:
 
 ```bash
-uv run binliquid computer-use doctor --platform macos --json
+uv run imperaos computer-use doctor --platform macos --json
 ```
 
 Verify the local provider with a synthetic fixture before any desktop capture or input:
 
 ```bash
-uv run binliquid computer-use provider doctor \
+uv run imperaos computer-use provider doctor \
   --provider ollama \
   --model <local-vision-model> \
   --synthetic-fixture \
@@ -57,17 +57,17 @@ The selected model must be present in `ollama list`, accept image input, and ret
 Run live qualification only on a prepared, supervised local desktop:
 
 ```bash
-BINLIQUID_COMPUTER_USE_LIVE_MACOS=1 \
-BINLIQUID_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1 \
-BINLIQUID_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1 \
-BINLIQUID_COMPUTER_USE_ACK="I understand BinLiquid will control my macOS desktop only for local supervised fixtures." \
-BINLIQUID_COMPUTER_USE_VISION_ENABLED=1 \
-BINLIQUID_COMPUTER_USE_VISION_PROVIDER=ollama \
-BINLIQUID_COMPUTER_USE_VISION_MODEL=<local-vision-model> \
-BINLIQUID_COMPUTER_USE_MACOS_LIVE_ENABLED=1 \
-BINLIQUID_COMPUTER_USE_MACOS_CAPTURE_BACKEND=screencapture \
-BINLIQUID_COMPUTER_USE_MACOS_INPUT_BACKEND=quartz \
-uv run binliquid computer-use qualification run \
+IMPERAOS_COMPUTER_USE_LIVE_MACOS=1 \
+IMPERAOS_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1 \
+IMPERAOS_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1 \
+IMPERAOS_COMPUTER_USE_ACK="I understand ImperaOS will control my macOS desktop only for local supervised fixtures." \
+IMPERAOS_COMPUTER_USE_VISION_ENABLED=1 \
+IMPERAOS_COMPUTER_USE_VISION_PROVIDER=ollama \
+IMPERAOS_COMPUTER_USE_VISION_MODEL=<local-vision-model> \
+IMPERAOS_COMPUTER_USE_MACOS_LIVE_ENABLED=1 \
+IMPERAOS_COMPUTER_USE_MACOS_CAPTURE_BACKEND=screencapture \
+IMPERAOS_COMPUTER_USE_MACOS_INPUT_BACKEND=quartz \
+uv run imperaos computer-use qualification run \
   --platform macos \
   --suite live-fixture-smoke \
   --mode supervised \
@@ -80,7 +80,7 @@ uv run binliquid computer-use qualification run \
 Run preflight first when preparing a host:
 
 ```bash
-uv run binliquid computer-use qualification run \
+uv run imperaos computer-use qualification run \
   --platform macos \
   --suite live-fixture-smoke \
   --mode preflight \
@@ -96,7 +96,7 @@ persist raw screenshots, or enable live runtime execution.
 Verify report replay integrity separately:
 
 ```bash
-uv run binliquid computer-use replay \
+uv run imperaos computer-use replay \
   --report artifacts/computer_use/macos_qualification_report.json \
   --verify \
   --json

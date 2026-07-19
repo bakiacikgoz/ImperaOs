@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from binliquid.model_providers.errors import InvalidProviderConfig
-from binliquid.model_providers.registry import resolve_model_provider_registry
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.model_providers.errors import InvalidProviderConfig
+from imperaos.model_providers.registry import resolve_model_provider_registry
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_resolves_synthetic_local_providers_when_registry_file_missing(tmp_path: Path) -> None:

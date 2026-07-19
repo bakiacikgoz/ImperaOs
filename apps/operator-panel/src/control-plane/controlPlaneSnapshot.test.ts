@@ -83,9 +83,9 @@ function makeSnapshot(overrides: Partial<ControlPlaneSnapshot> = {}): ControlPla
     },
     system: {
       profile: 'lite',
-      rootDir: '.binliquid/control-plane',
+      rootDir: '.imperaos/control-plane',
       coreVersion: '0.5.0',
-      contractVersion: '2.0',
+      contractVersion: '3.0',
       health: {
         status: 'partial',
         confidence: 'medium',
@@ -113,7 +113,7 @@ function makeSnapshot(overrides: Partial<ControlPlaneSnapshot> = {}): ControlPla
       {
         agentId: 'governed-ops',
         displayName: 'Governed Ops',
-        runtimeKind: 'binliquid_team',
+        runtimeKind: 'imperaos_team',
         agentType: 'internal',
         status: 'registered',
         readiness: 'policy_simulated',

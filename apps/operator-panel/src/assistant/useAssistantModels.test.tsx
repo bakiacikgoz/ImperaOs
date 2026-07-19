@@ -112,7 +112,7 @@ describe('useAssistantModels', () => {
     });
   });
 
-  it('refreshes discovery when assistant API key availability changes', async () => {
+  it('refreshes discovery when trusted runtime configuration changes', async () => {
     bridgeMocks.listAssistantModels.mockResolvedValue(providerModels([]));
 
     const { rerender } = renderHook(
@@ -127,7 +127,7 @@ describe('useAssistantModels', () => {
     await waitFor(() => expect(bridgeMocks.listAssistantModels).toHaveBeenCalledTimes(1));
 
     rerender({
-      settings: { ...DEFAULT_SETTINGS, assistantDeepSeekApiKey: 'sk-deepseek' },
+      settings: { ...DEFAULT_SETTINGS, rootDir: '.imperaos/team/alternate-jobs' },
     });
 
     await waitFor(() => expect(bridgeMocks.listAssistantModels).toHaveBeenCalledTimes(2));

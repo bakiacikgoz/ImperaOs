@@ -1,4 +1,5 @@
 import type { IconName } from './components/primitives/Icon';
+import { PRODUCT_IDENTITY } from './productIdentity';
 
 export type RouteId =
   | 'dashboard'
@@ -79,7 +80,13 @@ export const routeGroups: RouteGroup[] = [
         icon: 'shield',
       },
       { id: 'mission-control', routeId: 'workspace', label: 'Mission Control', heading: 'Mission Control', icon: 'target' },
-      { id: 'ai-assistant', routeId: 'assistant', label: 'AI Assistant', heading: 'AegisOS Assistant', icon: 'sparkle' },
+      {
+        id: 'ai-assistant',
+        routeId: 'assistant',
+        label: 'AI Assistant',
+        heading: `${PRODUCT_IDENTITY.displayName} Assistant`,
+        icon: 'sparkle',
+      },
       { id: 'tasks', routeId: 'tasks', label: 'Görevler', heading: 'Tasks', icon: 'list' },
     ],
   },

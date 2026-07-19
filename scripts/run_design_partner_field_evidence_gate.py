@@ -10,22 +10,22 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.field_evidence import (  # noqa: E402
+from imperaos.control_plane.field_evidence import (  # noqa: E402
     build_design_partner_field_pack,
     collect_field_evidence_bundle,
     prepare_field_evidence_session,
     validate_independent_operator_attestation,
     verify_field_evidence_bundle,
 )
-from binliquid.control_plane.pilot_workflow import (  # noqa: E402
+from imperaos.control_plane.pilot_workflow import (  # noqa: E402
     load_governed_pilot_workflow_spec,
     run_governed_pilot_workflow,
 )
-from binliquid.control_plane.pilot_workflow_verifier import (  # noqa: E402
+from imperaos.control_plane.pilot_workflow_verifier import (  # noqa: E402
     verify_governed_pilot_workflow_report,
 )
-from binliquid.control_plane.strict_rc_promotion import promote_strict_rc  # noqa: E402
-from binliquid.runtime.config import RuntimeConfig  # noqa: E402
+from imperaos.control_plane.strict_rc_promotion import promote_strict_rc  # noqa: E402
+from imperaos.runtime.config import RuntimeConfig  # noqa: E402
 
 
 def main() -> None:
@@ -159,7 +159,7 @@ def _write_operator_attestation(field_root: Path, session: object, bundle: objec
     _write_json(
         path,
         {
-            "schemaVersion": "binliquid-non-developer-operator-attestation/v1",
+            "schemaVersion": "imperaos-non-developer-operator-attestation/v2",
             "sessionId": session.session_id,
             "releasePackId": "design-partner-rc-v1",
             "targetEnvironmentLabelHash": session.target_environment.environment_label_hash,

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.governance.runtime import build_governance_runtime, governance_startup_abort
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.governance.runtime import build_governance_runtime, governance_startup_abort
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_fail_closed_aborts_when_policy_file_missing(tmp_path: Path) -> None:

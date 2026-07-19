@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from binliquid.control_plane.release_train import (
+from imperaos.control_plane.release_train import (
     ClaimBoundarySummary,
     ReleaseTrainGateRef,
     ReleaseTrainManifest,

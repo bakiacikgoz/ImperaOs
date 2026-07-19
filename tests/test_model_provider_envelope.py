@@ -2,18 +2,18 @@ from __future__ import annotations
 
 import json
 
-from binliquid.model_providers.envelope import (
+from imperaos.model_providers.envelope import (
     ProviderCallEnvelopeWriter,
     build_provider_call_envelope,
 )
-from binliquid.model_providers.models import (
+from imperaos.model_providers.models import (
     ChatMessage,
     DataClass,
     ProviderCallRequest,
     ProviderDecisionStatus,
     ProviderPolicyDecision,
 )
-from binliquid.model_providers.redaction import redact_provider_input
+from imperaos.model_providers.redaction import redact_provider_input
 
 
 def test_envelope_contains_hashes_not_raw_prompt(tmp_path) -> None:

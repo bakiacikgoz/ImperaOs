@@ -1,0 +1,77 @@
+{
+  "$defs": {
+    "ArtifactKind": {
+      "enum": [
+        "document",
+        "form",
+        "code",
+        "flow",
+        "spreadsheet",
+        "canvas",
+        "slides"
+      ],
+      "title": "ArtifactKind",
+      "type": "string"
+    },
+    "ArtifactStatus": {
+      "enum": [
+        "draft",
+        "active",
+        "archived",
+        "blocked",
+        "corrupt"
+      ],
+      "title": "ArtifactStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-list-query.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "cursor": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cursor"
+    },
+    "kind": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArtifactKind"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "limit": {
+      "default": 50,
+      "maximum": 200,
+      "minimum": 1,
+      "title": "Limit",
+      "type": "integer"
+    },
+    "status": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArtifactStatus"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "title": "ListArtifactsQuery",
+  "type": "object",
+  "x-imperaos-contract": "artifact-list-query.v1"
+}

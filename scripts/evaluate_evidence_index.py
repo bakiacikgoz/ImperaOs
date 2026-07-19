@@ -12,10 +12,10 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.evidence_index import build_evidence_index, discover_evidence_manifests
-from binliquid.control_plane.evidence_pack import EvidencePackBuilder
-from binliquid.control_plane.models import EvidencePackManifest
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.control_plane.evidence_index import build_evidence_index, discover_evidence_manifests
+from imperaos.control_plane.evidence_pack import EvidencePackBuilder
+from imperaos.control_plane.models import EvidencePackManifest
+from imperaos.runtime.config import RuntimeConfig
 
 
 def main() -> None:

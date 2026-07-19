@@ -1,9 +1,18 @@
+pub mod artifact_asset;
+pub mod artifact_export;
+pub mod artifact_rpc;
 mod bridge;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .manage(bridge::AssistantProcessRegistry::default())
+        .manage(artifact_rpc::WorkspaceRpcRegistry::default())
+        .manage(artifact_asset::ArtifactAssetState::default())
+        .manage(artifact_export::ArtifactExportState::new(
+            bridge::artifact_export_journal_root(),
+        ))
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_log::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             bridge::bridge_handshake,
@@ -53,6 +62,27 @@ pub fn run() {
             bridge::bridge_qualification_run,
             bridge::bridge_assistant_start_turn,
             bridge::bridge_assistant_cancel_turn,
+            bridge::bridge_artifact_list,
+            bridge::bridge_artifact_handshake,
+            bridge::bridge_artifact_get,
+            bridge::bridge_artifact_create,
+            bridge::bridge_artifact_mutate,
+            bridge::bridge_artifact_spreadsheet_patch,
+            bridge::bridge_artifact_slides_patch,
+            bridge::bridge_artifact_propose_mutation,
+            bridge::bridge_artifact_apply_proposal,
+            bridge::bridge_artifact_history,
+            bridge::bridge_artifact_restore,
+            bridge::bridge_artifact_archive,
+            bridge::bridge_artifact_duplicate,
+            bridge::bridge_artifact_asset_select,
+            bridge::bridge_artifact_asset_import,
+            bridge::bridge_artifact_asset_get,
+            bridge::bridge_artifact_form_submit,
+            bridge::bridge_artifact_export_begin,
+            bridge::bridge_artifact_export_commit,
+            bridge::bridge_artifact_export_cancel,
+            bridge::bridge_artifact_import_evidence,
             bridge::bridge_read_artifact,
             bridge::bridge_tail_events,
         ])

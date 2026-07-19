@@ -5,14 +5,14 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.policy_pack_store import (
+from imperaos.cli import app
+from imperaos.control_plane.policy_pack_store import (
     plan_policy_pack_rollback,
     promote_policy_pack,
     stage_policy_pack,
     validate_lifecycle_policy_pack,
 )
-from binliquid.control_plane.policy_packs import load_policy_pack_manifest
+from imperaos.control_plane.policy_packs import load_policy_pack_manifest
 
 runner = CliRunner()
 REPO_ROOT = Path(__file__).resolve().parents[1]

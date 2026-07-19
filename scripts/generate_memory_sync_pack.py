@@ -3,8 +3,8 @@ from __future__ import annotations
 import argparse
 import json
 
-from binliquid.memory.sync_pack import export_memory_sync_pack
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.memory.sync_pack import export_memory_sync_pack
+from imperaos.runtime.config import RuntimeConfig
 
 
 def main() -> None:

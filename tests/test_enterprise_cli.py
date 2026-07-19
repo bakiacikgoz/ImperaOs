@@ -8,14 +8,16 @@ from pathlib import Path
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.enterprise.maintenance import create_backup
-from binliquid.enterprise.signing import canonical_payload_hash, verify_signed_artifact
-from binliquid.governance.runtime import GovernanceRuntime
-from binliquid.runtime.config import RuntimeConfig
-from binliquid.schemas.models import OrchestratorResult
-from binliquid.team.models import TeamSpec
-from binliquid.team.supervisor import TeamSupervisor
+from imperaos.artifacts.store import ArtifactStore
+from imperaos.cli import app
+from imperaos.enterprise.maintenance import create_backup
+from imperaos.enterprise.signing import canonical_payload_hash, verify_signed_artifact
+from imperaos.governance.runtime import GovernanceRuntime
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.schemas.models import OrchestratorResult
+from imperaos.team.models import TeamSpec
+from imperaos.team.supervisor import TeamSupervisor
+from tests.artifact_store_support import make_artifact_pair
 
 runner = CliRunner()
 
@@ -50,8 +52,8 @@ def _write_signing_material(
     private_raw = private_key.private_bytes_raw()
     public_raw = private_key.public_key().public_bytes_raw()
 
-    private_dir = root / ".binliquid" / "keys" / "private"
-    trusted_dir = root / ".binliquid" / "keys" / "trusted"
+    private_dir = root / ".imperaos" / "enterprise" / "keys" / "private"
+    trusted_dir = root / ".imperaos" / "enterprise" / "keys" / "trusted"
     private_dir.mkdir(parents=True, exist_ok=True)
     trusted_dir.mkdir(parents=True, exist_ok=True)
 
@@ -83,7 +85,7 @@ def _write_signing_material(
         json.dumps(public_payload, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    ((root / ".binliquid" / "keys") / "manifest.json").write_text(
+    ((root / ".imperaos" / "enterprise" / "keys") / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
@@ -116,7 +118,7 @@ def _write_identity_assertion(
         base64.b64decode(signing_material["private_key"])
     ).sign(canonical_payload_hash(payload).encode("utf-8"))
     payload["signature"] = base64.b64encode(signature).decode("ascii")
-    identity_dir = root / ".binliquid" / "identity"
+    identity_dir = root / ".imperaos" / "enterprise" / "identity"
     identity_dir.mkdir(parents=True, exist_ok=True)
     (identity_dir / "current_assertion.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2),
@@ -173,7 +175,7 @@ def test_enterprise_auth_and_security_baseline(monkeypatch, tmp_path: Path) -> N
     whoami = runner.invoke(app, ["auth", "whoami", "--profile", "enterprise", "--json"])
     assert whoami.exit_code == 0
     whoami_payload = json.loads(whoami.stdout)
-    assert whoami_payload["contract_version"] == "2.0"
+    assert whoami_payload["contract_version"] == "3.0"
     assert whoami_payload["verified"] is True
     assert whoami_payload["actor"]["actor_id"] == "alice"
 
@@ -183,13 +185,13 @@ def test_enterprise_auth_and_security_baseline(monkeypatch, tmp_path: Path) -> N
     )
     assert allowed.exit_code == 0
     allowed_payload = json.loads(allowed.stdout)
-    assert allowed_payload["contract_version"] == "2.0"
+    assert allowed_payload["contract_version"] == "3.0"
     assert allowed_payload["allowed"] is True
 
     baseline = runner.invoke(app, ["security", "baseline", "--profile", "enterprise", "--json"])
     assert baseline.exit_code == 0
     baseline_payload = json.loads(baseline.stdout)
-    assert baseline_payload["contract_version"] == "2.0"
+    assert baseline_payload["contract_version"] == "3.0"
     assert baseline_payload["overall_status"] == "pass"
     assert (tmp_path / "artifacts" / "security_posture.json").exists()
 
@@ -237,10 +239,19 @@ def test_enterprise_team_audit_and_backup_are_signed(tmp_path: Path) -> None:
             "keys": RuntimeConfig.from_profile("enterprise").keys.model_copy(
                 update={
                     "private_key_path": str(
-                        tmp_path / ".binliquid" / "keys" / "private" / "current_key.json"
+                        tmp_path
+                        / ".imperaos"
+                        / "enterprise"
+                        / "keys"
+                        / "private"
+                        / "current_key.json"
                     ),
-                    "trusted_public_keys_dir": str(tmp_path / ".binliquid" / "keys" / "trusted"),
-                    "key_manifest_path": str(tmp_path / ".binliquid" / "keys" / "manifest.json"),
+                    "trusted_public_keys_dir": str(
+                        tmp_path / ".imperaos" / "enterprise" / "keys" / "trusted"
+                    ),
+                    "key_manifest_path": str(
+                        tmp_path / ".imperaos" / "enterprise" / "keys" / "manifest.json"
+                    ),
                 }
             ),
             "maintenance": RuntimeConfig.from_profile("enterprise").maintenance.model_copy(
@@ -293,12 +304,25 @@ def test_enterprise_metrics_support_bundle_and_ga_report(monkeypatch, tmp_path: 
     )
     assert baseline_verify.exit_code == 0
     baseline_verify_payload = json.loads(baseline_verify.stdout)
-    assert baseline_verify_payload["contract_version"] == "2.0"
+    assert baseline_verify_payload["contract_version"] == "3.0"
     assert baseline_verify_payload["verified"] is True
 
     metrics = runner.invoke(app, ["metrics", "snapshot", "--profile", "enterprise", "--json"])
     assert metrics.exit_code == 0
     assert (tmp_path / "artifacts" / "metrics_snapshot.json").exists()
+
+    artifact_payload = (
+        b'{"kind":"document","schemaVersion":1,"language":"en",'
+        b'"pageMode":"document","blocks":[]}'
+    )
+    descriptor, revision = make_artifact_pair(artifact_payload)
+    ArtifactStore(tmp_path / ".imperaos" / "artifacts").create_artifact(
+        descriptor,
+        revision,
+        artifact_payload,
+        operation="create",
+        request_hash="a" * 64,
+    )
 
     bundle = runner.invoke(
         app,
@@ -306,10 +330,19 @@ def test_enterprise_metrics_support_bundle_and_ga_report(monkeypatch, tmp_path: 
     )
     assert bundle.exit_code == 0
     bundle_payload = json.loads(bundle.stdout)
-    assert bundle_payload["contract_version"] == "2.0"
+    assert bundle_payload["contract_version"] == "3.0"
     assert Path(bundle_payload["archive_path"]).exists()
     bundle_verify = verify_signed_artifact(path=bundle_payload["manifest_path"])
     assert bundle_verify["verified"] is True
+    bundle_dir = Path(bundle_payload["bundle_dir"])
+    artifact_snapshot = json.loads(
+        (bundle_dir / "artifact_workspace_snapshot.json").read_text(encoding="utf-8")
+    )
+    assert artifact_snapshot["schemaVersion"] == "artifact-support/v1"
+    assert artifact_snapshot["counts"]["artifactCount"] == 1
+    serialized_snapshot = json.dumps(artifact_snapshot).lower()
+    for forbidden in ("rawcontent", "relativepath", "secretref", "authorization"):
+        assert forbidden not in serialized_snapshot
 
     readiness = runner.invoke(
         app,
@@ -325,7 +358,7 @@ def test_enterprise_metrics_support_bundle_and_ga_report(monkeypatch, tmp_path: 
     )
     assert readiness.exit_code == 0
     readiness_payload = json.loads(readiness.stdout)
-    assert readiness_payload["contract_version"] == "2.0"
+    assert readiness_payload["contract_version"] == "3.0"
     assert readiness_payload["overall_status"] == "yellow"
     assert readiness_payload["go_no_go"] == "conditional"
     assert (tmp_path / "artifacts" / "GA_READINESS_REPORT.md").exists()

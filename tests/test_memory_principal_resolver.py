@@ -1,11 +1,11 @@
 from pathlib import Path
 
-from binliquid.memory.principal_resolver import (
+from imperaos.memory.principal_resolver import (
     AgentMemoryPrincipalResolver,
     PrincipalResolutionInput,
     parse_memory_scope,
 )
-from binliquid.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
+from imperaos.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
 
 
 def test_principal_resolver_derives_team_agent_scopes(tmp_path: Path) -> None:

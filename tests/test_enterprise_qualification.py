@@ -9,10 +9,10 @@ from types import SimpleNamespace
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from typer.testing import CliRunner
 
-from binliquid import __version__
-from binliquid.cli import app
-from binliquid.enterprise.maintenance import ga_readiness_report
-from binliquid.enterprise.qualification import (
+from imperaos import __version__
+from imperaos.cli import app
+from imperaos.enterprise.maintenance import ga_readiness_report
+from imperaos.enterprise.qualification import (
     MIN_EXTENDED_SOAK_SECONDS,
     MIN_GREEN_SOAK_SECONDS,
     QualificationFailure,
@@ -24,13 +24,13 @@ from binliquid.enterprise.qualification import (
     run_qualification,
     write_qualification_report,
 )
-from binliquid.enterprise.signing import (
+from imperaos.enterprise.signing import (
     canonical_payload_hash,
     verify_signed_artifact,
     write_signed_json,
 )
-from binliquid.runtime.config import RuntimeConfig
-from binliquid.team.pilot_gate import build_deterministic_pilot_orchestrator
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.team.pilot_gate import build_deterministic_pilot_orchestrator
 
 runner = CliRunner()
 
@@ -44,8 +44,8 @@ def _write_signing_material(
     private_raw = private_key.private_bytes_raw()
     public_raw = private_key.public_key().public_bytes_raw()
 
-    private_dir = root / ".binliquid" / "keys" / "private"
-    trusted_dir = root / ".binliquid" / "keys" / "trusted"
+    private_dir = root / ".imperaos" / "enterprise" / "keys" / "private"
+    trusted_dir = root / ".imperaos" / "enterprise" / "keys" / "trusted"
     private_dir.mkdir(parents=True, exist_ok=True)
     trusted_dir.mkdir(parents=True, exist_ok=True)
 
@@ -77,7 +77,7 @@ def _write_signing_material(
         json.dumps(public_payload, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    ((root / ".binliquid" / "keys") / "manifest.json").write_text(
+    ((root / ".imperaos" / "enterprise" / "keys") / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
@@ -109,7 +109,7 @@ def _write_identity_assertion(
         base64.b64decode(signing_material["private_key"])
     ).sign(canonical_payload_hash(payload).encode("utf-8"))
     payload["signature"] = base64.b64encode(signature).decode("ascii")
-    identity_dir = root / ".binliquid" / "identity"
+    identity_dir = root / ".imperaos" / "enterprise" / "identity"
     identity_dir.mkdir(parents=True, exist_ok=True)
     (identity_dir / "current_assertion.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2),
@@ -388,7 +388,7 @@ def test_cli_qualification_run_generates_reports(monkeypatch, tmp_path: Path) ->
     )
 
     monkeypatch.setattr(
-        "binliquid.cli._build_orchestrator",
+        "imperaos.cli._build_orchestrator",
         lambda config, **kwargs: build_deterministic_pilot_orchestrator(config),
     )
 
@@ -424,7 +424,7 @@ def test_qualification_runner_captures_workload_failure(monkeypatch, tmp_path: P
         raise RuntimeError("baseline exploded")
 
     monkeypatch.setattr(
-        "binliquid.enterprise.qualification._run_baseline_enterprise_flow",
+        "imperaos.enterprise.qualification._run_baseline_enterprise_flow",
         fail_baseline,
     )
 
@@ -486,7 +486,7 @@ def test_terminal_positive_smoke_handles_multiple_resume_rounds(
             }
         ],
     }
-    from binliquid.team.models import TeamSpec
+    from imperaos.team.models import TeamSpec
 
     spec = TeamSpec.model_validate(spec_payload)
 
@@ -536,20 +536,20 @@ def test_terminal_positive_smoke_handles_multiple_resume_rounds(
         def execute_approval(self, *, approval_id):  # noqa: ANN001
             return SimpleNamespace(error_code=None)
 
-    monkeypatch.setattr("binliquid.enterprise.qualification.TeamSupervisor", FakeSupervisor)
+    monkeypatch.setattr("imperaos.enterprise.qualification.TeamSupervisor", FakeSupervisor)
     monkeypatch.setattr(
-        "binliquid.enterprise.qualification.load_events",
+        "imperaos.enterprise.qualification.load_events",
         lambda job_id, root_dir: list(events_by_job[job_id]),
     )
     monkeypatch.setattr(
-        "binliquid.enterprise.qualification.replay_job",
+        "imperaos.enterprise.qualification.replay_job",
         lambda job_id, root_dir, verify=True: {
             "verified": True,
             "event_count": len(events_by_job[job_id]),
         },
     )
     monkeypatch.setattr(
-        "binliquid.enterprise.qualification._collect_resume_overrides",
+        "imperaos.enterprise.qualification._collect_resume_overrides",
         lambda *, events, governance_runtime: (
             {
                 str(item["task_id"]): {"task": str(item["data"]["approval_id"])}
@@ -569,7 +569,7 @@ def test_terminal_positive_smoke_handles_multiple_resume_rounds(
         ),
     )
     monkeypatch.setattr(
-        "binliquid.enterprise.qualification._resume_from_source_job",
+        "imperaos.enterprise.qualification._resume_from_source_job",
         lambda **kwargs: {
             "result": SimpleNamespace(
                 job=SimpleNamespace(
@@ -609,7 +609,7 @@ def test_terminal_positive_smoke_fails_on_no_progress(monkeypatch, tmp_path: Pat
             "team": config.team.model_copy(update={"artifact_dir": str(tmp_path / "jobs")}),
         }
     )
-    from binliquid.team.models import TeamSpec
+    from imperaos.team.models import TeamSpec
 
     spec = TeamSpec.model_validate(
         {
@@ -655,17 +655,17 @@ def test_terminal_positive_smoke_fails_on_no_progress(monkeypatch, tmp_path: Pat
                 ),
             )
 
-    monkeypatch.setattr("binliquid.enterprise.qualification.TeamSupervisor", FakeSupervisor)
+    monkeypatch.setattr("imperaos.enterprise.qualification.TeamSupervisor", FakeSupervisor)
     monkeypatch.setattr(
-        "binliquid.enterprise.qualification.load_events",
+        "imperaos.enterprise.qualification.load_events",
         lambda job_id, root_dir: [{"event": "task_blocked", "task_id": "task-review"}],
     )
     monkeypatch.setattr(
-        "binliquid.enterprise.qualification.replay_job",
+        "imperaos.enterprise.qualification.replay_job",
         lambda job_id, root_dir, verify=True: {"verified": True, "event_count": 1},
     )
     monkeypatch.setattr(
-        "binliquid.enterprise.qualification._collect_resume_overrides",
+        "imperaos.enterprise.qualification._collect_resume_overrides",
         lambda *, events, governance_runtime: ({}, []),
     )
 
@@ -821,11 +821,11 @@ def test_subset_qualification_run_merges_failed_workloads(monkeypatch, tmp_path:
         }
 
     monkeypatch.setattr(
-        "binliquid.enterprise.qualification._run_baseline_enterprise_flow",
+        "imperaos.enterprise.qualification._run_baseline_enterprise_flow",
         fake_green_baseline,
     )
     monkeypatch.setattr(
-        "binliquid.enterprise.qualification._run_failure_injection_flow",
+        "imperaos.enterprise.qualification._run_failure_injection_flow",
         fake_green_failure,
     )
 

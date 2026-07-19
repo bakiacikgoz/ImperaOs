@@ -35,10 +35,10 @@ auditHashChainVerified=true
 ## Required One-Run Opt-In
 
 ```text
-BINLIQUID_COMPUTER_USE_LIVE_MACOS=1
-BINLIQUID_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1
-BINLIQUID_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1
-BINLIQUID_COMPUTER_USE_ACK=I understand BinLiquid will control my macOS desktop only for local supervised fixtures.
+IMPERAOS_COMPUTER_USE_LIVE_MACOS=1
+IMPERAOS_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1
+IMPERAOS_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1
+IMPERAOS_COMPUTER_USE_ACK=I understand ImperaOS will control my macOS desktop only for local supervised fixtures.
 ```
 
 These values are scoped to one command environment. They are not persisted into
@@ -47,14 +47,14 @@ default config.
 ## Safe Preflight
 
 ```bash
-uv run binliquid computer-use doctor --platform macos --json
-uv run binliquid computer-use qualification run \
+uv run imperaos computer-use doctor --platform macos --json
+uv run imperaos computer-use qualification run \
   --platform macos \
   --suite live-fixture-smoke \
   --mode preflight \
   --output artifacts/computer_use/macos_qualification_report.json \
   --json
-uv run binliquid computer-use replay \
+uv run imperaos computer-use replay \
   --report artifacts/computer_use/macos_qualification_report.json \
   --verify \
   --json

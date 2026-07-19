@@ -1,18 +1,30 @@
+use crate::artifact_asset::{
+    ArtifactAssetState, AssetBinding, DEFAULT_ASSET_TICKET_TTL, DEFAULT_MAX_ASSET_BYTES,
+};
+use crate::artifact_export::{
+    ArtifactExportCancelResult, ArtifactExportResult, ArtifactExportState, ExportBinding,
+    ExportBoundaryError, ExportReconciliationAction, DEFAULT_MAX_EXPORT_BYTES, DEFAULT_TICKET_TTL,
+};
+use crate::artifact_rpc::{
+    build_trusted_request, SupervisorError, TrustedArtifactIdentity, WorkspaceRpcLaunch,
+    WorkspaceRpcRegistry,
+};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashMap;
-use std::fs::{self, File};
+use std::fs::{self, File, OpenOptions};
 use std::io::{BufRead, BufReader as StdBufReader, Read, Seek, SeekFrom};
 use std::path::{Component, Path, PathBuf};
 use std::process::Stdio;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tauri::{Emitter, Manager};
+use tauri_plugin_dialog::DialogExt;
 use tokio::io::{AsyncBufReadExt, AsyncReadExt, BufReader as TokioBufReader};
 use tokio::process::Command;
 use tokio::process::{ChildStderr, ChildStdout};
 use tokio::sync::Mutex;
 
-const CONTRACT_VERSION: &str = "2.0";
+const CONTRACT_VERSION: &str = "3.0";
 const DEFAULT_TIMEOUT_MS: u64 = 15_000;
 const DEFAULT_MAX_BYTES: usize = 256 * 1024;
 const DEFAULT_MAX_LINES: usize = 500;
@@ -49,6 +61,57 @@ pub struct BridgeResult<T: Serialize> {
 struct AssistantProcessRef {
     process_id: u32,
     session_id: String,
+    prompt_path: PathBuf,
+}
+
+struct AssistantPromptFileGuard(PathBuf);
+
+impl Drop for AssistantPromptFileGuard {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_file(&self.0);
+    }
+}
+
+fn create_assistant_prompt_file_with_writer<F>(
+    prompt_path: &Path,
+    writer: F,
+) -> std::io::Result<AssistantPromptFileGuard>
+where
+    F: FnOnce(&mut File) -> std::io::Result<()>,
+{
+    let mut options = OpenOptions::new();
+    options.write(true).create_new(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o600);
+    }
+    let mut file = options.open(prompt_path)?;
+    let guard = AssistantPromptFileGuard(prompt_path.to_path_buf());
+    writer(&mut file)?;
+    Ok(guard)
+}
+
+fn cleanup_stale_assistant_prompt_files(prompt_dir: &Path, max_age: Duration) {
+    let now = SystemTime::now();
+    let Ok(entries) = std::fs::read_dir(prompt_dir) else {
+        return;
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.extension().and_then(|value| value.to_str()) != Some("md") {
+            continue;
+        }
+        let stale = entry
+            .metadata()
+            .and_then(|metadata| metadata.modified())
+            .ok()
+            .and_then(|modified| now.duration_since(modified).ok())
+            .is_some_and(|age| age >= max_age);
+        if stale {
+            let _ = std::fs::remove_file(path);
+        }
+    }
 }
 
 #[derive(Default)]
@@ -120,9 +183,1108 @@ impl BridgeConfig {
             .as_deref()
             .map(str::trim)
             .filter(|value| !value.is_empty())
-            .unwrap_or(".binliquid/team/jobs")
+            .unwrap_or(".imperaos/team/jobs")
             .to_string()
     }
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct ArtifactBridgePayload {
+    params: Value,
+    idempotency_key: Option<String>,
+    timeout_ms: Option<u64>,
+}
+
+macro_rules! artifact_bridge_command {
+    ($name:ident, $method:literal) => {
+        #[tauri::command]
+        pub async fn $name(
+            app: tauri::AppHandle,
+            payload: ArtifactBridgePayload,
+        ) -> BridgeResult<Value> {
+            bridge_artifact_rpc_call(app, $method.to_string(), payload).await
+        }
+    };
+}
+
+artifact_bridge_command!(bridge_artifact_list, "artifact.list");
+artifact_bridge_command!(bridge_artifact_handshake, "rpc.handshake");
+artifact_bridge_command!(bridge_artifact_get, "artifact.get");
+artifact_bridge_command!(bridge_artifact_create, "artifact.create");
+artifact_bridge_command!(bridge_artifact_mutate, "artifact.mutate");
+artifact_bridge_command!(
+    bridge_artifact_spreadsheet_patch,
+    "artifact.spreadsheet.patch"
+);
+artifact_bridge_command!(bridge_artifact_slides_patch, "artifact.slides.patch");
+artifact_bridge_command!(
+    bridge_artifact_propose_mutation,
+    "artifact.propose_mutation"
+);
+artifact_bridge_command!(bridge_artifact_apply_proposal, "artifact.apply_proposal");
+artifact_bridge_command!(bridge_artifact_history, "artifact.history");
+artifact_bridge_command!(bridge_artifact_restore, "artifact.restore");
+artifact_bridge_command!(bridge_artifact_archive, "artifact.archive");
+artifact_bridge_command!(bridge_artifact_duplicate, "artifact.duplicate");
+artifact_bridge_command!(bridge_artifact_asset_get, "artifact.asset.get");
+artifact_bridge_command!(bridge_artifact_form_submit, "artifact.form.submit");
+artifact_bridge_command!(bridge_artifact_import_evidence, "artifact.import_evidence");
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ArtifactAssetSelectResult {
+    cancelled: bool,
+    ticket: Option<String>,
+    file_name: Option<String>,
+    expires_in_ms: Option<u64>,
+    max_bytes: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct ArtifactAssetImportRequest {
+    ticket: String,
+    data_class: String,
+    idempotency_key: String,
+}
+
+#[tauri::command]
+pub async fn bridge_artifact_asset_select(
+    app: tauri::AppHandle,
+) -> BridgeResult<ArtifactAssetSelectResult> {
+    let identity =
+        match resolve_trusted_artifact_identity(&trusted_artifact_bridge_config(), &app).await {
+            Ok(identity) => identity,
+            Err(error) => return BridgeResult::err(error),
+        };
+    let binding = match AssetBinding::new(identity.workspace_id(), identity.principal_id()) {
+        Ok(binding) => binding,
+        Err(message) => {
+            return BridgeResult::err(BridgeError::new(
+                "ARTIFACT_ASSET_UNSAFE",
+                message,
+                "",
+                "artifact asset select",
+                false,
+            ))
+        }
+    };
+    let dialog_app = app.clone();
+    let selection = match tokio::task::spawn_blocking(move || {
+        dialog_app
+            .dialog()
+            .file()
+            .add_filter("Images", &["png", "jpg", "jpeg", "gif", "webp", "svg"])
+            .blocking_pick_file()
+    })
+    .await
+    {
+        Ok(selection) => selection,
+        Err(_) => {
+            return BridgeResult::err(BridgeError::new(
+                "ARTIFACT_ASSET_UNSAFE",
+                "Native asset dialog failed.",
+                "",
+                "artifact asset select",
+                true,
+            ))
+        }
+    };
+    let Some(selection) = selection else {
+        return BridgeResult::ok(ArtifactAssetSelectResult {
+            cancelled: true,
+            ticket: None,
+            file_name: None,
+            expires_in_ms: None,
+            max_bytes: DEFAULT_MAX_ASSET_BYTES,
+        });
+    };
+    let path = match selection.into_path() {
+        Ok(path) => path,
+        Err(_) => {
+            return BridgeResult::err(BridgeError::new(
+                "ARTIFACT_ASSET_UNSAFE",
+                "Selected asset is not a local filesystem path.",
+                "",
+                "artifact asset select",
+                false,
+            ))
+        }
+    };
+    match app
+        .state::<ArtifactAssetState>()
+        .issue_ticket(path, binding, DEFAULT_ASSET_TICKET_TTL)
+        .await
+    {
+        Ok(issued) => BridgeResult::ok(ArtifactAssetSelectResult {
+            cancelled: false,
+            ticket: Some(issued.ticket),
+            file_name: Some(issued.file_name),
+            expires_in_ms: Some(issued.expires_in_ms),
+            max_bytes: issued.max_bytes,
+        }),
+        Err(message) => BridgeResult::err(BridgeError::new(
+            "ARTIFACT_ASSET_UNSAFE",
+            message,
+            "",
+            "artifact asset select",
+            false,
+        )),
+    }
+}
+
+#[tauri::command]
+pub async fn bridge_artifact_asset_import(
+    app: tauri::AppHandle,
+    request: ArtifactAssetImportRequest,
+) -> BridgeResult<Value> {
+    if !matches!(
+        request.data_class.as_str(),
+        "public" | "internal" | "confidential" | "regulated"
+    ) || normalize_required_text(
+        &request.idempotency_key,
+        "idempotency_key",
+        "artifact asset import",
+    )
+    .is_err()
+    {
+        return BridgeResult::err(BridgeError::new(
+            "INVALID_INPUT",
+            "Asset classification and idempotency key are required.",
+            "",
+            "artifact asset import",
+            false,
+        ));
+    }
+    let identity =
+        match resolve_trusted_artifact_identity(&trusted_artifact_bridge_config(), &app).await {
+            Ok(identity) => identity,
+            Err(error) => return BridgeResult::err(error),
+        };
+    let binding = match AssetBinding::new(identity.workspace_id(), identity.principal_id()) {
+        Ok(binding) => binding,
+        Err(message) => {
+            return BridgeResult::err(BridgeError::new(
+                "ARTIFACT_ASSET_UNSAFE",
+                message,
+                "",
+                "artifact asset import",
+                false,
+            ))
+        }
+    };
+    let consumed = match app
+        .state::<ArtifactAssetState>()
+        .consume(&request.ticket, &binding)
+        .await
+    {
+        Ok(consumed) => consumed,
+        Err(message) => {
+            return BridgeResult::err(BridgeError::new(
+                "ARTIFACT_ASSET_UNSAFE",
+                message,
+                "",
+                "artifact asset import",
+                false,
+            ))
+        }
+    };
+    let declared_media_type = match detect_asset_media_type(&consumed.bytes) {
+        Some(value) => value,
+        None => {
+            return BridgeResult::err(BridgeError::new(
+                "ARTIFACT_ASSET_TYPE_UNSUPPORTED",
+                "Selected asset type is unsupported.",
+                "",
+                "artifact asset import",
+                false,
+            ))
+        }
+    };
+    bridge_artifact_rpc_call(
+        app,
+        "artifact.asset.import".to_string(),
+        ArtifactBridgePayload {
+            params: json!({
+                "fileName": consumed.file_name,
+                "declaredMediaType": declared_media_type,
+                "contentBase64": encode_base64(&consumed.bytes),
+                "dataClass": request.data_class,
+                "idempotencyKey": request.idempotency_key,
+            }),
+            idempotency_key: Some(request.idempotency_key),
+            timeout_ms: Some(DEFAULT_TIMEOUT_MS),
+        },
+    )
+    .await
+}
+
+fn detect_asset_media_type(payload: &[u8]) -> Option<&'static str> {
+    if payload.starts_with(b"\x89PNG\r\n\x1a\n") {
+        return Some("image/png");
+    }
+    if payload.starts_with(b"\xff\xd8\xff") {
+        return Some("image/jpeg");
+    }
+    if payload.starts_with(b"GIF87a") || payload.starts_with(b"GIF89a") {
+        return Some("image/gif");
+    }
+    if payload.len() >= 12 && payload.starts_with(b"RIFF") && &payload[8..12] == b"WEBP" {
+        return Some("image/webp");
+    }
+    let prefix = &payload[..payload.len().min(4096)];
+    let text = String::from_utf8_lossy(prefix).to_ascii_lowercase();
+    let normalized = text.trim_start_matches(['\u{feff}', '\0', '\t', '\r', '\n', ' ']);
+    if normalized.starts_with("<svg")
+        || (normalized.starts_with("<?xml") && normalized.contains("<svg"))
+    {
+        return Some("image/svg+xml");
+    }
+    None
+}
+
+fn encode_base64(payload: &[u8]) -> String {
+    const TABLE: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    let mut output = String::with_capacity(payload.len().div_ceil(3) * 4);
+    for chunk in payload.chunks(3) {
+        let first = chunk[0];
+        let second = *chunk.get(1).unwrap_or(&0);
+        let third = *chunk.get(2).unwrap_or(&0);
+        output.push(TABLE[(first >> 2) as usize] as char);
+        output.push(TABLE[(((first & 0x03) << 4) | (second >> 4)) as usize] as char);
+        output.push(if chunk.len() > 1 {
+            TABLE[(((second & 0x0F) << 2) | (third >> 6)) as usize] as char
+        } else {
+            '='
+        });
+        output.push(if chunk.len() > 2 {
+            TABLE[(third & 0x3F) as usize] as char
+        } else {
+            '='
+        });
+    }
+    output
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct ArtifactExportBeginRequest {
+    artifact_id: String,
+    revision_id: String,
+    format: String,
+    idempotency_key: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct AuthorizedExportBegin {
+    export_id: String,
+    artifact_id: String,
+    revision_id: String,
+    format: String,
+    basename: String,
+    max_bytes: usize,
+    disposition: String,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ArtifactExportBeginResult {
+    cancelled: bool,
+    export_id: String,
+    ticket: Option<String>,
+    expires_in_ms: Option<u64>,
+    max_bytes: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct ArtifactExportCommitRequest {
+    ticket: String,
+    bytes: Vec<u8>,
+    sha256: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct ArtifactExportCancelRequest {
+    ticket: String,
+}
+
+#[tauri::command]
+pub async fn bridge_artifact_export_begin(
+    app: tauri::AppHandle,
+    request: ArtifactExportBeginRequest,
+) -> BridgeResult<ArtifactExportBeginResult> {
+    if normalize_required_text(&request.artifact_id, "artifact_id", "artifact export begin")
+        .is_err()
+        || normalize_required_text(&request.revision_id, "revision_id", "artifact export begin")
+            .is_err()
+    {
+        return BridgeResult::err(BridgeError::new(
+            "INVALID_INPUT",
+            "artifact_id and revision_id are required",
+            "",
+            "artifact export begin",
+            false,
+        ));
+    }
+    let identity =
+        match resolve_trusted_artifact_identity(&trusted_artifact_bridge_config(), &app).await {
+            Ok(identity) => identity,
+            Err(error) => return BridgeResult::err(error),
+        };
+    if let Err(error) = reconcile_artifact_exports(app.clone(), &identity).await {
+        return BridgeResult::err(error);
+    }
+    let authority = bridge_artifact_rpc_call(
+        app.clone(),
+        "artifact.export.begin".to_string(),
+        ArtifactBridgePayload {
+            params: json!({
+                "artifactId": request.artifact_id.clone(),
+                "revisionId": request.revision_id.clone(),
+                "format": request.format.clone(),
+                "idempotencyKey": request.idempotency_key.clone(),
+            }),
+            idempotency_key: Some(request.idempotency_key.clone()),
+            timeout_ms: Some(DEFAULT_TIMEOUT_MS),
+        },
+    )
+    .await;
+    let authorized: AuthorizedExportBegin = match authority.data {
+        Some(value) => match serde_json::from_value(value) {
+            Ok(value) => value,
+            Err(_) => {
+                return BridgeResult::err(BridgeError::new(
+                    "ARTIFACT_RPC_PROTOCOL_MISMATCH",
+                    "Artifact export authority returned an invalid result.",
+                    "",
+                    "artifact export begin",
+                    false,
+                ))
+            }
+        },
+        None => {
+            return BridgeResult::err(authority.error.unwrap_or_else(|| {
+                BridgeError::new(
+                    "ARTIFACT_RPC_UNAVAILABLE",
+                    "Artifact export authority is unavailable.",
+                    "",
+                    "artifact export begin",
+                    true,
+                )
+            }))
+        }
+    };
+    let _ = &authorized.disposition;
+    let (filter_name, extensions) = match export_format(&authorized.format) {
+        Ok(format) => format,
+        Err(error) => {
+            let _ =
+                cancel_export_authority(app.clone(), &authorized.export_id, "native_write_failed")
+                    .await;
+            return BridgeResult::err(error);
+        }
+    };
+    let suggested_name = if authorized.format == "source" {
+        authorized.basename.clone()
+    } else {
+        sanitize_export_filename(&authorized.basename, extensions[0])
+    };
+    if suggested_name != authorized.basename {
+        let _ = cancel_export_authority(app.clone(), &authorized.export_id, "native_write_failed")
+            .await;
+        return BridgeResult::err(BridgeError::new(
+            "ARTIFACT_EXPORT_FAILED",
+            "Backend export basename is not portable.",
+            "",
+            "artifact export begin",
+            false,
+        ));
+    }
+    let binding = match ExportBinding::authorized(
+        identity.workspace_id(),
+        identity.principal_id(),
+        identity.principal_type(),
+        &authorized.export_id,
+        &authorized.artifact_id,
+        &authorized.revision_id,
+        &authorized.format,
+    ) {
+        Ok(binding) => binding,
+        Err(error) => {
+            let _ =
+                cancel_export_authority(app.clone(), &authorized.export_id, "native_write_failed")
+                    .await;
+            return BridgeResult::err(export_bridge_error("artifact export begin", error));
+        }
+    };
+    let dialog_app = app.clone();
+    let selection = match tokio::task::spawn_blocking(move || {
+        dialog_app
+            .dialog()
+            .file()
+            .set_file_name(suggested_name)
+            .add_filter(filter_name, &extensions)
+            .blocking_save_file()
+    })
+    .await
+    {
+        Ok(selection) => selection,
+        Err(_) => {
+            let _ =
+                cancel_export_authority(app.clone(), &authorized.export_id, "native_write_failed")
+                    .await;
+            return BridgeResult::err(BridgeError::new(
+                "ARTIFACT_EXPORT_FAILED",
+                "Native export dialog failed.",
+                "",
+                "artifact export begin",
+                true,
+            ));
+        }
+    };
+    let Some(selection) = selection else {
+        if let Err(error) =
+            cancel_export_authority(app.clone(), &authorized.export_id, "user_cancelled").await
+        {
+            return BridgeResult::err(error);
+        }
+        return BridgeResult::ok(ArtifactExportBeginResult {
+            cancelled: true,
+            export_id: authorized.export_id.clone(),
+            ticket: None,
+            expires_in_ms: None,
+            max_bytes: configured_max_export_bytes(),
+        });
+    };
+    let target = match selection.into_path() {
+        Ok(path) => path,
+        Err(_) => {
+            let _ =
+                cancel_export_authority(app.clone(), &authorized.export_id, "native_write_failed")
+                    .await;
+            return BridgeResult::err(BridgeError::new(
+                "ARTIFACT_EXPORT_FAILED",
+                "Native export target is not a local filesystem path.",
+                "",
+                "artifact export begin",
+                false,
+            ));
+        }
+    };
+    if target.file_name().and_then(|value| value.to_str()) != Some(authorized.basename.as_str()) {
+        let _ = cancel_export_authority(app.clone(), &authorized.export_id, "user_cancelled").await;
+        return BridgeResult::err(BridgeError::new(
+            "ARTIFACT_EXPORT_FAILED",
+            "The export filename must match the backend-authorized basename.",
+            "",
+            "artifact export begin",
+            false,
+        ));
+    }
+    let state = app.state::<ArtifactExportState>();
+    match state
+        .issue_ticket(
+            target,
+            binding,
+            configured_max_export_bytes().min(authorized.max_bytes),
+            DEFAULT_TICKET_TTL,
+        )
+        .await
+    {
+        Ok(issued) => BridgeResult::ok(ArtifactExportBeginResult {
+            cancelled: false,
+            export_id: authorized.export_id.clone(),
+            ticket: Some(issued.ticket),
+            expires_in_ms: Some(issued.expires_in_ms),
+            max_bytes: issued.max_bytes,
+        }),
+        Err(error) => {
+            let _ =
+                cancel_export_authority(app.clone(), &authorized.export_id, "native_write_failed")
+                    .await;
+            BridgeResult::err(export_bridge_error("artifact export begin", error))
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn bridge_artifact_export_commit(
+    app: tauri::AppHandle,
+    request: ArtifactExportCommitRequest,
+) -> BridgeResult<ArtifactExportResult> {
+    let identity =
+        match resolve_trusted_artifact_identity(&trusted_artifact_bridge_config(), &app).await {
+            Ok(identity) => identity,
+            Err(error) => return BridgeResult::err(error),
+        };
+    let binding = match ExportBinding::new(identity.workspace_id(), identity.principal_id()) {
+        Ok(binding) => binding,
+        Err(error) => {
+            return BridgeResult::err(export_bridge_error("artifact export commit", error))
+        }
+    };
+    let state = app.state::<ArtifactExportState>();
+    let authorized_binding = match state.binding_for_ticket(&request.ticket, &binding).await {
+        Ok(binding) => binding,
+        Err(error) => {
+            return BridgeResult::err(export_bridge_error("artifact export commit", error))
+        }
+    };
+    let preflight = match state
+        .preflight(&request.ticket, &binding, &request.bytes, &request.sha256)
+        .await
+    {
+        Ok(result) => result,
+        Err(error) => {
+            let _ = cancel_export_authority(
+                app.clone(),
+                authorized_binding.export_id(),
+                "native_write_failed",
+            )
+            .await;
+            return BridgeResult::err(export_bridge_error("artifact export commit", error));
+        }
+    };
+    let authority = bridge_artifact_rpc_call(
+        app.clone(),
+        "artifact.export.preflight".to_string(),
+        ArtifactBridgePayload {
+            params: json!({
+                "exportId": preflight.binding.export_id(),
+                "basename": preflight.basename,
+                "sha256": preflight.sha256,
+                "sizeBytes": preflight.size_bytes,
+                "idempotencyKey": format!("preflight-{}", preflight.binding.export_id()),
+            }),
+            idempotency_key: Some(format!("preflight-{}", preflight.binding.export_id())),
+            timeout_ms: Some(DEFAULT_TIMEOUT_MS),
+        },
+    )
+    .await;
+    if authority.data.is_none() {
+        let _ = state.cancel(&request.ticket, &binding).await;
+        let _ = cancel_export_authority(
+            app.clone(),
+            authorized_binding.export_id(),
+            "native_write_failed",
+        )
+        .await;
+        return BridgeResult::err(authority.error.unwrap_or_else(|| {
+            BridgeError::new(
+                "ARTIFACT_RPC_UNAVAILABLE",
+                "Artifact export preflight could not be authorized.",
+                "",
+                "artifact export commit",
+                true,
+            )
+        }));
+    }
+    if let Err(error) = state
+        .prepare_reconciliation(&request.ticket, &binding, &preflight)
+        .await
+    {
+        if cancel_export_authority(
+            app.clone(),
+            authorized_binding.export_id(),
+            "native_write_failed",
+        )
+        .await
+        .is_ok()
+        {
+            let _ = state.cancel(&request.ticket, &binding).await;
+        }
+        return BridgeResult::err(export_bridge_error("artifact export commit", error));
+    }
+    let result = match state
+        .commit(&request.ticket, &binding, request.bytes, &request.sha256)
+        .await
+    {
+        Ok(result) => result,
+        Err(error) => {
+            if error.requires_reconciliation() {
+                return BridgeResult::err(export_bridge_error("artifact export commit", error));
+            }
+            if cancel_export_authority(
+                app.clone(),
+                authorized_binding.export_id(),
+                "native_write_failed",
+            )
+            .await
+            .is_ok()
+            {
+                let _ = state.cancel(&request.ticket, &binding).await;
+            }
+            return BridgeResult::err(export_bridge_error("artifact export commit", error));
+        }
+    };
+    if let Err(error) = commit_export_authority(
+        app.clone(),
+        result.binding.export_id(),
+        &result.basename,
+        &result.sha256,
+        result.size_bytes,
+    )
+    .await
+    {
+        return BridgeResult::err(error);
+    }
+    if let Err(error) = state.finalize(&request.ticket, &binding).await {
+        return BridgeResult::err(export_bridge_error("artifact export commit", error));
+    }
+    BridgeResult::ok(result)
+}
+
+#[tauri::command]
+pub async fn bridge_artifact_export_cancel(
+    app: tauri::AppHandle,
+    request: ArtifactExportCancelRequest,
+) -> BridgeResult<ArtifactExportCancelResult> {
+    let identity =
+        match resolve_trusted_artifact_identity(&trusted_artifact_bridge_config(), &app).await {
+            Ok(identity) => identity,
+            Err(error) => return BridgeResult::err(error),
+        };
+    let binding = match ExportBinding::new(identity.workspace_id(), identity.principal_id()) {
+        Ok(binding) => binding,
+        Err(error) => {
+            return BridgeResult::err(export_bridge_error("artifact export cancel", error))
+        }
+    };
+    let state = app.state::<ArtifactExportState>();
+    if let Err(error) = state.require_cancellable(&request.ticket, &binding).await {
+        return BridgeResult::err(export_bridge_error("artifact export cancel", error));
+    }
+    let authorized_binding = match state.binding_for_ticket(&request.ticket, &binding).await {
+        Ok(result) => result,
+        Err(error) => {
+            return BridgeResult::err(export_bridge_error("artifact export cancel", error))
+        }
+    };
+    if let Err(error) = cancel_export_authority(
+        app.clone(),
+        authorized_binding.export_id(),
+        "user_cancelled",
+    )
+    .await
+    {
+        return BridgeResult::err(error);
+    }
+    let result = match state.cancel(&request.ticket, &binding).await {
+        Ok(result) => result,
+        Err(error) => {
+            return BridgeResult::err(export_bridge_error("artifact export cancel", error))
+        }
+    };
+    BridgeResult::ok(result)
+}
+
+fn export_format(format: &str) -> Result<(&'static str, Vec<&'static str>), BridgeError> {
+    match format.trim().to_ascii_lowercase().as_str() {
+        "json" => Ok(("JSON", vec!["json"])),
+        "submission-json" => Ok(("Submission JSON", vec!["submission.json"])),
+        "markdown" | "md" => Ok(("Markdown", vec!["md"])),
+        "html" => Ok(("HTML", vec!["html"])),
+        "csv" => Ok(("CSV", vec!["csv"])),
+        "xlsx" => Ok(("Excel", vec!["xlsx"])),
+        "png" => Ok(("PNG", vec!["png"])),
+        "svg" => Ok(("SVG", vec!["svg"])),
+        "pptx" => Ok(("PowerPoint", vec!["pptx"])),
+        "source" => Ok(("Source", vec!["txt"])),
+        "txt" => Ok(("Text", vec!["txt"])),
+        _ => Err(BridgeError::new(
+            "ARTIFACT_EXPORT_FAILED",
+            "Artifact export format is unsupported.",
+            "",
+            "artifact export begin",
+            false,
+        )),
+    }
+}
+
+fn sanitize_export_filename(value: &str, extension: &str) -> String {
+    let basename = Path::new(value)
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or("artifact");
+    let mut sanitized = basename
+        .chars()
+        .map(|character| {
+            if character.is_alphanumeric() || matches!(character, ' ' | '-' | '_' | '.') {
+                character
+            } else {
+                '_'
+            }
+        })
+        .take(120)
+        .collect::<String>();
+    sanitized = sanitized.trim_matches([' ', '.']).to_string();
+    if sanitized.is_empty() {
+        sanitized = "artifact".to_string();
+    }
+    let suffix = format!(".{extension}");
+    if !sanitized.to_ascii_lowercase().ends_with(&suffix) {
+        sanitized.push_str(&suffix);
+    }
+    sanitized
+}
+
+fn configured_max_export_bytes() -> usize {
+    std::env::var("IMPERAOS_ARTIFACT_MAX_EXPORT_BYTES")
+        .ok()
+        .and_then(|value| value.parse::<usize>().ok())
+        .filter(|value| *value > 0 && *value <= DEFAULT_MAX_EXPORT_BYTES)
+        .unwrap_or(DEFAULT_MAX_EXPORT_BYTES)
+}
+
+pub(crate) fn artifact_export_journal_root() -> PathBuf {
+    default_cli_workdir()
+        .unwrap_or_else(|| PathBuf::from("."))
+        .join(".imperaos")
+        .join("artifact-export-reconciliation")
+}
+
+fn export_bridge_error(command: &str, error: ExportBoundaryError) -> BridgeError {
+    BridgeError::new(&error.code, error.message, "", command, error.retryable)
+}
+
+async fn cancel_export_authority(
+    app: tauri::AppHandle,
+    export_id: &str,
+    reason: &str,
+) -> Result<(), BridgeError> {
+    let idempotency_key = format!("cancel-{export_id}-{reason}");
+    let response = bridge_artifact_rpc_call(
+        app,
+        "artifact.export.cancel".to_string(),
+        ArtifactBridgePayload {
+            params: json!({
+                "exportId": export_id,
+                "reason": reason,
+                "idempotencyKey": idempotency_key,
+            }),
+            idempotency_key: Some(idempotency_key.clone()),
+            timeout_ms: Some(DEFAULT_TIMEOUT_MS),
+        },
+    )
+    .await;
+    if response.data.is_some() {
+        Ok(())
+    } else {
+        Err(response.error.unwrap_or_else(|| {
+            BridgeError::new(
+                "ARTIFACT_RPC_UNAVAILABLE",
+                "Artifact export cancellation could not be acknowledged.",
+                "",
+                "artifact export cancel",
+                true,
+            )
+        }))
+    }
+}
+
+fn export_commit_terminal_request(
+    export_id: &str,
+    basename: &str,
+    sha256: &str,
+    size_bytes: usize,
+) -> (String, ArtifactBridgePayload) {
+    let idempotency_key = format!("commit-{export_id}");
+    (
+        "artifact.export.commit".to_string(),
+        ArtifactBridgePayload {
+            params: json!({
+                "exportId": export_id,
+                "basename": basename,
+                "sha256": sha256,
+                "sizeBytes": size_bytes,
+                "idempotencyKey": idempotency_key,
+            }),
+            idempotency_key: Some(idempotency_key),
+            timeout_ms: Some(DEFAULT_TIMEOUT_MS),
+        },
+    )
+}
+
+fn export_reconciliation_terminal_request(
+    action: &ExportReconciliationAction,
+) -> (String, ArtifactBridgePayload) {
+    match action {
+        ExportReconciliationAction::Commit(receipt) => export_commit_terminal_request(
+            receipt.export_id(),
+            receipt.basename(),
+            receipt.sha256(),
+            receipt.size_bytes(),
+        ),
+        ExportReconciliationAction::CancelNativeWriteFailed(receipt) => {
+            let idempotency_key = format!("cancel-{}-native_write_failed", receipt.export_id());
+            (
+                "artifact.export.cancel".to_string(),
+                ArtifactBridgePayload {
+                    params: json!({
+                        "exportId": receipt.export_id(),
+                        "reason": "native_write_failed",
+                        "idempotencyKey": idempotency_key.clone(),
+                    }),
+                    idempotency_key: Some(idempotency_key),
+                    timeout_ms: Some(DEFAULT_TIMEOUT_MS),
+                },
+            )
+        }
+    }
+}
+
+async fn call_export_terminal_authority(
+    app: tauri::AppHandle,
+    method: String,
+    payload: ArtifactBridgePayload,
+) -> Result<(), BridgeError> {
+    let response = bridge_artifact_rpc_call(app, method.clone(), payload).await;
+    if response.data.is_some() {
+        Ok(())
+    } else {
+        Err(response.error.unwrap_or_else(|| {
+            BridgeError::new(
+                "ARTIFACT_RPC_UNAVAILABLE",
+                "Artifact export terminal state could not be acknowledged.",
+                "",
+                method,
+                true,
+            )
+        }))
+    }
+}
+
+async fn commit_export_authority(
+    app: tauri::AppHandle,
+    export_id: &str,
+    basename: &str,
+    sha256: &str,
+    size_bytes: usize,
+) -> Result<(), BridgeError> {
+    let (method, payload) = export_commit_terminal_request(export_id, basename, sha256, size_bytes);
+    call_export_terminal_authority(app, method, payload).await
+}
+
+async fn reconcile_export_actions_with<F, Fut>(
+    state: &ArtifactExportState,
+    actions: Vec<ExportReconciliationAction>,
+    mut terminal: F,
+) -> Result<(), BridgeError>
+where
+    F: FnMut(ExportReconciliationAction) -> Fut,
+    Fut: std::future::Future<Output = Result<(), BridgeError>>,
+{
+    for action in actions {
+        let export_id = action.receipt().export_id().to_string();
+        terminal(action).await?;
+        state
+            .acknowledge_reconciliation(&export_id)
+            .await
+            .map_err(|error| export_bridge_error("artifact export reconciliation", error))?;
+    }
+    Ok(())
+}
+
+async fn reconcile_artifact_exports(
+    app: tauri::AppHandle,
+    identity: &TrustedArtifactIdentity,
+) -> Result<(), BridgeError> {
+    let binding = ExportBinding::new(identity.workspace_id(), identity.principal_id())
+        .map_err(|error| export_bridge_error("artifact export reconciliation", error))?;
+    let state = app.state::<ArtifactExportState>();
+    let actions = state
+        .reconciliation_actions(&binding)
+        .await
+        .map_err(|error| export_bridge_error("artifact export reconciliation", error))?;
+    reconcile_export_actions_with(&state, actions, |action| {
+        let app = app.clone();
+        async move {
+            let (method, payload) = export_reconciliation_terminal_request(&action);
+            call_export_terminal_authority(app, method, payload).await
+        }
+    })
+    .await
+}
+
+async fn bridge_artifact_rpc_call(
+    app: tauri::AppHandle,
+    method: String,
+    payload: ArtifactBridgePayload,
+) -> BridgeResult<Value> {
+    let registry = app.state::<WorkspaceRpcRegistry>();
+    let config = trusted_artifact_bridge_config();
+    let identity = match resolve_trusted_artifact_identity(&config, &app).await {
+        Ok(identity) => identity,
+        Err(error) => return BridgeResult::err(error),
+    };
+    let resolved = match resolve_cli_command(&config, app_resource_dir(&app).as_deref()) {
+        Ok(resolved) => resolved,
+        Err(error) => return BridgeResult::err(error),
+    };
+    let artifact_root = default_cli_workdir()
+        .unwrap_or_else(|| PathBuf::from("."))
+        .join(".imperaos")
+        .join("artifacts");
+    let launch = match WorkspaceRpcLaunch::new(
+        resolved.program,
+        resolved.prefix_args,
+        artifact_root,
+        trusted_artifact_profile(),
+    ) {
+        Ok(launch) => launch,
+        Err(error) => return BridgeResult::err(supervisor_bridge_error(&method, error)),
+    };
+    let timeout_ms = payload
+        .timeout_ms
+        .unwrap_or(DEFAULT_TIMEOUT_MS)
+        .clamp(1, 120_000);
+    let request = match build_trusted_request(
+        &method,
+        payload.params,
+        &identity,
+        payload.idempotency_key,
+        timeout_ms,
+    ) {
+        Ok(request) => request,
+        Err(error) => return BridgeResult::err(supervisor_bridge_error(&method, error)),
+    };
+    let supervisor = match registry.get_or_start(launch).await {
+        Ok(supervisor) => supervisor,
+        Err(error) => return BridgeResult::err(supervisor_bridge_error(&method, error)),
+    };
+    match supervisor
+        .call(request, Duration::from_millis(timeout_ms))
+        .await
+    {
+        Ok(value) => BridgeResult::ok(value),
+        Err(error) => BridgeResult::err(supervisor_bridge_error(&method, error)),
+    }
+}
+
+fn trusted_artifact_bridge_config() -> BridgeConfig {
+    BridgeConfig {
+        mode: Some("auto".to_string()),
+        cli_path: None,
+        bundled_python_path: None,
+        profile: Some(trusted_artifact_profile()),
+        root_dir: None,
+        env: HashMap::new(),
+        timeout_ms: Some(DEFAULT_TIMEOUT_MS),
+    }
+}
+
+fn trusted_artifact_profile() -> String {
+    std::env::var("IMPERAOS_PROFILE")
+        .ok()
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty() && !value.contains('\0'))
+        .unwrap_or_else(|| "enterprise".to_string())
+}
+
+fn trusted_artifact_command_config(config: &BridgeConfig) -> BridgeConfig {
+    let mut trusted = trusted_artifact_bridge_config();
+    trusted.timeout_ms = config.timeout_ms;
+    trusted
+}
+
+async fn resolve_trusted_artifact_identity(
+    config: &BridgeConfig,
+    app: &tauri::AppHandle,
+) -> Result<TrustedArtifactIdentity, BridgeError> {
+    let profile = config.profile();
+    let workspace_id = match std::env::var("IMPERAOS_WORKSPACE_ID") {
+        Ok(value) if !value.trim().is_empty() => value.trim().to_string(),
+        _ if profile != "enterprise" => "local".to_string(),
+        _ => {
+            return Err(BridgeError::new(
+                "ARTIFACT_PERMISSION_DENIED",
+                "Trusted artifact workspace identity is unavailable.",
+                "",
+                "artifact identity",
+                false,
+            ))
+        }
+    };
+
+    if profile == "enterprise" {
+        let whoami = run_cli_json_owned_with_resource_dir(
+            config,
+            vec![
+                "auth".to_string(),
+                "whoami".to_string(),
+                "--profile".to_string(),
+                profile,
+                "--json".to_string(),
+            ],
+            app_resource_dir(app).as_deref(),
+        )
+        .await?;
+        if whoami.get("verified").and_then(Value::as_bool) != Some(true) {
+            return Err(BridgeError::new(
+                "ARTIFACT_PERMISSION_DENIED",
+                "Trusted artifact principal could not be verified.",
+                "",
+                "artifact identity",
+                false,
+            ));
+        }
+        let actor = whoami
+            .get("actor")
+            .and_then(Value::as_object)
+            .ok_or_else(|| {
+                BridgeError::new(
+                    "ARTIFACT_PERMISSION_DENIED",
+                    "Trusted artifact principal is missing.",
+                    "",
+                    "artifact identity",
+                    false,
+                )
+            })?;
+        let principal_id = actor
+            .get("actor_id")
+            .and_then(Value::as_str)
+            .unwrap_or_default();
+        let roles = actor
+            .get("roles")
+            .and_then(Value::as_array)
+            .map(|values| {
+                values
+                    .iter()
+                    .filter_map(Value::as_str)
+                    .map(str::to_string)
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default();
+        return TrustedArtifactIdentity::new(workspace_id, principal_id, "user", roles)
+            .map_err(|error| supervisor_bridge_error("artifact identity", error));
+    }
+
+    let principal_id = std::env::var("IMPERAOS_ACTOR_ID")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .unwrap_or_else(|| "local-user".to_string());
+    let roles = std::env::var("IMPERAOS_ARTIFACT_ROLES")
+        .ok()
+        .map(|value| {
+            value
+                .split(',')
+                .map(str::trim)
+                .filter(|role| !role.is_empty())
+                .map(str::to_string)
+                .collect::<Vec<_>>()
+        })
+        .filter(|roles| !roles.is_empty())
+        .unwrap_or_else(|| vec!["artifact_admin".to_string()]);
+    TrustedArtifactIdentity::new(workspace_id, principal_id, "user", roles)
+        .map_err(|error| supervisor_bridge_error("artifact identity", error))
+}
+
+fn supervisor_bridge_error(command: &str, error: SupervisorError) -> BridgeError {
+    BridgeError::new(&error.code, error.message, "", command, error.retryable)
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -294,7 +1456,15 @@ pub async fn bridge_handshake(
 }
 
 #[tauri::command]
-pub async fn bridge_approval_pending(config: BridgeConfig) -> BridgeResult<Value> {
+pub async fn bridge_approval_pending(
+    app: tauri::AppHandle,
+    config: BridgeConfig,
+) -> BridgeResult<Value> {
+    let config = trusted_artifact_command_config(&config);
+    let identity = match resolve_trusted_artifact_identity(&config, &app).await {
+        Ok(value) => value,
+        Err(error) => return BridgeResult::err(error),
+    };
     match run_cli_json_owned(
         &config,
         vec![
@@ -302,6 +1472,8 @@ pub async fn bridge_approval_pending(config: BridgeConfig) -> BridgeResult<Value
             "pending".to_string(),
             "--profile".to_string(),
             config.profile(),
+            "--workspace-id".to_string(),
+            identity.workspace_id().to_string(),
             "--json".to_string(),
         ],
     )
@@ -314,9 +1486,15 @@ pub async fn bridge_approval_pending(config: BridgeConfig) -> BridgeResult<Value
 
 #[tauri::command]
 pub async fn bridge_approval_show(
+    app: tauri::AppHandle,
     config: BridgeConfig,
     approval_id: String,
 ) -> BridgeResult<Value> {
+    let config = trusted_artifact_command_config(&config);
+    let identity = match resolve_trusted_artifact_identity(&config, &app).await {
+        Ok(value) => value,
+        Err(error) => return BridgeResult::err(error),
+    };
     if approval_id.trim().is_empty() {
         return BridgeResult::err(BridgeError::new(
             "INVALID_INPUT",
@@ -335,6 +1513,8 @@ pub async fn bridge_approval_show(
             approval_id.trim().to_string(),
             "--profile".to_string(),
             config.profile(),
+            "--workspace-id".to_string(),
+            identity.workspace_id().to_string(),
             "--json".to_string(),
         ],
     )
@@ -347,13 +1527,15 @@ pub async fn bridge_approval_show(
 
 #[tauri::command]
 pub async fn bridge_approval_decide(
+    app: tauri::AppHandle,
     config: BridgeConfig,
     approval_id: String,
     approve: bool,
     reason: Option<String>,
-    operator_id: String,
+    _operator_id: String,
 ) -> BridgeResult<Value> {
-    let actor = match normalize_actor(&operator_id) {
+    let config = trusted_artifact_command_config(&config);
+    let identity = match resolve_trusted_artifact_identity(&config, &app).await {
         Ok(value) => value,
         Err(error) => return BridgeResult::err(error),
     };
@@ -369,7 +1551,9 @@ pub async fn bridge_approval_decide(
             "--reject".to_string()
         },
         "--actor".to_string(),
-        actor,
+        identity.principal_id().to_string(),
+        "--workspace-id".to_string(),
+        identity.workspace_id().to_string(),
         "--profile".to_string(),
         config.profile(),
     ];
@@ -389,11 +1573,13 @@ pub async fn bridge_approval_decide(
 
 #[tauri::command]
 pub async fn bridge_approval_execute(
+    app: tauri::AppHandle,
     config: BridgeConfig,
     approval_id: String,
-    operator_id: String,
+    _operator_id: String,
 ) -> BridgeResult<Value> {
-    let actor = match normalize_actor(&operator_id) {
+    let config = trusted_artifact_command_config(&config);
+    let identity = match resolve_trusted_artifact_identity(&config, &app).await {
         Ok(value) => value,
         Err(error) => return BridgeResult::err(error),
     };
@@ -406,7 +1592,9 @@ pub async fn bridge_approval_execute(
             "--id".to_string(),
             approval_id.trim().to_string(),
             "--actor".to_string(),
-            actor,
+            identity.principal_id().to_string(),
+            "--workspace-id".to_string(),
+            identity.workspace_id().to_string(),
             "--profile".to_string(),
             config.profile(),
         ],
@@ -1242,7 +2430,7 @@ pub async fn bridge_install_rehearsal(
         "--profile".to_string(),
         config.profile(),
         "--target-root".to_string(),
-        target_root.unwrap_or_else(|| ".binliquid/rehearsal/design-partner".to_string()),
+        target_root.unwrap_or_else(|| ".imperaos/rehearsal/design-partner".to_string()),
         "--mode".to_string(),
         mode.unwrap_or_else(|| "source-cli".to_string()),
         "--output".to_string(),
@@ -1584,6 +2772,7 @@ pub async fn bridge_assistant_start_turn(
     model: Option<String>,
     hf_model_id: Option<String>,
 ) -> BridgeResult<AssistantStartTurnPayload> {
+    let config = trusted_artifact_command_config(&config);
     let assistant_turn_id = match normalize_assistant_turn_id(&assistant_turn_id) {
         Ok(value) => value,
         Err(error) => return BridgeResult::err(error),
@@ -1592,7 +2781,7 @@ pub async fn bridge_assistant_start_turn(
         Ok(value) => value,
         Err(error) => return BridgeResult::err(error),
     };
-    let user_message = match normalize_assistant_prompt(
+    let _user_message = match normalize_assistant_prompt(
         &user_message,
         DEFAULT_ASSISTANT_PROMPT_MAX_CHARS,
         "user_message",
@@ -1600,7 +2789,7 @@ pub async fn bridge_assistant_start_turn(
         Ok(value) => value,
         Err(error) => return BridgeResult::err(error),
     };
-    let _compiled_prompt = match normalize_assistant_prompt(
+    let compiled_prompt = match normalize_assistant_prompt(
         &compiled_prompt,
         DEFAULT_ASSISTANT_PROMPT_MAX_CHARS,
         "compiled_prompt",
@@ -1655,9 +2844,43 @@ pub async fn bridge_assistant_start_turn(
         Ok(value) => value,
         Err(error) => return BridgeResult::err(error),
     };
-    let args = build_assistant_chat_args(
+    let identity =
+        match resolve_trusted_artifact_identity(&trusted_artifact_bridge_config(), &app).await {
+            Ok(value) => value,
+            Err(error) => return BridgeResult::err(error),
+        };
+    let runtime_root = default_cli_workdir().unwrap_or_else(|| PathBuf::from("."));
+    let artifact_root = runtime_root.join(".imperaos").join("artifacts");
+    let prompt_dir = std::env::temp_dir().join("imperaos-assistant-prompts");
+    if let Err(error) = std::fs::create_dir_all(&prompt_dir) {
+        return BridgeResult::err(BridgeError::new(
+            "CLI_FAILED",
+            format!("Assistant prompt directory could not be prepared: {error}"),
+            "",
+            "assistant prompt preparation",
+            true,
+        ));
+    }
+    cleanup_stale_assistant_prompt_files(&prompt_dir, Duration::from_secs(24 * 60 * 60));
+    let prompt_path = prompt_dir.join(format!("{assistant_turn_id}-{}.md", uuid::Uuid::new_v4()));
+    let prompt_guard = match create_assistant_prompt_file_with_writer(&prompt_path, |file| {
+        std::io::Write::write_all(file, compiled_prompt.as_bytes())
+    }) {
+        Ok(guard) => guard,
+        Err(error) => {
+            return BridgeResult::err(BridgeError::new(
+                "CLI_FAILED",
+                format!("Assistant prompt could not be prepared: {error}"),
+                "",
+                "assistant prompt preparation",
+                true,
+            ))
+        }
+    };
+    let args = build_assistant_turn_args(
         &config,
-        &user_message,
+        &prompt_path,
+        &assistant_turn_id,
         &session_id,
         provider.as_deref(),
         provider_id.as_deref(),
@@ -1665,6 +2888,8 @@ pub async fn bridge_assistant_start_turn(
         fallback_provider_id.as_deref(),
         model.as_deref(),
         hf_model_id.as_deref(),
+        &artifact_root,
+        &identity,
     );
     let command_preview =
         format_assistant_command_preview(&resolved.program, &resolved.prefix_args, &args);
@@ -1680,6 +2905,7 @@ pub async fn bridge_assistant_start_turn(
     let mut child = match command.spawn() {
         Ok(value) => value,
         Err(error) => {
+            let _ = std::fs::remove_file(&prompt_path);
             let code = if error.kind() == std::io::ErrorKind::NotFound {
                 "CLI_NOT_FOUND"
             } else {
@@ -1706,12 +2932,22 @@ pub async fn bridge_assistant_start_turn(
                 AssistantProcessRef {
                     process_id,
                     session_id: session_id.clone(),
+                    prompt_path: prompt_path.clone(),
                 },
             );
     }
     let stdout = match child.stdout.take() {
         Some(value) => value,
         None => {
+            if process_id.is_some() {
+                app.state::<AssistantProcessRegistry>()
+                    .turns
+                    .lock()
+                    .await
+                    .remove(&assistant_turn_id);
+            }
+            let _ = child.kill().await;
+            let _ = std::fs::remove_file(&prompt_path);
             return BridgeResult::err(BridgeError::new(
                 "CLI_FAILED",
                 "Assistant process stdout was not available.",
@@ -1726,8 +2962,10 @@ pub async fn bridge_assistant_start_turn(
     let task_turn_id = assistant_turn_id.clone();
     let task_session_id = session_id.clone();
     let task_command_preview = command_preview.clone();
+    let task_prompt_guard = prompt_guard;
 
     tokio::spawn(async move {
+        let _prompt_guard = task_prompt_guard;
         let stderr_task = tokio::spawn(read_assistant_stderr_preview(stderr));
         let stream_result = stream_assistant_stdout(
             task_app.clone(),
@@ -1859,7 +3097,9 @@ pub async fn bridge_assistant_cancel_turn(
         ));
     };
 
-    if let Err(error) = terminate_process(process_ref.process_id).await {
+    let termination = terminate_process(process_ref.process_id).await;
+    let _ = std::fs::remove_file(&process_ref.prompt_path);
+    if let Err(error) = termination {
         return BridgeResult::err(error);
     }
 
@@ -1980,6 +3220,55 @@ fn normalize_assistant_prompt(
     Ok(normalized.to_string())
 }
 
+fn build_assistant_turn_args(
+    config: &BridgeConfig,
+    prompt_path: &Path,
+    assistant_turn_id: &str,
+    session_id: &str,
+    provider: Option<&str>,
+    provider_id: Option<&str>,
+    fallback_provider: Option<&str>,
+    fallback_provider_id: Option<&str>,
+    model: Option<&str>,
+    hf_model_id: Option<&str>,
+    artifact_root: &Path,
+    identity: &TrustedArtifactIdentity,
+) -> Vec<String> {
+    let mut args = vec![
+        "assistant".to_string(),
+        "turn".to_string(),
+        "--profile".to_string(),
+        config.profile(),
+        "--session-id".to_string(),
+        session_id.to_string(),
+        "--turn-id".to_string(),
+        assistant_turn_id.to_string(),
+        "--prompt-file".to_string(),
+        prompt_path.to_string_lossy().to_string(),
+        "--stream-json".to_string(),
+        "--artifact-root".to_string(),
+        artifact_root.to_string_lossy().to_string(),
+        "--artifact-workspace-id".to_string(),
+        identity.workspace_id().to_string(),
+        "--artifact-principal-id".to_string(),
+        identity.principal_id().to_string(),
+        "--artifact-prompt-data-class".to_string(),
+        "regulated".to_string(),
+    ];
+    for role in identity.roles() {
+        args.push("--artifact-role".to_string());
+        args.push(role.clone());
+    }
+    push_optional_arg(&mut args, "--provider", provider);
+    push_optional_arg(&mut args, "--provider-id", provider_id);
+    push_optional_arg(&mut args, "--fallback-provider", fallback_provider);
+    push_optional_arg(&mut args, "--fallback-provider-id", fallback_provider_id);
+    push_optional_arg(&mut args, "--model", model);
+    push_optional_arg(&mut args, "--hf-model-id", hf_model_id);
+    args
+}
+
+#[cfg(test)]
 fn build_assistant_chat_args(
     config: &BridgeConfig,
     user_message: &str,
@@ -2018,6 +3307,12 @@ fn format_assistant_command_preview(program: &str, prefix: &[String], args: &[St
         .map(|(index, value)| {
             if index > 0 && args[index - 1] == "--once" {
                 "[user_message]".to_string()
+            } else if index > 0 && args[index - 1] == "--prompt-file" {
+                "[compiled_prompt_file]".to_string()
+            } else if index > 0 && args[index - 1] == "--artifact-root" {
+                "[artifact_root]".to_string()
+            } else if index > 0 && args[index - 1] == "--artifact-principal-id" {
+                "[artifact_principal]".to_string()
             } else {
                 value.clone()
             }
@@ -2090,8 +3385,26 @@ fn parse_assistant_json_line(
 
 fn normalize_assistant_event_name(value: &str) -> &str {
     match value {
-        "status" | "token" | "router_decision" | "policy_decision" | "approval_pending"
-        | "expert_start" | "expert_end" | "audit_artifact" | "final" | "warning" | "error"
+        "status"
+        | "token"
+        | "delta"
+        | "text_delta"
+        | "router_decision"
+        | "policy_decision"
+        | "approval_pending"
+        | "expert_start"
+        | "expert_end"
+        | "artifact_proposed"
+        | "artifact_committed"
+        | "artifact_patch_proposed"
+        | "artifact_patch_applied"
+        | "form_requested"
+        | "form_submitted"
+        | "tool_result"
+        | "audit_artifact"
+        | "final"
+        | "warning"
+        | "error"
         | "cancelled" => value,
         _ => "status",
     }
@@ -2306,7 +3619,7 @@ fn resolve_cli_command(
     if mode == CoreMode::External {
         return Ok(ResolvedCli {
             mode,
-            program: cli_path.unwrap_or_else(|| "binliquid".to_string()),
+            program: cli_path.unwrap_or_else(|| "imperaos".to_string()),
             prefix_args: vec![],
         });
     }
@@ -2325,7 +3638,7 @@ fn resolve_cli_command(
         return Ok(ResolvedCli {
             mode,
             program: python.to_string_lossy().to_string(),
-            prefix_args: vec!["-m".to_string(), "binliquid".to_string()],
+            prefix_args: vec!["-m".to_string(), "imperaos".to_string()],
         });
     }
 
@@ -2341,13 +3654,13 @@ fn resolve_cli_command(
         return Ok(ResolvedCli {
             mode: CoreMode::Bundled,
             program: path.to_string_lossy().to_string(),
-            prefix_args: vec!["-m".to_string(), "binliquid".to_string()],
+            prefix_args: vec!["-m".to_string(), "imperaos".to_string()],
         });
     }
 
     Ok(ResolvedCli {
         mode: CoreMode::External,
-        program: "binliquid".to_string(),
+        program: "imperaos".to_string(),
         prefix_args: vec![],
     })
 }
@@ -2372,9 +3685,9 @@ fn default_bundled_python_path() -> Option<PathBuf> {
 
 fn bundled_python_relative_path() -> &'static str {
     if cfg!(windows) {
-        "binliquid-runtime/python/Scripts/python.exe"
+        "imperaos-runtime/python/Scripts/python.exe"
     } else {
-        "binliquid-runtime/python/bin/python"
+        "imperaos-runtime/python/bin/python"
     }
 }
 
@@ -2500,20 +3813,45 @@ fn configure_cli_env(command: &mut Command, config: &BridgeConfig, resolved: &Re
             command.env(key, value);
         }
     }
+    for key in [
+        "IMPERAOS_PROFILE",
+        "IMPERAOS_WORKSPACE_ID",
+        "IMPERAOS_IDENTITY_ASSERTION_PATH",
+        "IMPERAOS_BREAK_GLASS_ASSERTION_PATH",
+        "IMPERAOS_ACTOR_ID",
+        "IMPERAOS_ARTIFACT_ROLES",
+        "IMPERAOS_GOVERNANCE_APPROVAL_STORE_PATH",
+        "IMPERAOS_ARTIFACT_WORKSPACE_ENABLED",
+        "IMPERAOS_ARTIFACT_DOCUMENT_EDITOR_ENABLED",
+        "IMPERAOS_ARTIFACT_FORM_EDITOR_ENABLED",
+        "IMPERAOS_ARTIFACT_CODE_EDITOR_ENABLED",
+        "IMPERAOS_ARTIFACT_FLOW_EDITOR_ENABLED",
+        "IMPERAOS_ARTIFACT_SPREADSHEET_EDITOR_ENABLED",
+        "IMPERAOS_ARTIFACT_CANVAS_EDITOR_ENABLED",
+        "IMPERAOS_ARTIFACT_SLIDES_EDITOR_ENABLED",
+        "IMPERAOS_ARTIFACT_EXPORT_ENABLED",
+        "IMPERAOS_ASSISTANT_UI_RUNTIME_ENABLED",
+        "IMPERAOS_ASSISTANT_AI_SDK_RUNTIME_ENABLED",
+        "OPENAI_API_KEY",
+        "DEEPSEEK_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "COMPANY_LLM_API_KEY",
+    ] {
+        if let Ok(value) = std::env::var(key) {
+            command.env(key, value);
+        }
+    }
 
     command.env("PYTHONNOUSERSITE", "1");
     command.env("PYTHONDONTWRITEBYTECODE", "1");
     if let Some(config_dir) = bundled_config_dir(resolved) {
-        command.env("BINLIQUID_CONFIG_ROOT", &config_dir);
+        command.env("IMPERAOS_CONFIG_ROOT", &config_dir);
         let provider_registry = config_dir.join("providers.toml");
         let provider_registry_example = config_dir.join("providers.example.toml");
         if provider_registry.exists() {
-            command.env("BINLIQUID_PROVIDER_REGISTRY_PATH", provider_registry);
+            command.env("IMPERAOS_PROVIDER_REGISTRY_PATH", provider_registry);
         } else if provider_registry_example.exists() {
-            command.env(
-                "BINLIQUID_PROVIDER_REGISTRY_PATH",
-                provider_registry_example,
-            );
+            command.env("IMPERAOS_PROVIDER_REGISTRY_PATH", provider_registry_example);
         }
     }
 
@@ -2525,7 +3863,7 @@ fn configure_cli_env(command: &mut Command, config: &BridgeConfig, resolved: &Re
 }
 
 fn is_allowed_cli_env_key(key: &str) -> bool {
-    key.starts_with("BINLIQUID_")
+    key.starts_with("IMPERAOS_")
         || matches!(
             key,
             "OPENAI_API_KEY" | "DEEPSEEK_API_KEY" | "ANTHROPIC_API_KEY" | "COMPANY_LLM_API_KEY"
@@ -2552,25 +3890,30 @@ fn bundled_config_dir(resolved: &ResolvedCli) -> Option<PathBuf> {
     }
 }
 
+fn macos_runtime_workdir(base: &Path) -> PathBuf {
+    base.join("com.imperaos.operatorpanel").join("runtime")
+}
+
+fn windows_runtime_workdir(base: &Path) -> PathBuf {
+    base.join("ImperaOS Operator Panel").join("runtime")
+}
+
+fn unix_runtime_workdir(base: &Path) -> PathBuf {
+    base.join("imperaos-operator-panel").join("runtime")
+}
+
 fn default_cli_workdir() -> Option<PathBuf> {
     if cfg!(target_os = "macos") {
         let home = std::env::var_os("HOME")?;
-        return Some(
-            PathBuf::from(home)
-                .join("Library")
-                .join("Application Support")
-                .join("com.aegisos.operatorpanel")
-                .join("runtime"),
-        );
+        let base = PathBuf::from(home)
+            .join("Library")
+            .join("Application Support");
+        return Some(macos_runtime_workdir(&base));
     }
     if cfg!(windows) {
         if let Some(base) = std::env::var_os("LOCALAPPDATA").or_else(|| std::env::var_os("APPDATA"))
         {
-            return Some(
-                PathBuf::from(base)
-                    .join("AegisOS Operator Panel")
-                    .join("runtime"),
-            );
+            return Some(windows_runtime_workdir(&PathBuf::from(base)));
         }
     }
     let base = std::env::var_os("XDG_DATA_HOME")
@@ -2578,7 +3921,7 @@ fn default_cli_workdir() -> Option<PathBuf> {
         .or_else(|| {
             std::env::var_os("HOME").map(|home| PathBuf::from(home).join(".local/share"))
         })?;
-    Some(base.join("aegisos-operator-panel").join("runtime"))
+    Some(unix_runtime_workdir(&base))
 }
 
 fn configure_cli_workdir(command: &mut Command) {
@@ -3205,10 +4548,12 @@ fn tail_events_impl(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use sha2::{Digest, Sha256};
     use std::collections::HashMap;
     use std::io::Write;
     #[cfg(unix)]
     use std::os::unix::fs::PermissionsExt;
+    use std::sync::{Arc, Mutex as StdMutex};
 
     #[test]
     fn normalize_actor_requires_expected_format() {
@@ -3273,6 +4618,11 @@ mod tests {
     }
 
     #[test]
+    fn operator_panel_contract_version_is_3_0() {
+        assert_eq!(CONTRACT_VERSION, "3.0");
+    }
+
+    #[test]
     fn parse_assistant_json_line_valid_token() {
         let payload = parse_assistant_json_line(
             r#"{"event":"token","data":{"text":"Hello"}}"#,
@@ -3317,7 +4667,7 @@ mod tests {
     fn assistant_command_args_include_stdio_json_stream_once() {
         let config = BridgeConfig {
             mode: Some("external".to_string()),
-            cli_path: Some("binliquid".to_string()),
+            cli_path: Some("imperaos".to_string()),
             bundled_python_path: None,
             profile: Some("balanced".to_string()),
             root_dir: None,
@@ -3366,7 +4716,7 @@ mod tests {
     #[test]
     fn assistant_command_preview_redacts_user_message() {
         let preview = format_assistant_command_preview(
-            "binliquid",
+            "imperaos",
             &[],
             &[
                 "chat".to_string(),
@@ -3378,6 +4728,141 @@ mod tests {
 
         assert!(preview.contains("[user_message]"));
         assert!(!preview.contains("secret prompt body"));
+    }
+
+    #[test]
+    fn governed_assistant_args_use_compiled_prompt_file_and_trusted_identity() {
+        let config = BridgeConfig {
+            mode: Some("external".to_string()),
+            cli_path: Some("imperaos".to_string()),
+            bundled_python_path: None,
+            profile: Some("balanced".to_string()),
+            root_dir: None,
+            env: HashMap::new(),
+            timeout_ms: None,
+        };
+        let identity = TrustedArtifactIdentity::new(
+            "workspace-1",
+            "user-1",
+            "user",
+            vec!["artifact_admin".to_string()],
+        )
+        .expect("identity");
+        let trusted_config = trusted_artifact_command_config(&config);
+        let args = build_assistant_turn_args(
+            &trusted_config,
+            Path::new("C:/tmp/compiled-prompt.md"),
+            "turn-1",
+            "session-1",
+            Some("ollama"),
+            Some("local-ollama"),
+            None,
+            None,
+            None,
+            None,
+            Path::new("C:/tmp/artifacts"),
+            &identity,
+        );
+
+        assert_eq!(&args[..2], &["assistant", "turn"]);
+        assert!(args
+            .windows(2)
+            .any(|pair| pair[0] == "--prompt-file" && pair[1] == "C:/tmp/compiled-prompt.md"));
+        assert!(args
+            .windows(2)
+            .any(|pair| pair[0] == "--artifact-workspace-id" && pair[1] == "workspace-1"));
+        assert!(args
+            .windows(2)
+            .any(|pair| pair[0] == "--artifact-principal-id" && pair[1] == "user-1"));
+        assert!(args
+            .windows(2)
+            .any(|pair| pair[0] == "--artifact-role" && pair[1] == "artifact_admin"));
+        assert!(args
+            .windows(2)
+            .any(|pair| { pair[0] == "--artifact-prompt-data-class" && pair[1] == "regulated" }));
+        assert!(args
+            .windows(2)
+            .any(|pair| pair[0] == "--profile" && pair[1] == "enterprise"));
+
+        let preview = format_assistant_command_preview("imperaos", &[], &args);
+        assert!(preview.contains("[compiled_prompt_file]"));
+        assert!(preview.contains("[artifact_root]"));
+        assert!(preview.contains("[artifact_principal]"));
+        assert!(!preview.contains("C:/tmp"));
+        assert!(!preview.contains("user-1"));
+    }
+
+    #[test]
+    fn governed_artifact_config_drops_renderer_authority_overrides() {
+        let config = BridgeConfig {
+            mode: Some("external".to_string()),
+            cli_path: Some("renderer-controlled.exe".to_string()),
+            bundled_python_path: Some("renderer-python.exe".to_string()),
+            profile: Some("balanced".to_string()),
+            root_dir: Some("renderer-root".to_string()),
+            env: HashMap::from([
+                (
+                    "IMPERAOS_GOVERNANCE_APPROVAL_STORE_PATH".to_string(),
+                    "renderer-controlled.sqlite3".to_string(),
+                ),
+                (
+                    "IMPERAOS_CONFIG_ROOT".to_string(),
+                    "renderer-controlled-config".to_string(),
+                ),
+                ("OPENAI_API_KEY".to_string(), "provider-key".to_string()),
+            ]),
+            timeout_ms: None,
+        };
+
+        let trusted = trusted_artifact_command_config(&config);
+
+        assert_eq!(trusted.profile(), trusted_artifact_profile());
+        assert_eq!(trusted.mode.as_deref(), Some("auto"));
+        assert!(trusted.cli_path.is_none());
+        assert!(trusted.bundled_python_path.is_none());
+        assert!(trusted.root_dir.is_none());
+        assert!(trusted.env.is_empty());
+    }
+
+    #[test]
+    fn assistant_prompt_guard_removes_prompt_on_every_drop_path() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let prompt = dir.path().join("prompt.md");
+        fs::write(&prompt, "classified prompt").expect("write prompt");
+
+        {
+            let _guard = AssistantPromptFileGuard(prompt.clone());
+            assert!(prompt.exists());
+        }
+
+        assert!(!prompt.exists());
+    }
+
+    #[test]
+    fn assistant_prompt_partial_write_failure_removes_created_file() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let prompt = dir.path().join("partial.md");
+        let result = create_assistant_prompt_file_with_writer(&prompt, |file| {
+            std::io::Write::write_all(file, b"classified prefix")?;
+            Err(std::io::Error::other("simulated disk failure"))
+        });
+
+        assert!(result.is_err());
+        assert!(!prompt.exists());
+    }
+
+    #[test]
+    fn assistant_prompt_startup_cleanup_removes_only_stale_prompt_files() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let stale = dir.path().join("stale.md");
+        let unrelated = dir.path().join("keep.json");
+        fs::write(&stale, "stale prompt").expect("write stale");
+        fs::write(&unrelated, "keep").expect("write unrelated");
+
+        cleanup_stale_assistant_prompt_files(dir.path(), Duration::ZERO);
+
+        assert!(!stale.exists());
+        assert!(unrelated.exists());
     }
 
     #[test]
@@ -3401,6 +4886,36 @@ mod tests {
         assert_eq!(token.data["text"], "Hi");
         assert_eq!(final_event.event, "final");
         assert_eq!(final_event.data["final_text"], "Done");
+    }
+
+    #[test]
+    fn assistant_runtime_v3_golden_events_parse_through_the_tauri_bridge() {
+        let fixture: Value = serde_json::from_str(include_str!(
+            "../../../../contracts/operator_panel/fixtures/assistant_runtime_v3_golden.json"
+        ))
+        .expect("assistant runtime golden fixture");
+        let scenarios = fixture["scenarios"].as_array().expect("scenarios");
+
+        for scenario in scenarios {
+            let events = scenario["events"].as_array().expect("events");
+            for (index, event) in events.iter().enumerate() {
+                let line = serde_json::to_string(&json!({
+                    "event": event["event"],
+                    "data": event["data"],
+                }))
+                .expect("json line");
+                let parsed = parse_assistant_json_line(
+                    &line,
+                    event["assistantTurnId"].as_str().expect("turn id"),
+                    event["sessionId"].as_str().expect("session id"),
+                    (index + 1) as u64,
+                )
+                .expect("parse golden event");
+
+                assert_eq!(parsed.event, event["event"].as_str().expect("event name"));
+                assert_eq!(parsed.data, event["data"]);
+            }
+        }
     }
 
     #[test]
@@ -3486,7 +5001,7 @@ mod tests {
             contract_version: CONTRACT_VERSION.to_string(),
             job_id: "job-4".to_string(),
             profile: "balanced".to_string(),
-            root_dir: ".binliquid/team/jobs".to_string(),
+            root_dir: ".imperaos/team/jobs".to_string(),
             process_id: Some(4242),
         };
         let json = serde_json::to_value(payload).expect("serialize");
@@ -3499,9 +5014,9 @@ mod tests {
     fn bundled_python_relative_path_matches_platform() {
         let path = bundled_python_relative_path();
         if cfg!(windows) {
-            assert_eq!(path, "binliquid-runtime/python/Scripts/python.exe");
+            assert_eq!(path, "imperaos-runtime/python/Scripts/python.exe");
         } else {
-            assert_eq!(path, "binliquid-runtime/python/bin/python");
+            assert_eq!(path, "imperaos-runtime/python/bin/python");
         }
     }
 
@@ -3540,7 +5055,7 @@ mod tests {
         fs::write(&bundled, "placeholder").expect("python");
         let config = BridgeConfig {
             mode: Some("auto".to_string()),
-            cli_path: Some("binliquid-custom".to_string()),
+            cli_path: Some("imperaos-custom".to_string()),
             bundled_python_path: Some(bundled.to_string_lossy().to_string()),
             profile: Some("balanced".to_string()),
             root_dir: None,
@@ -3550,7 +5065,7 @@ mod tests {
 
         let external = resolve_cli_command(&config, None).expect("external");
         assert_eq!(external.mode, CoreMode::External);
-        assert_eq!(external.program, "binliquid-custom");
+        assert_eq!(external.program, "imperaos-custom");
 
         let bundled_config = BridgeConfig {
             cli_path: None,
@@ -3558,7 +5073,7 @@ mod tests {
         };
         let bundled = resolve_cli_command(&bundled_config, None).expect("bundled");
         assert_eq!(bundled.mode, CoreMode::Bundled);
-        assert_eq!(bundled.prefix_args, vec!["-m", "binliquid"]);
+        assert_eq!(bundled.prefix_args, vec!["-m", "imperaos"]);
     }
 
     #[test]
@@ -3570,7 +5085,7 @@ mod tests {
         fs::write(&python, "placeholder").expect("python");
         let config = BridgeConfig {
             mode: Some("auto".to_string()),
-            cli_path: Some("binliquid-custom".to_string()),
+            cli_path: Some("imperaos-custom".to_string()),
             bundled_python_path: None,
             profile: Some("balanced".to_string()),
             root_dir: None,
@@ -3581,7 +5096,7 @@ mod tests {
         let resolved = resolve_cli_command(&config, Some(&resource_dir)).expect("external");
 
         assert_eq!(resolved.mode, CoreMode::External);
-        assert_eq!(resolved.program, "binliquid-custom");
+        assert_eq!(resolved.program, "imperaos-custom");
     }
 
     #[test]
@@ -3605,7 +5120,7 @@ mod tests {
 
         assert_eq!(resolved.mode, CoreMode::Bundled);
         assert_eq!(resolved.program, python.to_string_lossy());
-        assert_eq!(resolved.prefix_args, vec!["-m", "binliquid"]);
+        assert_eq!(resolved.prefix_args, vec!["-m", "imperaos"]);
     }
 
     #[test]
@@ -3631,7 +5146,43 @@ mod tests {
 
         assert_eq!(resolved.mode, CoreMode::Bundled);
         assert_eq!(resolved.program, python.to_string_lossy());
-        assert_eq!(resolved.prefix_args, vec!["-m", "binliquid"]);
+        assert_eq!(resolved.prefix_args, vec!["-m", "imperaos"]);
+    }
+
+    #[test]
+    fn resolve_cli_command_external_fallback_uses_imperaos() {
+        let config = BridgeConfig {
+            mode: Some("external".to_string()),
+            cli_path: None,
+            bundled_python_path: None,
+            profile: Some("balanced".to_string()),
+            root_dir: None,
+            env: HashMap::new(),
+            timeout_ms: None,
+        };
+
+        let resolved = resolve_cli_command(&config, None).expect("external fallback");
+        assert_eq!(resolved.mode, CoreMode::External);
+        assert_eq!(resolved.program, "imperaos");
+        assert!(resolved.prefix_args.is_empty());
+    }
+
+    #[test]
+    fn desktop_runtime_workdirs_use_only_imperaos_identity() {
+        let base = Path::new("data-root");
+
+        assert_eq!(
+            macos_runtime_workdir(base),
+            base.join("com.imperaos.operatorpanel").join("runtime")
+        );
+        assert_eq!(
+            windows_runtime_workdir(base),
+            base.join("ImperaOS Operator Panel").join("runtime")
+        );
+        assert_eq!(
+            unix_runtime_workdir(base),
+            base.join("imperaos-operator-panel").join("runtime")
+        );
     }
 
     #[test]
@@ -3644,16 +5195,31 @@ mod tests {
     }
 
     #[test]
+    fn cli_env_allowlist_uses_only_canonical_project_prefix() {
+        let legacy_product_key = format!("{}_MODEL_NAME", ["BIN", "LIQUID"].concat());
+        let former_product_key = format!("{}_MODEL_NAME", ["AE", "GIS", "OS"].concat());
+
+        assert!(is_allowed_cli_env_key("IMPERAOS_MODEL_NAME"));
+        assert!(is_allowed_cli_env_key("OPENAI_API_KEY"));
+        assert!(is_allowed_cli_env_key("DEEPSEEK_API_KEY"));
+        assert!(is_allowed_cli_env_key("ANTHROPIC_API_KEY"));
+        assert!(is_allowed_cli_env_key("COMPANY_LLM_API_KEY"));
+        assert!(!is_allowed_cli_env_key(&legacy_product_key));
+        assert!(!is_allowed_cli_env_key(&former_product_key));
+        assert!(!is_allowed_cli_env_key("PYTHONPATH"));
+    }
+
+    #[test]
     fn spawn_cli_background_returns_pid_for_external_script() {
         let dir = tempfile::tempdir().expect("tempdir");
         let root = dir.path().join("jobs");
         fs::create_dir_all(&root).expect("mkdir");
         let script = if cfg!(windows) {
-            let path = dir.path().join("fake-binliquid.cmd");
+            let path = dir.path().join("fake-imperaos.cmd");
             fs::write(&path, "@echo off\r\nping -n 2 127.0.0.1 >nul\r\n").expect("script");
             path
         } else {
-            let path = dir.path().join("fake-binliquid.sh");
+            let path = dir.path().join("fake-imperaos.sh");
             fs::write(&path, "#!/bin/sh\nsleep 1\n").expect("script");
             path
         };
@@ -3679,5 +5245,159 @@ mod tests {
             .expect("spawn");
 
         assert!(pid.is_some());
+    }
+
+    #[test]
+    fn export_reconciliation_retains_receipt_until_idempotent_authority_ack() {
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .expect("runtime");
+        runtime.block_on(async {
+            let root = tempfile::tempdir().expect("tempdir");
+            let state = ArtifactExportState::new(root.path().join("journal"));
+            let actor = ExportBinding::new("workspace-1", "user-1").expect("actor");
+            let exact = ExportBinding::authorized(
+                "workspace-1",
+                "user-1",
+                "user",
+                "export-reconcile-1",
+                "artifact-1",
+                "revision-1",
+                "json",
+            )
+            .expect("binding");
+            let target = root.path().join("report.json");
+            let bytes = br#"{"status":"ok"}"#.to_vec();
+            let digest = format!("{:x}", Sha256::digest(&bytes));
+            let issued = state
+                .issue_ticket(target, exact, 1024, Duration::from_secs(60))
+                .await
+                .expect("ticket");
+            let preflight = state
+                .preflight(&issued.ticket, &actor, &bytes, &digest)
+                .await
+                .expect("preflight");
+            state
+                .prepare_reconciliation(&issued.ticket, &actor, &preflight)
+                .await
+                .expect("receipt");
+            state
+                .commit(&issued.ticket, &actor, bytes, &digest)
+                .await
+                .expect("write");
+
+            let unavailable = reconcile_export_actions_with(
+                &state,
+                state.reconciliation_actions(&actor).await.expect("actions"),
+                |_action| async {
+                    Err(BridgeError::new(
+                        "ARTIFACT_RPC_UNAVAILABLE",
+                        "unavailable",
+                        "",
+                        "artifact export reconciliation",
+                        true,
+                    ))
+                },
+            )
+            .await
+            .expect_err("authority failure");
+            assert!(unavailable.retryable);
+            assert_eq!(
+                state
+                    .reconciliation_actions(&actor)
+                    .await
+                    .expect("retained")
+                    .len(),
+                1
+            );
+
+            let requests = Arc::new(StdMutex::new(Vec::new()));
+            let observed = requests.clone();
+            reconcile_export_actions_with(
+                &state,
+                state
+                    .reconciliation_actions(&actor)
+                    .await
+                    .expect("retry actions"),
+                move |action| {
+                    let observed = observed.clone();
+                    async move {
+                        let (method, payload) = export_reconciliation_terminal_request(&action);
+                        observed
+                            .lock()
+                            .expect("requests")
+                            .push((method, payload.params));
+                        Ok(())
+                    }
+                },
+            )
+            .await
+            .expect("authority ack");
+
+            let requests = requests.lock().expect("requests");
+            assert_eq!(requests.len(), 1);
+            assert_eq!(requests[0].0, "artifact.export.commit");
+            assert_eq!(requests[0].1["idempotencyKey"], "commit-export-reconcile-1");
+            assert!(state
+                .reconciliation_actions(&actor)
+                .await
+                .expect("cleared")
+                .is_empty());
+        });
+    }
+
+    #[test]
+    fn missing_export_reconciliation_uses_idempotent_native_write_failed_cancel() {
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .expect("runtime");
+        runtime.block_on(async {
+            let root = tempfile::tempdir().expect("tempdir");
+            let state = ArtifactExportState::new(root.path().join("journal"));
+            let actor = ExportBinding::new("workspace-1", "user-1").expect("actor");
+            let bytes = b"safe export".to_vec();
+            let digest = format!("{:x}", Sha256::digest(&bytes));
+            let issued = state
+                .issue_ticket(
+                    root.path().join("missing.json"),
+                    ExportBinding::authorized(
+                        "workspace-1",
+                        "user-1",
+                        "user",
+                        "export-cancel-1",
+                        "artifact-1",
+                        "revision-1",
+                        "json",
+                    )
+                    .expect("binding"),
+                    1024,
+                    Duration::from_secs(60),
+                )
+                .await
+                .expect("ticket");
+            let preflight = state
+                .preflight(&issued.ticket, &actor, &bytes, &digest)
+                .await
+                .expect("preflight");
+            state
+                .prepare_reconciliation(&issued.ticket, &actor, &preflight)
+                .await
+                .expect("receipt");
+
+            let actions = state.reconciliation_actions(&actor).await.expect("actions");
+            let (method, payload) = export_reconciliation_terminal_request(&actions[0]);
+            assert_eq!(method, "artifact.export.cancel");
+            assert_eq!(payload.params["reason"], "native_write_failed");
+            assert_eq!(
+                payload.params["idempotencyKey"],
+                "cancel-export-cancel-1-native_write_failed"
+            );
+            assert_eq!(
+                payload.idempotency_key.as_deref(),
+                Some("cancel-export-cancel-1-native_write_failed")
+            );
+        });
     }
 }

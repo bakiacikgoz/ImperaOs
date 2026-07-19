@@ -5,7 +5,7 @@ Provider runtime invocation starts with dry-run evidence, not live API calls.
 Run a dry-run invocation:
 
 ```bash
-uv run binliquid provider invoke \
+uv run imperaos provider invoke \
   --provider openai_responses \
   --model gpt-placeholder \
   --profile enterprise \
@@ -28,7 +28,7 @@ uv run python scripts/run_provider_runtime_workflow_proof.py \
 Operational rules:
 
 - `dry_run` never performs an external provider API call.
-- `canary_live` requires `BINLIQUID_PROVIDER_LIVE_CANARY_OPT_IN=1` plus the
+- `canary_live` requires `IMPERAOS_PROVIDER_LIVE_CANARY_OPT_IN=1` plus the
   matching provider credential, and remains blocked in CI.
 - Evidence artifacts contain hashes, policy decision metadata, tool policy, and
   reason codes only.

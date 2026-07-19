@@ -1,4 +1,4 @@
-AegisOS / BinLiquid
+ImperaOS / ImperaOS
 Final Technical System State Report (v0.4.1 Hardening)
 Date: 2026-03-03 (Europe/Istanbul)
 Repository: repo root
@@ -48,19 +48,19 @@ State at validation time:
 - latest commits:
   - 314d8dc hardening: optional audit envelope signature support
   - 18c7412 v0.4.1 hardening: team resume, restricted profile, sqlite concurrency, CI mock benchmark
-  - 28a828b feat: integrate aegisos v0.4 team runtime and publish system report
+  - 28a828b feat: integrate imperaos v0.4 team runtime and publish system report
 
 Changed-file footprint by hardening wave:
 - Core runtime/orchestration/governance
-  - `binliquid/cli.py`
-  - `binliquid/governance/runtime.py`
-  - `binliquid/governance/approval_store.py`
-  - `binliquid/team/supervisor.py`
-  - `binliquid/team/handoff.py`
-  - `binliquid/team/memory_scope.py`
-  - `binliquid/team/checkpoint_store.py`
-  - `binliquid/team/artifacts.py`
-  - `binliquid/memory/persistent_store.py`
+  - `imperaos/cli.py`
+  - `imperaos/governance/runtime.py`
+  - `imperaos/governance/approval_store.py`
+  - `imperaos/team/supervisor.py`
+  - `imperaos/team/handoff.py`
+  - `imperaos/team/memory_scope.py`
+  - `imperaos/team/checkpoint_store.py`
+  - `imperaos/team/artifacts.py`
+  - `imperaos/memory/persistent_store.py`
   - `benchmarks/run_team.py`
 - New policy/config/docs
   - `config/policies/restricted.toml`
@@ -82,7 +82,7 @@ Changed-file footprint by hardening wave:
 3) Runtime Architecture (Current)
 ====================================================================
 3.1 Core + Team layering
-- Aegis Core runtime (planner/router/orchestrator/governance/memory/tracing) remains foundational.
+- ImperaOS Core runtime (planner/router/orchestrator/governance/memory/tracing) remains foundational.
 - Team runtime is a layer above orchestrator:
   - task decomposition/materialization
   - dependency-aware scheduling
@@ -91,23 +91,23 @@ Changed-file footprint by hardening wave:
   - team artifact emission and replay support
 
 3.2 Team runtime modules
-- `binliquid/team/models.py`
+- `imperaos/team/models.py`
   - job/task/handoff/event/envelope typed models
-- `binliquid/team/scheduler.py`
+- `imperaos/team/scheduler.py`
   - parallel scheduler; deadlock/limit handling
-- `binliquid/team/supervisor.py`
+- `imperaos/team/supervisor.py`
   - primary team execution loop
   - approval override injection for resume semantics
-- `binliquid/team/handoff.py`
+- `imperaos/team/handoff.py`
   - handoff governance evaluation wrapper
-- `binliquid/team/memory_scope.py`
+- `imperaos/team/memory_scope.py`
   - memory write governance wrapper
-- `binliquid/team/artifacts.py`
+- `imperaos/team/artifacts.py`
   - status/tasks/handoffs/events/envelope writing
   - hash-chain integrity + optional signature
-- `binliquid/team/replay.py`
+- `imperaos/team/replay.py`
   - status/events/envelope replay view
-- `binliquid/team/checkpoint_store.py`
+- `imperaos/team/checkpoint_store.py`
   - checkpoint persistence (sqlite)
 
 3.3 Governance phases covered in team runtime
@@ -130,7 +130,7 @@ Team path now enforces governance checkpoints at:
 
 4.2 What is implemented now
 - New CLI command:
-  - `binliquid team resume --spec <spec> --job-id <blocked_job> --root-dir <jobs_dir> [--resume-job-id ...]`
+  - `imperaos team resume --spec <spec> --job-id <blocked_job> --root-dir <jobs_dir> [--resume-job-id ...]`
 - Resume flow:
   1. Load source job status/events.
   2. Discover `approval_requested` events.
@@ -170,7 +170,7 @@ Team path now enforces governance checkpoints at:
 - Unmatched handoff/memory routes remain deny-by-default by evaluator fallback.
 
 5.4 Team template support
-- `binliquid team init --template regulated` now produces a regulated-oriented team spec
+- `imperaos team init --template regulated` now produces a regulated-oriented team spec
   with role set:
   - Intake Agent
   - Research Analyst Agent
@@ -228,7 +228,7 @@ Team path now enforces governance checkpoints at:
 - Hash chain head persisted under team artifact root parent.
 
 8.2 New signature support
-- If `BINLIQUID_AUDIT_SIGNING_KEY` is set:
+- If `IMPERAOS_AUDIT_SIGNING_KEY` is set:
   - signature is computed as HMAC-SHA256 over current envelope hash.
 - If unset:
   - signature remains `null` (previous behavior).
@@ -263,7 +263,7 @@ Approval group (resume pipeline support):
 10) Data Contracts and Artifact Surface
 ====================================================================
 10.1 Team artifact set per job
-Default root (configurable): `.binliquid/team/jobs/<job_id>/`
+Default root (configurable): `.imperaos/team/jobs/<job_id>/`
 - `status.json`
 - `events.jsonl`
 - `tasks.json`
@@ -293,7 +293,7 @@ Executed:
 
 11.2 Runtime health
 Executed:
-- `uv run binliquid doctor --profile restricted --provider auto`
+- `uv run imperaos doctor --profile restricted --provider auto`
 Observed:
 - selected provider: `ollama`
 - status: `healthy`

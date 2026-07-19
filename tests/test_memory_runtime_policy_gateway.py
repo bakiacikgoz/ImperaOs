@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from binliquid.memory.runtime_bridge import RuntimeMemoryRequest
-from binliquid.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
+from imperaos.memory.runtime_bridge import RuntimeMemoryRequest
+from imperaos.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
 
 
 def test_policy_gateway_allows_authorized_read_and_writes_hash_only_evidence(

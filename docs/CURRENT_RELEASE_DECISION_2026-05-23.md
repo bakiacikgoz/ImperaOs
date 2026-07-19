@@ -87,8 +87,8 @@ All requested validation commands exited `0`:
 - `uv run --extra dev pytest -q`
 - `corepack pnpm --dir apps/operator-panel qa:frontend`
 - `cargo test -q --manifest-path apps/operator-panel/src-tauri/Cargo.toml`
-- `uv run python -m binliquid computer-use doctor --json`
-- `uv run python -m binliquid operator capabilities --json`
+- `uv run python -m imperaos computer-use doctor --json`
+- `uv run python -m imperaos operator capabilities --json`
 
 ## Red / blocked gates
 

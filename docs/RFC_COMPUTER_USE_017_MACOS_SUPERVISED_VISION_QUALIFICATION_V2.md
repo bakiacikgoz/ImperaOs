@@ -21,9 +21,9 @@ local supervised fixture envelope on the current macOS host.
 ## Preflight
 
 ```bash
-uv run binliquid computer-use doctor --profile balanced --platform all --json
+uv run imperaos computer-use doctor --profile balanced --platform all --json
 
-uv run binliquid computer-use provider doctor \
+uv run imperaos computer-use provider doctor \
   --provider ollama \
   --model <local-vision-model> \
   --synthetic-fixture \
@@ -40,17 +40,17 @@ Expected preflight evidence:
 ## Supervised Fixture Run
 
 ```bash
-BINLIQUID_COMPUTER_USE_LIVE_MACOS=1 \
-BINLIQUID_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1 \
-BINLIQUID_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1 \
-BINLIQUID_COMPUTER_USE_ACK="I understand BinLiquid will control my macOS desktop only for local supervised fixtures." \
-BINLIQUID_COMPUTER_USE_VISION_ENABLED=1 \
-BINLIQUID_COMPUTER_USE_VISION_PROVIDER=ollama \
-BINLIQUID_COMPUTER_USE_VISION_MODEL=<local-vision-model> \
-BINLIQUID_COMPUTER_USE_MACOS_LIVE_ENABLED=1 \
-BINLIQUID_COMPUTER_USE_MACOS_CAPTURE_BACKEND=screencapture \
-BINLIQUID_COMPUTER_USE_MACOS_INPUT_BACKEND=quartz \
-uv run binliquid computer-use qualification run \
+IMPERAOS_COMPUTER_USE_LIVE_MACOS=1 \
+IMPERAOS_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1 \
+IMPERAOS_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1 \
+IMPERAOS_COMPUTER_USE_ACK="I understand ImperaOS will control my macOS desktop only for local supervised fixtures." \
+IMPERAOS_COMPUTER_USE_VISION_ENABLED=1 \
+IMPERAOS_COMPUTER_USE_VISION_PROVIDER=ollama \
+IMPERAOS_COMPUTER_USE_VISION_MODEL=<local-vision-model> \
+IMPERAOS_COMPUTER_USE_MACOS_LIVE_ENABLED=1 \
+IMPERAOS_COMPUTER_USE_MACOS_CAPTURE_BACKEND=screencapture \
+IMPERAOS_COMPUTER_USE_MACOS_INPUT_BACKEND=quartz \
+uv run imperaos computer-use qualification run \
   --platform macos \
   --suite live-fixture-smoke \
   --mode supervised \
@@ -63,12 +63,12 @@ uv run binliquid computer-use qualification run \
 ## Replay Verification
 
 ```bash
-uv run binliquid computer-use replay \
+uv run imperaos computer-use replay \
   --report artifacts/computer_use/macos_qualification_v2_report.json \
   --verify \
   --json
 
-uv run binliquid computer-use qualification verify \
+uv run imperaos computer-use qualification verify \
   --platform macos \
   --report artifacts/computer_use/macos_qualification_v2_report.json \
   --json

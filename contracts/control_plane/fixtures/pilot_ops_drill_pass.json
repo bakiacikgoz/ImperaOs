@@ -7,7 +7,7 @@
   "steps": [
     {
       "stepId": "config-resolve",
-      "command": "binliquid config resolve --profile enterprise",
+      "command": "imperaos config resolve --profile enterprise",
       "status": "pass",
       "exitCode": 0,
       "startedAtUtc": "2026-06-14T00:00:00Z",

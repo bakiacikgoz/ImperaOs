@@ -155,7 +155,7 @@ corepack pnpm --dir apps/operator-panel build
 cargo test -q --manifest-path apps/operator-panel/src-tauri/Cargo.toml
 cargo fmt --manifest-path apps/operator-panel/src-tauri/Cargo.toml --check
 powershell -NoProfile -ExecutionPolicy Bypass -File apps/operator-panel/scripts/build_bundled_runtime_windows.ps1 -Arch x64 -PythonBin .venv\Scripts\python.exe
-powershell -NoProfile -ExecutionPolicy Bypass -File apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 -RuntimeDir apps/operator-panel/src-tauri/resources/binliquid-runtime
+powershell -NoProfile -ExecutionPolicy Bypass -File apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 -RuntimeDir apps/operator-panel/src-tauri/resources/imperaos-runtime
 corepack pnpm --dir apps/operator-panel exec tauri build --debug --no-bundle
 git diff --check
 ```
@@ -168,7 +168,7 @@ Summary:
 - Operator panel Vitest suite: 12 files / 43 tests passed.
 - Operator panel lint and production build: pass.
 - Tauri bridge Cargo tests: 13 tests passed.
-- Bundled runtime build and verify: pass, `binliquid_version=0.4.1`.
+- Bundled runtime build and verify: pass, `imperaos_version=0.4.1`.
 - Tauri debug no-bundle smoke: pass.
 - Workflow YAML parse and PowerShell parser checks: pass.
 - Diff whitespace check: pass.

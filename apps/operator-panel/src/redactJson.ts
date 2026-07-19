@@ -1,5 +1,5 @@
 const SENSITIVE_KEY_PATTERN =
-  /(secret|token|password|credential|authorization|cookie|api[_-]?key|private[_-]?key|raw[_-]?screenshot[_-]?path|screenshot[_-]?path)/i;
+  /(secret|token|password|credential|authorization|cookie|api[_-]?key|private[_-]?key|(?:^|[_-])path$)/i;
 
 export function redactJson(value: unknown): unknown {
   if (Array.isArray(value)) {

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from binliquid.control_plane.snapshot import build_control_plane_snapshot
+from imperaos.control_plane.snapshot import build_control_plane_snapshot
 
 
 def test_control_plane_snapshot_exposes_missing_mainline_rc_freeze(tmp_path) -> None:

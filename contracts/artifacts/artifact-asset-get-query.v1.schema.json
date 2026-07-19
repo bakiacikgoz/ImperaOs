@@ -1,0 +1,19 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-asset-get-query.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "assetId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Assetid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "assetId"
+  ],
+  "title": "GetArtifactAssetQuery",
+  "type": "object",
+  "x-imperaos-contract": "artifact-asset-get-query.v1"
+}

@@ -3,9 +3,9 @@ name: Enterprise Workspace Release Closure
 on:
   pull_request:
     paths:
-      - "binliquid/control_plane/**"
-      - "binliquid/enterprise/**"
-      - "binliquid/memory/**"
+      - "imperaos/control_plane/**"
+      - "imperaos/enterprise/**"
+      - "imperaos/memory/**"
       - "apps/operator-panel/**"
       - "contracts/**"
       - "scripts/**enterprise_workspace**"
@@ -19,6 +19,8 @@ on:
 jobs:
   enterprise-workspace-release-closure:
     runs-on: windows-latest
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
 
     steps:
       - name: Checkout
@@ -32,7 +34,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -44,6 +46,9 @@ jobs:
 
       - name: Sync Python dependencies
         run: uv sync --python 3.11 --extra dev
+
+      - name: Install UI dependencies
+        run: pnpm install --dir apps/operator-panel --frozen-lockfile
 
       - name: Install Playwright Chromium
         run: pnpm --dir apps/operator-panel exec playwright install chromium

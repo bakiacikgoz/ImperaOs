@@ -5,15 +5,15 @@ from pathlib import Path
 
 import jsonschema
 
-from binliquid.computer_use.models import RiskClass
-from binliquid.computer_use.vision_runtime.errors import VisionRuntimeError
-from binliquid.computer_use.vision_runtime.models import (
+from imperaos.computer_use.models import RiskClass
+from imperaos.computer_use.vision_runtime.errors import VisionRuntimeError
+from imperaos.computer_use.vision_runtime.models import (
     InputActionType,
     SurfaceKind,
     VisionObservation,
 )
-from binliquid.computer_use.vision_runtime.provider_doctor import doctor_vision_provider
-from binliquid.computer_use.vision_runtime.providers.ollama_vision import OllamaVisionInterpreter
+from imperaos.computer_use.vision_runtime.provider_doctor import doctor_vision_provider
+from imperaos.computer_use.vision_runtime.providers.ollama_vision import OllamaVisionInterpreter
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PROVIDER_SCHEMA_PATH = (

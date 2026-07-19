@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.experts.code_expert import CodeExpert
-from binliquid.experts.memory_plan_expert import MemoryPlanExpert
-from binliquid.experts.research_expert import ResearchExpert
-from binliquid.schemas.expert_payloads import (
+from imperaos.experts.code_expert import CodeExpert
+from imperaos.experts.memory_plan_expert import MemoryPlanExpert
+from imperaos.experts.research_expert import ResearchExpert
+from imperaos.schemas.expert_payloads import (
     CodeExpertPayload,
     PlanExpertPayload,
     ResearchExpertPayload,
 )
-from binliquid.schemas.models import ExpertRequest, TaskType
+from imperaos.schemas.models import ExpertRequest, TaskType
 
 
 def _request(task_type: TaskType, user_input: str) -> ExpertRequest:

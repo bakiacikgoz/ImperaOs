@@ -5,20 +5,20 @@
 ### Smoke (health)
 
 ```bash
-uv run binliquid benchmark smoke --mode all --profile balanced
+uv run imperaos benchmark smoke --mode all --profile balanced
 ```
 
 ### Ablation (quality)
 
 ```bash
-uv run binliquid benchmark ablation --mode all --profile balanced --suite quality
+uv run imperaos benchmark ablation --mode all --profile balanced --suite quality
 ```
 
 ### Energy
 
 ```bash
-uv run binliquid benchmark energy --profile balanced --energy-mode measured
-uv run binliquid benchmark energy --profile balanced --energy-mode estimated
+uv run imperaos benchmark energy --profile balanced --energy-mode measured
+uv run imperaos benchmark energy --profile balanced --energy-mode estimated
 ```
 
 ## Suites

@@ -1,0 +1,90 @@
+{
+  "contractVersion": "artifact-feature-flags/v1",
+  "flags": [
+    "artifact_workspace.enabled",
+    "artifact_workspace.document.enabled",
+    "artifact_workspace.form.enabled",
+    "artifact_workspace.code.enabled",
+    "artifact_workspace.flow.enabled",
+    "artifact_workspace.spreadsheet.enabled",
+    "artifact_workspace.canvas.enabled",
+    "artifact_workspace.slides.enabled",
+    "artifact_workspace.export.enabled",
+    "assistant_ui_runtime.enabled",
+    "ai_sdk_tauri_transport.enabled"
+  ],
+  "defaults": {
+    "artifact_workspace.enabled": false,
+    "artifact_workspace.document.enabled": false,
+    "artifact_workspace.form.enabled": false,
+    "artifact_workspace.code.enabled": false,
+    "artifact_workspace.flow.enabled": false,
+    "artifact_workspace.spreadsheet.enabled": false,
+    "artifact_workspace.canvas.enabled": false,
+    "artifact_workspace.slides.enabled": false,
+    "artifact_workspace.export.enabled": false,
+    "assistant_ui_runtime.enabled": false,
+    "ai_sdk_tauri_transport.enabled": false
+  },
+  "profiles": {
+    "artifact_workspace_off": {
+      "description": "Fail-closed profile; every workspace capability is disabled.",
+      "features": {
+        "artifact_workspace.enabled": false,
+        "artifact_workspace.document.enabled": false,
+        "artifact_workspace.form.enabled": false,
+        "artifact_workspace.code.enabled": false,
+        "artifact_workspace.flow.enabled": false,
+        "artifact_workspace.spreadsheet.enabled": false,
+        "artifact_workspace.canvas.enabled": false,
+        "artifact_workspace.slides.enabled": false,
+        "artifact_workspace.export.enabled": false,
+        "assistant_ui_runtime.enabled": false,
+        "ai_sdk_tauri_transport.enabled": false
+      },
+      "adapterPolicy": "none"
+    },
+    "artifact_workspace_core": {
+      "description": "Enables the complete workspace using built-in and bundled fallback adapters.",
+      "features": {
+        "artifact_workspace.enabled": true,
+        "artifact_workspace.document.enabled": true,
+        "artifact_workspace.form.enabled": true,
+        "artifact_workspace.code.enabled": true,
+        "artifact_workspace.flow.enabled": true,
+        "artifact_workspace.spreadsheet.enabled": true,
+        "artifact_workspace.canvas.enabled": true,
+        "artifact_workspace.slides.enabled": true,
+        "artifact_workspace.export.enabled": true,
+        "assistant_ui_runtime.enabled": true,
+        "ai_sdk_tauri_transport.enabled": true
+      },
+      "adapterPolicy": "bundled_or_commercial"
+    },
+    "artifact_workspace_full": {
+      "description": "Enables the complete workspace and prefers licensed commercial adapters when available.",
+      "features": {
+        "artifact_workspace.enabled": true,
+        "artifact_workspace.document.enabled": true,
+        "artifact_workspace.form.enabled": true,
+        "artifact_workspace.code.enabled": true,
+        "artifact_workspace.flow.enabled": true,
+        "artifact_workspace.spreadsheet.enabled": true,
+        "artifact_workspace.canvas.enabled": true,
+        "artifact_workspace.slides.enabled": true,
+        "artifact_workspace.export.enabled": true,
+        "assistant_ui_runtime.enabled": true,
+        "ai_sdk_tauri_transport.enabled": true
+      },
+      "adapterPolicy": "commercial_preferred_with_bundled_fallback"
+    }
+  },
+  "authority": {
+    "globalGate": "artifact_workspace.enabled",
+    "adapterCapabilityGates": {
+      "artifact_workspace.spreadsheet.enabled": "spreadsheet",
+      "artifact_workspace.canvas.enabled": "canvas"
+    },
+    "rendererMayDisableOnly": true
+  }
+}

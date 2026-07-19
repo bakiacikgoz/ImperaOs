@@ -1,11 +1,13 @@
 import { useState, type ReactNode } from 'react';
 
-import type { AssistantTurn } from '../../assistant/assistantTypes';
+import type { AssistantArtifactProposalPart, AssistantArtifactRef, AssistantTurn } from '../../assistant/assistantTypes';
 import { assistantUiText, translateAssistantText, type UiLocale } from '../../i18n';
 import { Card } from '../primitives/Card';
+import { Button } from '../primitives/Button';
 import { Icon } from '../primitives/Icon';
 import { AssistantActionPreview } from './AssistantActionPreview';
 import { AssistantApprovalCard } from './AssistantApprovalCard';
+import { ArtifactProposalCard } from './ArtifactProposalCard';
 import { AssistantRunReferences } from './AssistantRunReferences';
 import { AssistantRunningState } from './AssistantRunningState';
 
@@ -283,7 +285,10 @@ export function AssistantMessage({
   onApprove,
   onReject,
   onExecute,
+  onApplyProposal,
   onRegenerate,
+  onOpenArtifact,
+  renderInlineArtifact,
 }: {
   turn: AssistantTurn;
   approvalDisabled: boolean;
@@ -295,7 +300,10 @@ export function AssistantMessage({
   onApprove: (approvalId: string) => void;
   onReject: (approvalId: string) => void;
   onExecute: (approvalId: string) => void;
+  onApplyProposal?: (proposal: AssistantArtifactProposalPart) => void;
   onRegenerate: (turnId: string) => void;
+  onOpenArtifact?: (artifactId: string) => void;
+  renderInlineArtifact?: (artifact: AssistantArtifactRef) => ReactNode;
 }) {
   const text = assistantUiText[locale];
   const message = turn.assistantMessage;
@@ -308,7 +316,8 @@ export function AssistantMessage({
       message.proposedAction ||
       message.approval ||
       message.referencedRuns.length > 0 ||
-      message.referencedArtifacts.length > 0,
+      message.referencedArtifacts.length > 0 ||
+      message.parts.length > 0,
   );
   const copyAssistantText = () => {
     if (message.text && typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -391,11 +400,43 @@ export function AssistantMessage({
             onExecute={onExecute}
           />
         ) : null}
+        {message.parts.filter((part) => part.type === 'artifact-proposal').map((proposal) => (
+          <ArtifactProposalCard
+            key={proposal.proposalId}
+            proposal={proposal}
+            disabled={approvalDisabled}
+            disabledReason={approvalDisabledReason}
+            onReview={onReviewApproval}
+            onApprove={onApprove}
+            onReject={onReject}
+            onApply={onApplyProposal ?? (() => undefined)}
+            risk={message.approval?.approvalId === proposal.approvalId ? message.approval.risk : undefined}
+          />
+        ))}
+        {message.parts.filter((part) => part.type === 'artifact').map((artifact) => (
+          <section className="assistant-inline-artifact" key={`${artifact.artifactId}-${artifact.revisionId ?? 'draft'}`}>
+            <div>
+              <strong>{artifact.title}</strong>
+              <p>{artifact.summary}</p>
+            </div>
+            {artifact.openable && onOpenArtifact ? (
+              <Button variant="ghost" onClick={() => onOpenArtifact(artifact.artifactId)}>Open artifact</Button>
+            ) : null}
+          </section>
+        ))}
+        {renderInlineArtifact ? message.referencedArtifacts
+          .filter((artifact) => artifact.kind === 'form' && artifact.artifactId)
+          .map((artifact) => (
+            <div key={`inline-${artifact.artifactId}-${artifact.revisionId ?? ''}`}>
+              {renderInlineArtifact(artifact)}
+            </div>
+          )) : null}
         <AssistantRunReferences
           runs={message.referencedRuns}
           artifacts={message.referencedArtifacts}
           emptyRunLabel={emptyRunLabel}
           locale={locale}
+          onOpenArtifact={onOpenArtifact}
         />
         {hasAssistantOutput ? (
           <div className="assistant-message-actions" aria-label="Assistant message actions">

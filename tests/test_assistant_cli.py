@@ -5,9 +5,44 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
+from imperaos.cli import _assistant_trace_stream_event, app
 
 runner = CliRunner()
+
+
+def test_assistant_trace_stream_event_flattens_data_and_skips_terminal_trace() -> None:
+    approval = _assistant_trace_stream_event(
+        {
+            "stage": "approval_pending",
+            "request_id": "request-1",
+            "data": {
+                "approval_id": "approval-1",
+                "title": "Approval required",
+                "risk": "medium",
+            },
+        }
+    )
+
+    assert approval == (
+        "approval_pending",
+        {
+            "approval_id": "approval-1",
+            "title": "Approval required",
+            "risk": "medium",
+            "stage": "approval_pending",
+            "request_id": "request-1",
+        },
+    )
+    assert (
+        _assistant_trace_stream_event(
+            {
+                "stage": "final_response",
+                "request_id": "request-1",
+                "data": {"final_text": "duplicate"},
+            }
+        )
+        is None
+    )
 
 
 def test_assistant_models_exposes_product_contract(monkeypatch) -> None:
@@ -35,7 +70,7 @@ def test_assistant_models_exposes_product_contract(monkeypatch) -> None:
             ],
         }
 
-    monkeypatch.setattr("binliquid.cli._provider_models_payload", fake_provider_models_payload)
+    monkeypatch.setattr("imperaos.cli._provider_models_payload", fake_provider_models_payload)
 
     result = runner.invoke(app, ["assistant", "models", "--profile", "enterprise", "--json"])
 
@@ -52,7 +87,7 @@ def test_assistant_models_exposes_product_contract(monkeypatch) -> None:
 
 def test_assistant_doctor_reports_model_discovery_without_fake_ready(monkeypatch) -> None:
     monkeypatch.setattr(
-        "binliquid.cli._provider_models_payload",
+        "imperaos.cli._provider_models_payload",
         lambda *, profile, requested_provider: {
             "profile": profile,
             "providers": [
@@ -97,7 +132,7 @@ def test_assistant_turn_streams_contract_events(tmp_path: Path, monkeypatch) -> 
             },
         ]
 
-    monkeypatch.setattr("binliquid.cli._assistant_turn_events", fake_events)
+    monkeypatch.setattr("imperaos.cli._assistant_turn_events", fake_events)
 
     result = runner.invoke(
         app,
@@ -118,7 +153,10 @@ def test_assistant_turn_streams_contract_events(tmp_path: Path, monkeypatch) -> 
 
     assert result.exit_code == 0, result.stdout
     events = [json.loads(line) for line in result.stdout.splitlines()]
-    assert [event["event"] for event in events] == ["delta", "final"]
-    assert all(event["contractVersion"] == "2.0" for event in events)
+    assert [event["event"] for event in events] == ["text_delta", "final"]
+    assert all(event["contractVersion"] == "3.0" for event in events)
     assert all(event["assistantTurnId"] == "turn-1" for event in events)
     assert [event["sequence"] for event in events] == [1, 2]
+    assert [event["eventId"] for event in events] == ["turn-1-1", "turn-1-2"]
+    assert all(event["traceId"] == "trace-turn-1" for event in events)
+    assert all(event["dataClass"] == "internal" for event in events)

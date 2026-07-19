@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from binliquid.release.product_complete import build_product_complete_no_ship_register
+from imperaos.release.product_complete import build_product_complete_no_ship_register
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_ROOT = REPO_ROOT / "artifacts" / "product-complete-closure"
@@ -354,7 +354,7 @@ def render_markdown(report: dict[str, Any]) -> str:
 def render_pr_body(report: dict[str, Any]) -> str:
     return (
         "## Summary\n"
-        "- Product-complete closure gate for BinLiquid / AegisOS.\n"
+        "- Product-complete closure gate for ImperaOS.\n"
         "- Scope: self-hosted single-organization enterprise Agent Control Plane.\n\n"
         "## Validation\n"
         f"- Closure gate: `{report['status']}`\n"

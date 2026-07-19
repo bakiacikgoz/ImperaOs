@@ -5,19 +5,19 @@ import json
 import sys
 from pathlib import Path
 
-from binliquid.model_providers.canary import run_provider_canary
-from binliquid.model_providers.canary_evidence import (
+from imperaos.model_providers.canary import run_provider_canary
+from imperaos.model_providers.canary_evidence import (
     verify_canary_evidence_root,
     write_router_shadow_evidence,
 )
-from binliquid.model_providers.models import (
+from imperaos.model_providers.models import (
     DataClass,
     ProviderCanaryRequest,
     ProviderRouteShadowRequest,
 )
-from binliquid.model_providers.registry import resolve_model_provider_registry
-from binliquid.model_providers.router_shadow import recommend_provider_shadow
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.model_providers.registry import resolve_model_provider_registry
+from imperaos.model_providers.router_shadow import recommend_provider_shadow
+from imperaos.runtime.config import RuntimeConfig
 
 DEFAULT_OUTPUT_DIR = Path("artifacts/model-provider-governance/canary")
 
@@ -51,7 +51,7 @@ def generate_canary_evidence(
             evidence_root=str(output_dir),
         ),
         registry=registry,
-        env={"BINLIQUID_PROVIDER_LIVE_CANARY": "1"},
+        env={"IMPERAOS_PROVIDER_LIVE_CANARY": "1"},
         evidence_root=output_dir,
     )
     router_decision = recommend_provider_shadow(

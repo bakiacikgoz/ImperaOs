@@ -1,0 +1,120 @@
+{
+  "$defs": {
+    "ArtifactDataClass": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "regulated"
+      ],
+      "title": "ArtifactDataClass",
+      "type": "string"
+    },
+    "ArtifactKind": {
+      "enum": [
+        "document",
+        "form",
+        "code",
+        "flow",
+        "spreadsheet",
+        "canvas",
+        "slides"
+      ],
+      "title": "ArtifactKind",
+      "type": "string"
+    },
+    "JsonValue": {}
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-create-command.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifactId": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Artifactid"
+    },
+    "content": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Content",
+      "type": "object"
+    },
+    "dataClass": {
+      "$ref": "#/$defs/ArtifactDataClass"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Idempotencykey",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/ArtifactKind"
+    },
+    "metadata": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Metadata",
+      "type": "object"
+    },
+    "sourceSessionId": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sourcesessionid"
+    },
+    "sourceTurnId": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sourceturnid"
+    },
+    "title": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "title",
+    "dataClass",
+    "content",
+    "idempotencyKey"
+  ],
+  "title": "CreateArtifactCommand",
+  "type": "object",
+  "x-imperaos-contract": "artifact-create-command.v1"
+}

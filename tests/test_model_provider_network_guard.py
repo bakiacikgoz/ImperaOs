@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from binliquid.model_providers.models import (
+from imperaos.model_providers.models import (
     AuthMode,
     DataBoundary,
     ModelProviderRecord,
     ProviderKind,
     ProviderPolicy,
 )
-from binliquid.model_providers.network import evaluate_provider_network
+from imperaos.model_providers.network import evaluate_provider_network
 
 
 def _provider(

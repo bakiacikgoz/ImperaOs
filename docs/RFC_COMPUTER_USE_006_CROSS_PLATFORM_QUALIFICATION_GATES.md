@@ -16,7 +16,7 @@ The runtime must expose platform state as:
 
 ## Platform Status Model
 
-`binliquid.computer_use.vision_runtime.platforms` is the source of truth for:
+`imperaos.computer_use.vision_runtime.platforms` is the source of truth for:
 
 - platform capability serialization
 - platform-specific blockers
@@ -57,9 +57,9 @@ fail-closed and no live claim is made.
 ## CLI Surfaces
 
 ```bash
-uv run python -m binliquid operator capabilities --json
-uv run python -m binliquid computer-use doctor --profile balanced --platform all --json
-uv run python -m binliquid computer-use qualification verify --profile balanced --platform windows --report artifacts/windows/qualification.json --json
+uv run python -m imperaos operator capabilities --json
+uv run python -m imperaos computer-use doctor --profile balanced --platform all --json
+uv run python -m imperaos computer-use qualification verify --profile balanced --platform windows --report artifacts/windows/qualification.json --json
 ```
 
 ## Non-Goals

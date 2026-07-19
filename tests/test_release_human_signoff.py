@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.release_decision.signoff import (
+from imperaos.release_decision.signoff import (
     build_signoff_template,
     verify_human_signoffs,
 )

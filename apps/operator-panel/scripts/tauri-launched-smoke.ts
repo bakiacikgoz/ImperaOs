@@ -2,6 +2,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 
 type CheckStatus = 'passed' | 'failed' | 'skipped' | 'conditional';
 type Check = {
@@ -10,7 +11,7 @@ type Check = {
   detail: string;
 };
 
-const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const REPO_ROOT = findRepoRoot(APP_ROOT);
 const OUTPUT_ROOT = path.join(REPO_ROOT, 'artifacts', 'operator-panel-ui', 'tauri-smoke');

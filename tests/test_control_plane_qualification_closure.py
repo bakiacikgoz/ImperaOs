@@ -8,15 +8,15 @@ from pathlib import Path
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.claim_guard import ClaimGuard
-from binliquid.control_plane.qualification_closure import (
+from imperaos.cli import app
+from imperaos.control_plane.claim_guard import ClaimGuard
+from imperaos.control_plane.qualification_closure import (
     generate_enterprise_hat_a_closure,
     verify_enterprise_hat_a_closure,
     write_pilot_qualification_fixture,
 )
-from binliquid.enterprise.signing import canonical_payload_hash
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.enterprise.signing import canonical_payload_hash
+from imperaos.runtime.config import RuntimeConfig
 
 runner = CliRunner()
 
@@ -120,7 +120,7 @@ def test_dev_hmac_does_not_satisfy_enterprise_ready(
     tmp_path: Path,
 ) -> None:
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setenv("BINLIQUID_AUDIT_SIGNING_KEY", "dev-only")
+    monkeypatch.setenv("IMPERAOS_AUDIT_SIGNING_KEY", "dev-only")
     base = RuntimeConfig.from_profile("lite")
     config = base.model_copy(update={"profile_name": "enterprise"})
     report = write_pilot_qualification_fixture(
@@ -170,9 +170,9 @@ def _write_signing_material(root: Path) -> None:
     private_key = Ed25519PrivateKey.generate()
     private_raw = private_key.private_bytes_raw()
     public_raw = private_key.public_key().public_bytes_raw()
-    private_dir = root / ".binliquid" / "keys" / "private"
-    trusted_dir = root / ".binliquid" / "keys" / "trusted"
-    identity_dir = root / ".binliquid" / "identity"
+    private_dir = root / ".imperaos" / "enterprise" / "keys" / "private"
+    trusted_dir = root / ".imperaos" / "enterprise" / "keys" / "trusted"
+    identity_dir = root / ".imperaos" / "enterprise" / "identity"
     private_dir.mkdir(parents=True, exist_ok=True)
     trusted_dir.mkdir(parents=True, exist_ok=True)
     identity_dir.mkdir(parents=True, exist_ok=True)
@@ -218,7 +218,7 @@ def _write_signing_material(root: Path) -> None:
         json.dumps(public_payload, indent=2),
         encoding="utf-8",
     )
-    (root / ".binliquid" / "keys" / "manifest.json").write_text(
+    (root / ".imperaos" / "enterprise" / "keys" / "manifest.json").write_text(
         json.dumps({"schema_version": "1", "current_key_id": key_id, "revoked_keys": []}),
         encoding="utf-8",
     )

@@ -6,21 +6,21 @@ from pathlib import Path
 import jsonschema
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.computer_use.models import ComputerUseMode
-from binliquid.computer_use.vision_runtime.models import (
+from imperaos.cli import app
+from imperaos.computer_use.models import ComputerUseMode
+from imperaos.computer_use.vision_runtime.models import (
     InputActionType,
     StopDecision,
     VisionObservation,
 )
-from binliquid.computer_use.vision_runtime.planner import CandidateActionPlanner
-from binliquid.computer_use.vision_runtime.policy import UniversalComputerUsePolicy
-from binliquid.computer_use.vision_runtime.providers.ollama_vision import (
+from imperaos.computer_use.vision_runtime.planner import CandidateActionPlanner
+from imperaos.computer_use.vision_runtime.policy import UniversalComputerUsePolicy
+from imperaos.computer_use.vision_runtime.providers.ollama_vision import (
     OllamaVisionInterpreter,
 )
-from binliquid.contracts.operator_panel import OperatorCapabilitiesPayload
-from binliquid.runtime.config import ComputerUseRuntimeConfig
-from binliquid.runtime.platform import current_platform
+from imperaos.contracts.operator_panel import OperatorCapabilitiesPayload
+from imperaos.runtime.config import ComputerUseRuntimeConfig
+from imperaos.runtime.platform import current_platform
 
 runner = CliRunner()
 REPO_ROOT = Path(__file__).resolve().parents[1]

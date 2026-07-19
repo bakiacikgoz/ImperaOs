@@ -1,6 +1,6 @@
 version: "1"
 team:
-  team_id: "aegis-enterprise-conflict"
+  team_id: "imperaos-enterprise-conflict"
   supervisor_policy: "sequential_then_parallel"
   agents:
     - agent_id: "agent-intake"

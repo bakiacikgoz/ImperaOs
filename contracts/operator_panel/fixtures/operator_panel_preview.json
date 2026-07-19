@@ -1,8 +1,8 @@
 {
-  "contractVersion": "2.0",
+  "contractVersion": "3.0",
   "assistant": {
     "startTurn": {
-      "contractVersion": "2.0",
+      "contractVersion": "3.0",
       "assistantTurnId": "assistant-preview-turn",
       "sessionId": "assistant-preview-session",
       "processId": null,
@@ -10,7 +10,7 @@
     },
     "events": [
       {
-        "contractVersion": "2.0",
+        "contractVersion": "3.0",
         "assistantTurnId": "assistant-preview-turn",
         "sessionId": "assistant-preview-session",
         "event": "status",
@@ -22,7 +22,7 @@
         }
       },
       {
-        "contractVersion": "2.0",
+        "contractVersion": "3.0",
         "assistantTurnId": "assistant-preview-turn",
         "sessionId": "assistant-preview-session",
         "event": "token",
@@ -33,7 +33,7 @@
         }
       },
       {
-        "contractVersion": "2.0",
+        "contractVersion": "3.0",
         "assistantTurnId": "assistant-preview-turn",
         "sessionId": "assistant-preview-session",
         "event": "approval_pending",
@@ -50,13 +50,13 @@
   "handshake": {
     "uiVersion": "0.6.0-preview",
     "coreVersion": "0.6.0-preview",
-    "contractVersion": "2.0",
+    "contractVersion": "3.0",
     "profile": "balanced",
-    "rootDir": ".binliquid/team/jobs",
+    "rootDir": ".imperaos/team/jobs",
     "mode": "auto",
     "capabilities": {
       "coreVersion": "0.6.0-preview",
-      "contractVersion": "2.0",
+      "contractVersion": "3.0",
       "previewMode": true,
       "profiles": ["balanced", "restricted", "enterprise", "research", "lite", "default"],
       "features": {
@@ -254,14 +254,14 @@
     }
   },
   "submitTeamRun": {
-    "contractVersion": "2.0",
+    "contractVersion": "3.0",
     "jobId": "job-ui-preview-1",
     "profile": "balanced",
-    "rootDir": ".binliquid/team/jobs",
+    "rootDir": ".imperaos/team/jobs",
     "processId": 4242
   },
   "approvalPending": {
-    "contract_version": "2.0",
+    "contract_version": "3.0",
     "pending": [
       {
         "version": 1,
@@ -329,7 +329,7 @@
     ]
   },
   "approvalDetail": {
-    "contract_version": "2.0",
+    "contract_version": "3.0",
     "approval_id": "apr_20260308_device_action",
     "status": "pending",
     "execution_status": "not_executed",
@@ -398,53 +398,53 @@
     }
   },
   "runSummary": {
-    "contract_version": "2.0",
+    "contract_version": "3.0",
     "status": "ok",
-    "root_dir": ".binliquid/team/jobs",
+    "root_dir": ".imperaos/team/jobs",
     "count": 3,
     "items": [
       {
         "job_id": "run_20260308_0910",
         "case_id": "case-preview",
-        "team_id": "aegis-team",
+        "team_id": "imperaos-team",
         "status": "running",
         "request": "Inspect operator queue health",
         "created_at": "2026-03-08T09:10:00Z",
         "finished_at": "",
-        "audit_envelope_path": ".binliquid/team/jobs/run_20260308_0910/audit_envelope.json",
-        "job_dir": ".binliquid/team/jobs/run_20260308_0910"
+        "audit_envelope_path": ".imperaos/team/jobs/run_20260308_0910/audit_envelope.json",
+        "job_dir": ".imperaos/team/jobs/run_20260308_0910"
       },
       {
         "job_id": "run_20260308_0838",
         "case_id": "case-preview",
-        "team_id": "aegis-team",
+        "team_id": "imperaos-team",
         "status": "blocked",
         "request": "Resume a privileged replay path",
         "created_at": "2026-03-08T08:38:00Z",
         "finished_at": "",
-        "audit_envelope_path": ".binliquid/team/jobs/run_20260308_0838/audit_envelope.json",
-        "job_dir": ".binliquid/team/jobs/run_20260308_0838"
+        "audit_envelope_path": ".imperaos/team/jobs/run_20260308_0838/audit_envelope.json",
+        "job_dir": ".imperaos/team/jobs/run_20260308_0838"
       },
       {
         "job_id": "run_20260307_2214",
         "case_id": "case-preview",
-        "team_id": "aegis-team",
+        "team_id": "imperaos-team",
         "status": "completed",
         "request": "Export previous audit envelope",
         "created_at": "2026-03-07T22:14:00Z",
         "finished_at": "2026-03-07T22:26:00Z",
-        "audit_envelope_path": ".binliquid/team/jobs/run_20260307_2214/audit_envelope.json",
-        "job_dir": ".binliquid/team/jobs/run_20260307_2214"
+        "audit_envelope_path": ".imperaos/team/jobs/run_20260307_2214/audit_envelope.json",
+        "job_dir": ".imperaos/team/jobs/run_20260307_2214"
       }
     ],
     "errors": []
   },
   "runDetail": {
-    "contract_version": "2.0",
+    "contract_version": "3.0",
     "job": {
       "job_id": "run_20260308_0910",
       "case_id": "case-preview",
-      "team_id": "aegis-team",
+      "team_id": "imperaos-team",
       "request": "Inspect operator queue health",
       "status": "running",
       "created_at": "2026-03-08T09:10:00Z",
@@ -472,16 +472,16 @@
         "finished_at": null
       }
     ],
-    "audit_envelope_path": ".binliquid/team/jobs/run_20260308_0910/audit_envelope.json",
-    "job_dir": ".binliquid/team/jobs/run_20260308_0910",
+    "audit_envelope_path": ".imperaos/team/jobs/run_20260308_0910/audit_envelope.json",
+    "job_dir": ".imperaos/team/jobs/run_20260308_0910",
     "resume_outcomes": [],
     "continuation": {}
   },
   "runReplay": {
-    "contract_version": "2.0",
+    "contract_version": "3.0",
     "job_id": "run_20260308_0910",
     "status": "running",
-    "team_id": "aegis-team",
+    "team_id": "imperaos-team",
     "case_id": "case-preview",
     "final_output": null,
     "event_count": 4,
@@ -534,11 +534,11 @@
   },
   "readArtifact": {
     "status": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "job": {
         "job_id": "run_20260308_0910",
         "case_id": "case-preview",
-        "team_id": "aegis-team",
+        "team_id": "imperaos-team",
         "request": "Inspect operator queue health",
         "status": "running",
         "created_at": "2026-03-08T09:10:00Z",
@@ -566,13 +566,13 @@
           "finished_at": null
         }
       ],
-      "audit_envelope_path": ".binliquid/team/jobs/run_20260308_0910/audit_envelope.json",
-      "job_dir": ".binliquid/team/jobs/run_20260308_0910",
+      "audit_envelope_path": ".imperaos/team/jobs/run_20260308_0910/audit_envelope.json",
+      "job_dir": ".imperaos/team/jobs/run_20260308_0910",
       "resume_outcomes": [],
       "continuation": {}
     },
     "tasks": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "generated_at": "2026-03-08T09:35:00Z",
       "tasks": [
         {
@@ -594,7 +594,7 @@
       ]
     },
     "handoffs": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "generated_at": "2026-03-08T09:35:00Z",
       "handoffs": []
     },
@@ -605,7 +605,7 @@
       "handoff_schema_version": "3",
       "job_id": "run_20260308_0910",
       "case_id": "case-preview",
-      "team_id": "aegis-team",
+      "team_id": "imperaos-team",
       "policy_bundle_id": "preview-policy",
       "policy_bundle_hash": "policy-hash-preview",
       "runtime_config_hash": "runtime-config-hash-preview",
@@ -633,7 +633,7 @@
     }
   },
   "tailEvents": {
-    "contractVersion": "2.0",
+    "contractVersion": "3.0",
     "events": [
       {
         "schema_version": "3",
@@ -641,7 +641,7 @@
         "event_id": "evt-preview-1",
         "event_seq": 1,
         "timestamp": "2026-03-08T09:10:00Z",
-        "team_id": "aegis-team",
+        "team_id": "imperaos-team",
         "case_id": "case-preview",
         "job_id": "run_20260308_0910",
         "phase": "team",
@@ -657,7 +657,7 @@
         "event_id": "evt-preview-2",
         "event_seq": 2,
         "timestamp": "2026-03-08T09:10:15Z",
-        "team_id": "aegis-team",
+        "team_id": "imperaos-team",
         "case_id": "case-preview",
         "job_id": "run_20260308_0910",
         "task_id": "task-02",
@@ -673,7 +673,7 @@
         "event_id": "evt-preview-3",
         "event_seq": 3,
         "timestamp": "2026-03-08T09:11:05Z",
-        "team_id": "aegis-team",
+        "team_id": "imperaos-team",
         "case_id": "case-preview",
         "job_id": "run_20260308_0910",
         "task_id": "task-02",
@@ -694,7 +694,7 @@
         "event_id": "evt-preview-4",
         "event_seq": 4,
         "timestamp": "2026-03-08T09:13:09Z",
-        "team_id": "aegis-team",
+        "team_id": "imperaos-team",
         "case_id": "case-preview",
         "job_id": "run_20260308_0910",
         "phase": "team",
@@ -711,7 +711,7 @@
     "badLineCount": 0
   },
   "configResolve": {
-    "contract_version": "2.0",
+    "contract_version": "3.0",
     "profile": "balanced",
     "status": "ok",
     "resolved": {
@@ -721,7 +721,7 @@
       "model_name": "qwen3.5:4b",
       "hf_model_id": "Qwen/Qwen3.5-4B-Instruct",
       "team": {
-        "artifact_dir": ".binliquid/team/jobs"
+        "artifact_dir": ".imperaos/team/jobs"
       }
     },
     "source_map": {
@@ -733,7 +733,7 @@
   },
   "operations": {
     "identity": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "identity_enabled": true,
       "verified": true,
       "actor": {
@@ -743,14 +743,14 @@
         "roles": ["platform_admin"],
         "permissions": ["runtime.run", "runtime.resume", "support.export"],
         "auth_mode": "external_assertion",
-        "assertion_path": ".binliquid/identity/current_assertion.json",
+        "assertion_path": ".imperaos/identity/current_assertion.json",
         "key_id": "enterprise-signing-current",
         "expires_at": "2026-03-08T10:35:00Z",
         "is_break_glass": false
       }
     },
     "permissionCheck": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "permission": "runtime.run",
       "allowed": true,
       "actor": {
@@ -761,7 +761,7 @@
       "error": null
     },
     "security": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "profile": "enterprise",
       "overall_status": "pass",
       "checks": {
@@ -792,7 +792,7 @@
       ]
     },
     "keys": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "provider": "local_file",
       "current_key_id": "enterprise-signing-current",
       "private_key_path": "/tmp/preview/current_key.json",
@@ -807,14 +807,14 @@
       "pkcs11_status": "n/a"
     },
     "support": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "bundle_dir": "./support/support-20260308093500",
-      "archive_path": "./support/aegisos-support.zip",
+      "archive_path": "./support/imperaos-support.zip",
       "manifest_path": "./support/support-20260308093500/support_bundle_manifest.json",
       "file_count": 4
     },
     "metrics": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "generated_at": "2026-03-08T09:35:00Z",
       "profile": "enterprise",
       "job_counts": {
@@ -830,7 +830,7 @@
       }
     },
     "gaReadiness": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "generated_at": "2026-03-08T09:35:00Z",
       "profile": "enterprise",
       "overall_status": "yellow",
@@ -844,7 +844,7 @@
       "go_no_go": "conditional"
     },
     "qualification": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "version": "1",
       "generated_at": "2026-03-08T09:35:00Z",
       "profile": "enterprise",
@@ -858,7 +858,7 @@
       }
     },
     "backupCreate": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "generated_at": "2026-03-08T09:35:00Z",
       "profile": "enterprise",
       "backup_dir": "./backups/backup-preview",
@@ -873,21 +873,21 @@
       "manifest_path": "./backups/backup-preview/manifest.json"
     },
     "backupVerify": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "backup_dir": "./backups/backup-preview",
       "verified": true,
       "checks": {},
       "errors": []
     },
     "restoreVerify": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "backup_dir": "./backups/backup-preview",
       "verified": true,
       "checks": {},
       "errors": []
     },
     "migratePlan": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "generated_at": "2026-03-08T09:35:00Z",
       "profile": "enterprise",
       "compatible_upgrade_path": "N->N+1 only",
@@ -902,7 +902,7 @@
       "actions": ["validate profile and manifests", "enter maintenance mode"]
     },
     "migrateApplyDryRun": {
-      "contract_version": "2.0",
+      "contract_version": "3.0",
       "generated_at": "2026-03-08T09:35:00Z",
       "profile": "enterprise",
       "compatible_upgrade_path": "N->N+1 only",

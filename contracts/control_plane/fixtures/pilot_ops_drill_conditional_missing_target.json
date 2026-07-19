@@ -7,7 +7,7 @@
   "steps": [
     {
       "stepId": "identity-whoami",
-      "command": "binliquid auth whoami --profile enterprise",
+      "command": "imperaos auth whoami --profile enterprise",
       "status": "conditional",
       "exitCode": 3,
       "startedAtUtc": "2026-06-14T00:00:00Z",

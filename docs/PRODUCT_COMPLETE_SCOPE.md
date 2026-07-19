@@ -1,6 +1,6 @@
 # Product-Complete Scope
 
-BinLiquid / AegisOS product-complete status means a self-hosted, single-organization
+ImperaOS / ImperaOS product-complete status means a self-hosted, single-organization
 enterprise Agent Control Plane that can be installed locally, connected to a real
 assistant runtime or explicit setup diagnostic, and verified by release gates.
 

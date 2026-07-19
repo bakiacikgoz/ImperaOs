@@ -6,7 +6,7 @@ lifecycle, replay/audit, signed evidence, support bundle and claim guard.
 
 ## Purpose
 
-This document defines the evidence required before BinLiquid / AegisOS can be described as `enterprise deployment-ready under defined constraints`.
+This document defines the evidence required before ImperaOS / ImperaOS can be described as `enterprise deployment-ready under defined constraints`.
 It does not claim that evidence already exists.
 
 ## Current Evidence Status - 2026-05-16
@@ -145,7 +145,7 @@ At minimum publish:
 Run qualification through the canonical runner:
 
 ```bash
-uv run binliquid qualification run \
+uv run imperaos qualification run \
   --profile enterprise \
   --mode mixed \
   --soak-hours 6 \

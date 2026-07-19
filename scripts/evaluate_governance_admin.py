@@ -11,22 +11,22 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.admin_store import (
+from imperaos.control_plane.admin_store import (
     IdentityAssertion,
     apply_admin_change,
     build_governance_admin_report,
     propose_admin_change,
 )
-from binliquid.control_plane.policy_pack_store import (
+from imperaos.control_plane.policy_pack_store import (
     build_policy_pack_lifecycle_report,
     plan_policy_pack_rollback,
     promote_policy_pack,
     stage_policy_pack,
     validate_lifecycle_policy_pack,
 )
-from binliquid.control_plane.policy_packs import load_policy_pack_manifest
-from binliquid.governance.approval_store import ApprovalStore
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.control_plane.policy_packs import load_policy_pack_manifest
+from imperaos.governance.approval_store import ApprovalStore
+from imperaos.runtime.config import RuntimeConfig
 
 
 def main() -> None:

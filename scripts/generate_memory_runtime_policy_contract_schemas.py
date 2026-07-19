@@ -3,13 +3,13 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.memory.runtime_policy import (
+from imperaos.memory.runtime_policy import (
     AgentMemoryRuntimePolicyDecision,
     AgentMemoryRuntimePolicyDoctorReport,
     AgentMemoryRuntimePolicyReadResult,
     MemoryRuntimePolicyEvaluationReport,
 )
-from binliquid.memory.runtime_policy_snapshot import MemoryPolicyEnforcementSnapshot
+from imperaos.memory.runtime_policy_snapshot import MemoryPolicyEnforcementSnapshot
 
 SCHEMAS = {
     "runtime_policy_decision.schema.json": AgentMemoryRuntimePolicyDecision,

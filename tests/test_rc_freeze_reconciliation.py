@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.release.gate_ledger import write_gate_evidence_ledger
-from binliquid.release.gate_models import GateEvidenceLedger
-from binliquid.release_decision.reconciler import build_reconciliation_input, reconcile_rc_freeze
+from imperaos.release.gate_ledger import write_gate_evidence_ledger
+from imperaos.release.gate_models import GateEvidenceLedger
+from imperaos.release_decision.reconciler import build_reconciliation_input, reconcile_rc_freeze
 
 
 def _copy_fixture(name: str, tmp_path: Path) -> Path:

@@ -5,12 +5,12 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.external_agent_client import (
+from imperaos.cli import app
+from imperaos.control_plane.external_agent_client import (
     run_external_agent_manifest,
     run_external_agent_pilot_suite,
 )
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.runtime.config import RuntimeConfig
 
 runner = CliRunner()
 REPO_ROOT = Path(__file__).resolve().parents[1]

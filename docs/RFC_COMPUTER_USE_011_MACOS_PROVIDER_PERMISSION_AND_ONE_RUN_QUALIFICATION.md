@@ -9,21 +9,21 @@ Phase 4E keeps macOS computer-use limited to a single supervised local fixture q
 The operator must explicitly select a local Ollama-compatible vision model:
 
 ```bash
-BINLIQUID_COMPUTER_USE_VISION_PROVIDER=ollama
-BINLIQUID_COMPUTER_USE_VISION_MODEL=<local-vision-model>
+IMPERAOS_COMPUTER_USE_VISION_PROVIDER=ollama
+IMPERAOS_COMPUTER_USE_VISION_MODEL=<local-vision-model>
 ```
 
 Readiness is checked with a generated synthetic local fixture image:
 
 ```bash
-uv run binliquid computer-use provider doctor \
+uv run imperaos computer-use provider doctor \
   --provider ollama \
-  --model "$BINLIQUID_COMPUTER_USE_VISION_MODEL" \
+  --model "$IMPERAOS_COMPUTER_USE_VISION_MODEL" \
   --synthetic-fixture \
   --json
 ```
 
-The doctor checks that the model is configured, present in `ollama list`, accepts image input, and returns strict schema-valid JSON. It does not auto-select text-only models and does not run `ollama pull`. Model pulls require separate operator action; `BINLIQUID_ALLOW_OLLAMA_MODEL_PULL=1` is documented only as an explicit future opt-in and remains fail-closed here.
+The doctor checks that the model is configured, present in `ollama list`, accepts image input, and returns strict schema-valid JSON. It does not auto-select text-only models and does not run `ollama pull`. Model pulls require separate operator action; `IMPERAOS_ALLOW_OLLAMA_MODEL_PULL=1` is documented only as an explicit future opt-in and remains fail-closed here.
 
 ## Permission Readiness
 
@@ -34,10 +34,10 @@ macOS Screen Recording and Accessibility are manual prerequisites. The runtime r
 The supervised run remains blocked until all of these are present for the one command:
 
 ```bash
-BINLIQUID_COMPUTER_USE_LIVE_MACOS=1
-BINLIQUID_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1
-BINLIQUID_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1
-BINLIQUID_COMPUTER_USE_ACK="I understand BinLiquid will control my macOS desktop only for local supervised fixtures."
+IMPERAOS_COMPUTER_USE_LIVE_MACOS=1
+IMPERAOS_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1
+IMPERAOS_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1
+IMPERAOS_COMPUTER_USE_ACK="I understand ImperaOS will control my macOS desktop only for local supervised fixtures."
 ```
 
 Runtime config still defaults to `vision_enabled=false`, `vision_provider="none"`, `macos_live_enabled=false`, `macos_capture_backend="disabled"`, `macos_input_backend="disabled"`, and `raw_screenshot_persistence=false`.

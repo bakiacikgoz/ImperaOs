@@ -7,11 +7,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from binliquid.model_providers.envelope import (
+from imperaos.model_providers.envelope import (
     ProviderCallEnvelopeWriter,
     build_provider_call_envelope,
 )
-from binliquid.model_providers.models import (
+from imperaos.model_providers.models import (
     ChatMessage,
     DataBoundary,
     DataClass,
@@ -19,10 +19,10 @@ from binliquid.model_providers.models import (
     ProviderDecisionStatus,
     ProviderPolicyDecision,
 )
-from binliquid.model_providers.policy import GovernanceContext, evaluate_provider_policy
-from binliquid.model_providers.redaction import redact_provider_input
-from binliquid.model_providers.registry import resolve_model_provider_registry
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.model_providers.policy import GovernanceContext, evaluate_provider_policy
+from imperaos.model_providers.redaction import redact_provider_input
+from imperaos.model_providers.registry import resolve_model_provider_registry
+from imperaos.runtime.config import RuntimeConfig
 
 try:
     from scripts.generate_provider_canary_evidence import generate_canary_evidence

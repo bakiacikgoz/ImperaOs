@@ -3,19 +3,19 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.control_plane.design_partner_handoff import (
+from imperaos.control_plane.design_partner_handoff import (
     DesignPartnerHandoffManifest,
     HandoffComponentSummary,
     build_design_partner_handoff_pack,
     build_design_partner_handoff_snapshot,
     verify_design_partner_handoff_pack,
 )
-from binliquid.control_plane.pilot_ops_drill import PilotOpsDrillMetrics, PilotOpsDrillReport
-from binliquid.control_plane.release_train import (
+from imperaos.control_plane.pilot_ops_drill import PilotOpsDrillMetrics, PilotOpsDrillReport
+from imperaos.control_plane.release_train import (
     ClaimBoundarySummary,
     ReleaseTrainVerificationReport,
 )
-from binliquid.control_plane.strict_rc_promotion import StrictRCPromotionReport
+from imperaos.control_plane.strict_rc_promotion import StrictRCPromotionReport
 
 
 def test_handoff_pack_ready_with_strict_rc_and_pass_drill(tmp_path: Path) -> None:

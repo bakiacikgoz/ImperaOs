@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from threading import Thread
 
-from binliquid.memory.persistent_store import PersistentMemoryStore
+from imperaos.memory.persistent_store import PersistentMemoryStore
 
 
 def test_persistent_memory_store_parallel_writes(tmp_path) -> None:

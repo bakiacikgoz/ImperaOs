@@ -3,13 +3,13 @@
 Inspect the local RBAC matrix:
 
 ```bash
-uv run binliquid control-plane rbac matrix --profile lite --json
+uv run imperaos control-plane rbac matrix --profile lite --json
 ```
 
 Check a permission without mutating state:
 
 ```bash
-uv run binliquid control-plane rbac check \
+uv run imperaos control-plane rbac check \
   --actor-id identity-disabled \
   --permission config.read \
   --profile lite \

@@ -3,12 +3,12 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from pathlib import Path
 
-from binliquid.control_plane.enterprise_workspace import (
+from imperaos.control_plane.enterprise_workspace import (
     EnterpriseOrganization,
     EnterpriseWorkspace,
     EnterpriseWorkspaceMembership,
 )
-from binliquid.control_plane.enterprise_workspace_store import EnterpriseWorkspaceStore
+from imperaos.control_plane.enterprise_workspace_store import EnterpriseWorkspaceStore
 
 NOW = datetime(2026, 6, 19, tzinfo=UTC)
 

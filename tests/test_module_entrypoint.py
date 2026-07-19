@@ -3,12 +3,12 @@ from __future__ import annotations
 import subprocess
 import sys
 
-from binliquid import __version__
+from imperaos import __version__
 
 
 def test_python_module_entrypoint_supports_version_flag() -> None:
     result = subprocess.run(
-        [sys.executable, "-m", "binliquid", "--version"],
+        [sys.executable, "-m", "imperaos", "--version"],
         check=False,
         capture_output=True,
         text=True,

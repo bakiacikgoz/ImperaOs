@@ -1,0 +1,138 @@
+{
+  "$defs": {
+    "SpreadsheetCellV2": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "SpreadsheetCellV2",
+      "type": "object"
+    },
+    "SpreadsheetColumnV2": {
+      "additionalProperties": false,
+      "properties": {
+        "hidden": {
+          "default": false,
+          "title": "Hidden",
+          "type": "boolean"
+        },
+        "index": {
+          "maximum": 16384,
+          "minimum": 1,
+          "title": "Index",
+          "type": "integer"
+        },
+        "width": {
+          "default": 120,
+          "maximum": 1000,
+          "minimum": 20,
+          "title": "Width",
+          "type": "number"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "SpreadsheetColumnV2",
+      "type": "object"
+    },
+    "SpreadsheetSheetV2": {
+      "additionalProperties": false,
+      "properties": {
+        "cells": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SpreadsheetCellV2"
+          },
+          "title": "Cells",
+          "type": "object"
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/SpreadsheetColumnV2"
+          },
+          "maxItems": 16384,
+          "title": "Columns",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "SpreadsheetSheetV2",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/spreadsheet.v2.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "calculationMode": {
+      "const": "disabled",
+      "default": "disabled",
+      "title": "Calculationmode",
+      "type": "string"
+    },
+    "kind": {
+      "const": "spreadsheet",
+      "default": "spreadsheet",
+      "title": "Kind",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 2,
+      "default": 2,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "sheets": {
+      "items": {
+        "$ref": "#/$defs/SpreadsheetSheetV2"
+      },
+      "maxItems": 1024,
+      "minItems": 1,
+      "title": "Sheets",
+      "type": "array"
+    }
+  },
+  "required": [
+    "sheets"
+  ],
+  "title": "SpreadsheetContentV2",
+  "type": "object",
+  "x-imperaos-contract": "spreadsheet.v2"
+}

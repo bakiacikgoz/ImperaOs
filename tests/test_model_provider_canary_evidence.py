@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import json
 
-from binliquid.model_providers.canary_evidence import (
+from imperaos.model_providers.canary_evidence import (
     verify_canary_evidence_root,
     write_canary_evidence,
 )
-from binliquid.model_providers.models import (
+from imperaos.model_providers.models import (
     DataBoundary,
     DataClass,
     ProviderCanaryResult,

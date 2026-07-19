@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from binliquid.governance.runtime import GovernanceRuntime
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.governance.runtime import GovernanceRuntime
+from imperaos.runtime.config import RuntimeConfig
 
 
 def _runtime(tmp_path) -> GovernanceRuntime:
@@ -84,7 +84,7 @@ def test_expired_ticket_cannot_be_decided(tmp_path) -> None:
         )
     runtime.approval_store.expire_pending()
 
-    expired = runtime.approval_store.get(ticket.approval_id)
+    expired = runtime.get_approval(ticket.approval_id, workspace_id=ticket.workspace_id)
     assert expired is not None
     assert expired.status.value == "expired"
 

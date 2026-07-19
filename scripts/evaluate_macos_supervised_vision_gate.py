@@ -12,7 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.runtime.platform import current_platform as runtime_current_platform  # noqa: E402
+from imperaos.runtime.platform import current_platform as runtime_current_platform  # noqa: E402
 
 SCHEMA_VERSION = "1.0"
 QUALIFICATION_LEVEL = "supervised_vision_v2"

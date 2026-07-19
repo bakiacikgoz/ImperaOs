@@ -6,10 +6,10 @@ __pycache__/
 dist/
 build/
 *.egg-info/
-.binliquid/
+.imperaos/
 .worktrees/
 benchmarks/results/
-artifacts/
+/artifacts/
 test-results/
 .DS_Store
 node_modules/
@@ -19,7 +19,7 @@ apps/**/test-results/
 apps/**/src-tauri/target/
 apps/**/src-tauri/target-*/
 apps/**/src-tauri/gen/
-apps/**/src-tauri/resources/binliquid-runtime/python/
-apps/**/src-tauri/resources/binliquid-runtime/config/
-apps/**/src-tauri/resources/binliquid-runtime/RUNTIME_MANIFEST.txt
-apps/**/src-tauri/resources/binliquid-runtime/*.json
+apps/**/src-tauri/resources/imperaos-runtime/python/
+apps/**/src-tauri/resources/imperaos-runtime/config/
+apps/**/src-tauri/resources/imperaos-runtime/RUNTIME_MANIFEST.txt
+apps/**/src-tauri/resources/imperaos-runtime/*.json

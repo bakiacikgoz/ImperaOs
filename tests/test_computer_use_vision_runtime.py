@@ -4,10 +4,10 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-import binliquid.computer_use.runtime as computer_use_runtime
-import binliquid.computer_use.vision_runtime.runtime as vision_runtime_module
-from binliquid.computer_use.models import ComputerUseMode, RiskClass
-from binliquid.computer_use.vision_runtime.models import (
+import imperaos.computer_use.runtime as computer_use_runtime
+import imperaos.computer_use.vision_runtime.runtime as vision_runtime_module
+from imperaos.computer_use.models import ComputerUseMode, RiskClass
+from imperaos.computer_use.vision_runtime.models import (
     ExecutionResult,
     InputActionType,
     NormalizedBBox,
@@ -20,17 +20,17 @@ from binliquid.computer_use.vision_runtime.models import (
     VisionRunRequest,
     VisionVerificationStatus,
 )
-from binliquid.computer_use.vision_runtime.providers.mock_vision import (
+from imperaos.computer_use.vision_runtime.providers.mock_vision import (
     DeterministicActionPlanner,
     DeterministicScreenCapture,
     DeterministicStepVerifier,
 )
-from binliquid.computer_use.vision_runtime.runtime import VisionComputerUseRuntime
-from binliquid.computer_use.vision_runtime.runtime_gate import (
+from imperaos.computer_use.vision_runtime.runtime import VisionComputerUseRuntime
+from imperaos.computer_use.vision_runtime.runtime_gate import (
     ComputerUseOperationIntent,
     RuntimePreflightContext,
 )
-from binliquid.runtime.config import ComputerUseRuntimeConfig, RuntimeConfig
+from imperaos.runtime.config import ComputerUseRuntimeConfig, RuntimeConfig
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_ROOT = REPO_ROOT / "contracts" / "computer_use" / "fixtures"

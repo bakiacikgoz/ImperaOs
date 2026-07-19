@@ -1,0 +1,15 @@
+{
+  "displayName": "ImperaOS",
+  "slug": "imperaos",
+  "pythonDistribution": "imperaos",
+  "pythonPackage": "imperaos",
+  "cliName": "imperaos",
+  "envPrefix": "IMPERAOS",
+  "stateRoot": ".imperaos",
+  "operatorProductName": "ImperaOS Operator Panel",
+  "operatorBundleId": "com.imperaos.operatorpanel",
+  "runtimeResourceDir": "imperaos-runtime",
+  "domain": "imperaos.com",
+  "repository": "bakiacikgoz/ImperaOS",
+  "metricPrefix": "imperaos_"
+}

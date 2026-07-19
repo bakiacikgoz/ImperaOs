@@ -4,16 +4,16 @@ on:
   push:
     paths:
       - 'apps/operator-panel/**'
-      - 'binliquid/cli.py'
-      - 'binliquid/control_plane/provider_*.py'
+      - 'imperaos/cli.py'
+      - 'imperaos/control_plane/provider_*.py'
       - 'contracts/operator_panel/**'
       - 'docs/RELEASE_GATE_v0.5.md'
       - '.github/workflows/operator-panel-ci.yml'
   pull_request:
     paths:
       - 'apps/operator-panel/**'
-      - 'binliquid/cli.py'
-      - 'binliquid/control_plane/provider_*.py'
+      - 'imperaos/cli.py'
+      - 'imperaos/control_plane/provider_*.py'
       - 'contracts/operator_panel/**'
       - 'docs/RELEASE_GATE_v0.5.md'
       - '.github/workflows/operator-panel-ci.yml'
@@ -21,6 +21,8 @@ on:
 jobs:
   operator-panel:
     runs-on: macos-14
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
 
     steps:
       - name: Checkout
@@ -29,7 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -78,4 +80,4 @@ jobs:
         run: cargo test -q --manifest-path apps/operator-panel/src-tauri/Cargo.toml
 
       - name: Capabilities command smoke
-        run: uv run binliquid operator capabilities --json
+        run: uv run imperaos operator capabilities --json

@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "FormBehavior": {
+      "additionalProperties": false,
+      "properties": {
+        "externalContinuation": {
+          "default": "deny",
+          "enum": [
+            "deny",
+            "approval_required"
+          ],
+          "title": "Externalcontinuation",
+          "type": "string"
+        },
+        "submitMode": {
+          "const": "explicit",
+          "default": "explicit",
+          "title": "Submitmode",
+          "type": "string"
+        }
+      },
+      "title": "FormBehavior",
+      "type": "object"
+    },
+    "JsonValue": {}
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/form.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "behavior": {
+      "$ref": "#/$defs/FormBehavior"
+    },
+    "kind": {
+      "const": "form",
+      "default": "form",
+      "title": "Kind",
+      "type": "string"
+    },
+    "schema": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Schema",
+      "type": "object"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "sensitivePaths": {
+      "items": {
+        "pattern": "^/(?:[^/~]|~[01])+(?:/(?:[^/~]|~[01])+)*$",
+        "type": "string"
+      },
+      "maxItems": 100,
+      "title": "Sensitivepaths",
+      "type": "array"
+    },
+    "uiSchema": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Uischema",
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema"
+  ],
+  "title": "FormContentV1",
+  "type": "object",
+  "x-imperaos-contract": "form.v1",
+  "x-imperaos-security": {
+    "authority": "backend revalidation is mandatory",
+    "refs": "local definitions only; remote $ref is forbidden",
+    "validator": "CSP-safe ValidatorType; global unsafe-eval is forbidden"
+  }
+}

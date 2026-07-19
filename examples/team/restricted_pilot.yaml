@@ -1,6 +1,6 @@
 version: "1"
 team:
-  team_id: "aegis-pilot-gated-team"
+  team_id: "imperaos-pilot-gated-team"
   supervisor_policy: "sequential_then_parallel"
   agents:
     - agent_id: "agent-intake"

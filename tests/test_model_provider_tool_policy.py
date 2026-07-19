@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from binliquid.model_providers.models import DataClass, ProviderPolicy
-from binliquid.model_providers.native.types import (
+from imperaos.model_providers.models import DataClass, ProviderPolicy
+from imperaos.model_providers.native.types import (
     ProviderRequestedTool,
     ProviderRequestedToolType,
 )
-from binliquid.model_providers.tool_policy import evaluate_provider_tool_policy
+from imperaos.model_providers.tool_policy import evaluate_provider_tool_policy
 
 
 def _policy() -> ProviderPolicy:

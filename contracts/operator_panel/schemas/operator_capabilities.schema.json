@@ -784,7 +784,7 @@
       "$ref": "#/$defs/OperatorCommandCapabilitiesContract"
     },
     "contractVersion": {
-      "const": "2.0",
+      "const": "3.0",
       "title": "Contractversion",
       "type": "string"
     },

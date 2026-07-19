@@ -5,7 +5,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from pydantic import ValidationError
 
-from binliquid.control_plane.agent_enrollment import (
+from imperaos.control_plane.agent_enrollment import (
     AgentEnrollmentRequest,
     AgentEnrollmentToken,
     EnrolledAgent,

@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from binliquid.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
-from binliquid.team.memory_scope import read_scoped_memory, write_scoped_memory
+from imperaos.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
+from imperaos.team.memory_scope import read_scoped_memory, write_scoped_memory
 
 
 def test_team_memory_policy_enforced_read_and_write_paths(tmp_path: Path) -> None:

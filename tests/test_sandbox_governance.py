@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.governance.runtime import GovernanceRuntime
-from binliquid.runtime.config import RuntimeConfig
-from binliquid.tools.sandbox_runner import SandboxRunner
+from imperaos.governance.runtime import GovernanceRuntime
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.tools.sandbox_runner import SandboxRunner
 
 CUSTOM_POLICY = """
 policy_schema_version = "1.0"
@@ -71,4 +71,4 @@ def test_sandbox_runner_creates_approval_ticket_when_policy_requires(tmp_path: P
     assert result.allowed is False
     assert result.exit_code == 125
     assert "approval_id" in result.stderr
-    assert len(runtime.approval_store.list_pending()) == 1
+    assert len(runtime.approval_store.list_pending(workspace_id="default")) == 1

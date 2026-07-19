@@ -5,9 +5,9 @@ import tempfile
 import time
 from pathlib import Path
 
-from binliquid.memory.semantic.backends.turbovec_backend import TurboVecSemanticBackend
-from binliquid.memory.semantic.fixtures import build_semantic_fixture
-from binliquid.memory.semantic.models import MemoryBackendBenchmarkReport, MemorySearchRequest
+from imperaos.memory.semantic.backends.turbovec_backend import TurboVecSemanticBackend
+from imperaos.memory.semantic.fixtures import build_semantic_fixture
+from imperaos.memory.semantic.models import MemoryBackendBenchmarkReport, MemorySearchRequest
 
 
 def main() -> None:

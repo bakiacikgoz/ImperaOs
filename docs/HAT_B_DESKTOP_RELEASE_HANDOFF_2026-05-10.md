@@ -6,7 +6,7 @@ Hat B is blocked by external credentials and clean-machine evidence. No public
 desktop installer release has been made, and no desktop release claim should be
 published from the current evidence.
 
-Tracking issue: https://github.com/bakiacikgoz/BinLiquidAI/issues/4
+Tracking issue: https://github.com/bakiacikgoz/ImperaOS/issues/4
 
 Local evidence already captured:
 
@@ -128,7 +128,7 @@ Workflow to run after secrets are provisioned:
 
 ```bash
 gh workflow run operator-panel-release-macos.yml \
-  --repo bakiacikgoz/BinLiquidAI
+  --repo bakiacikgoz/ImperaOS
 ```
 
 If secrets are still missing or partial, the workflow should fail before
@@ -192,15 +192,15 @@ Workflow sequence after secrets are provisioned:
 
 ```bash
 gh workflow run operator-panel-release-windows.yml \
-  --repo bakiacikgoz/BinLiquidAI
+  --repo bakiacikgoz/ImperaOS
 
 gh workflow run operator-panel-windows-clean-smoke.yml \
-  --repo bakiacikgoz/BinLiquidAI \
+  --repo bakiacikgoz/ImperaOS \
   -f signed_rc_run_id=<SIGNED_RC_RUN_ID> \
   -f installer_sha256=<SIGNED_RC_INSTALLER_SHA256>
 
 gh workflow run operator-panel-promote-windows.yml \
-  --repo bakiacikgoz/BinLiquidAI \
+  --repo bakiacikgoz/ImperaOS \
   -f signed_rc_run_id=<SIGNED_RC_RUN_ID> \
   -f clean_smoke_run_id=<CLEAN_SMOKE_RUN_ID> \
   -f expected_installer_sha256=<SIGNED_RC_INSTALLER_SHA256>

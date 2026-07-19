@@ -1,7 +1,7 @@
 # Product-Complete Closure
 
-The product-complete closure gate is the top-level local proof for BinLiquid /
-AegisOS as a self-hosted single-organization enterprise Agent Control Plane.
+The product-complete closure gate is the top-level local proof for ImperaOS /
+ImperaOS as a self-hosted single-organization enterprise Agent Control Plane.
 
 Canonical command:
 

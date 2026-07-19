@@ -8,7 +8,7 @@
           "type": "string"
         },
         "contract_version": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contract Version",
           "type": "string"
         },
@@ -38,7 +38,7 @@
       "additionalProperties": false,
       "properties": {
         "contract_version": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contract Version",
           "type": "string"
         },
@@ -161,6 +161,18 @@
           "default": null,
           "title": "Executed At"
         },
+        "executed_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Executed By"
+        },
         "execution_contract_hash": {
           "anyOf": [
             {
@@ -271,6 +283,11 @@
           "minimum": 0,
           "title": "Version",
           "type": "integer"
+        },
+        "workspace_id": {
+          "default": "default",
+          "title": "Workspace Id",
+          "type": "string"
         }
       },
       "required": [
@@ -298,7 +315,7 @@
           "type": "string"
         },
         "contractVersion": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contractversion",
           "type": "string"
         },
@@ -341,7 +358,7 @@
           "type": "string"
         },
         "contractVersion": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contractversion",
           "type": "string"
         },
@@ -350,24 +367,67 @@
           "title": "Data",
           "type": "object"
         },
+        "dataClass": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "internal",
+                "confidential",
+                "regulated"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dataclass"
+        },
         "event": {
           "enum": [
             "status",
             "token",
+            "delta",
+            "text_delta",
             "router_decision",
             "policy_decision",
             "approval_pending",
             "expert_start",
             "expert_end",
+            "artifact_proposed",
+            "artifact_committed",
+            "artifact_patch_proposed",
+            "artifact_patch_applied",
+            "form_requested",
+            "form_submitted",
+            "tool_result",
             "audit_artifact",
             "final",
             "warning",
-            "error"
+            "error",
+            "cancelled"
           ],
           "title": "Event",
           "type": "string"
         },
+        "eventId": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eventid"
+        },
         "sequence": {
+          "minimum": 1,
           "title": "Sequence",
           "type": "integer"
         },
@@ -378,6 +438,19 @@
         "timestampUtc": {
           "title": "Timestamputc",
           "type": "string"
+        },
+        "traceId": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Traceid"
         }
       },
       "required": [
@@ -412,7 +485,7 @@
           "type": "boolean"
         },
         "contract_version": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contract Version",
           "type": "string"
         },
@@ -470,7 +543,7 @@
           "title": "Actor"
         },
         "contract_version": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contract Version",
           "type": "string"
         },
@@ -522,7 +595,7 @@
           "$ref": "#/$defs/OperatorCapabilitiesPayload"
         },
         "contractVersion": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contractversion",
           "type": "string"
         },
@@ -1148,7 +1221,7 @@
       "additionalProperties": false,
       "properties": {
         "contract_version": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contract Version",
           "type": "string"
         },
@@ -1366,7 +1439,7 @@
           "type": "boolean"
         },
         "contract_version": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contract Version",
           "type": "string"
         },
@@ -1456,7 +1529,7 @@
           "$ref": "#/$defs/OperatorCommandCapabilitiesContract"
         },
         "contractVersion": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contractversion",
           "type": "string"
         },
@@ -1843,7 +1916,7 @@
           "type": "object"
         },
         "contract_version": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contract Version",
           "type": "string"
         },
@@ -2021,7 +2094,7 @@
       "additionalProperties": false,
       "properties": {
         "contract_version": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contract Version",
           "type": "string"
         },
@@ -2073,7 +2146,7 @@
           "type": "object"
         },
         "contract_version": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contract Version",
           "type": "string"
         },
@@ -2131,7 +2204,7 @@
       "additionalProperties": false,
       "properties": {
         "contractVersion": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contractversion",
           "type": "string"
         },
@@ -2181,7 +2254,7 @@
           "type": "string"
         },
         "contract_version": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contract Version",
           "type": "string"
         },
@@ -2212,7 +2285,7 @@
           "type": "integer"
         },
         "contractVersion": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contractversion",
           "type": "string"
         },
@@ -2777,7 +2850,7 @@
           "type": "object"
         },
         "contract_version": {
-          "const": "2.0",
+          "const": "3.0",
           "title": "Contract Version",
           "type": "string"
         },
@@ -2843,7 +2916,7 @@
       "$ref": "#/$defs/ConfigResolvePayloadContract"
     },
     "contractVersion": {
-      "const": "2.0",
+      "const": "3.0",
       "title": "Contractversion",
       "type": "string"
     },

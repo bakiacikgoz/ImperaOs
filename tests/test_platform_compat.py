@@ -3,11 +3,11 @@ from __future__ import annotations
 import subprocess
 from types import SimpleNamespace
 
-from binliquid.computer_use.adapters import FileDialogAdapter, ScaffoldBrowserAdapter
-from binliquid.computer_use.runtime import ComputerUseRunner, RuntimeAdapters
-from binliquid.runtime import platform as platform_mod
-from binliquid.runtime.config import RuntimeConfig
-from binliquid.tools.local_search import find_matches
+from imperaos.computer_use.adapters import FileDialogAdapter, ScaffoldBrowserAdapter
+from imperaos.computer_use.runtime import ComputerUseRunner, RuntimeAdapters
+from imperaos.runtime import platform as platform_mod
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.tools.local_search import find_matches
 
 
 class _NoopDesktop:
@@ -62,7 +62,7 @@ def test_safe_allowed_roots_uses_downloads_or_temp(monkeypatch, tmp_path) -> Non
 
 def test_computer_use_readiness_is_fail_closed_on_windows(monkeypatch, tmp_path) -> None:
     monkeypatch.setattr(
-        "binliquid.computer_use.runtime.current_platform",
+        "imperaos.computer_use.runtime.current_platform",
         lambda: SimpleNamespace(
             system="Windows",
             label="windows",
@@ -92,7 +92,7 @@ def test_computer_use_readiness_is_fail_closed_on_windows(monkeypatch, tmp_path)
 
 def test_computer_use_run_stops_before_live_adapters_on_windows(monkeypatch, tmp_path) -> None:
     monkeypatch.setattr(
-        "binliquid.computer_use.runtime.current_platform",
+        "imperaos.computer_use.runtime.current_platform",
         lambda: SimpleNamespace(
             system="Windows",
             label="windows",

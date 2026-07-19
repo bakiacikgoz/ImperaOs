@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "name": "simple-valid",
+      "allowed": true,
+      "schema": { "type": "object", "properties": { "name": { "type": "string" } }, "required": ["name"], "additionalProperties": false },
+      "response": { "name": "Ada" }
+    },
+    {
+      "name": "prototype-named-required-missing",
+      "allowed": false,
+      "schema": { "type": "object", "properties": { "toString": { "type": "string" } }, "required": ["toString"], "additionalProperties": false },
+      "response": {}
+    },
+    {
+      "name": "prototype-additional-property",
+      "allowed": false,
+      "schema": { "type": "object", "properties": {}, "additionalProperties": false },
+      "response": { "__proto__": "denied" }
+    },
+    {
+      "name": "const-object-key-order",
+      "allowed": true,
+      "schema": { "const": { "a": 1, "b": 2 } },
+      "response": { "b": 2, "a": 1 }
+    },
+    {
+      "name": "const-number-is-not-boolean",
+      "allowed": false,
+      "schema": { "const": 1 },
+      "response": true
+    },
+    {
+      "name": "unicode-code-point-length",
+      "allowed": true,
+      "schema": { "type": "string", "maxLength": 1 },
+      "response": "😀"
+    },
+    {
+      "name": "typeless-required-applies-to-object",
+      "allowed": false,
+      "schema": { "properties": { "name": { "type": "string" } }, "required": ["name"] },
+      "response": {}
+    },
+    {
+      "name": "invalid-date",
+      "allowed": false,
+      "schema": { "type": "string", "format": "date" },
+      "response": "2026-99-99"
+    },
+    {
+      "name": "json-integral-number",
+      "allowed": true,
+      "schema": { "type": "integer" },
+      "response": 2.0
+    },
+    {
+      "name": "const-json-number-equivalence",
+      "allowed": true,
+      "schema": { "const": 1 },
+      "response": 1.0
+    },
+    {
+      "name": "typeless-string-keywords-apply",
+      "allowed": false,
+      "schema": { "maxLength": 2 },
+      "response": "long"
+    },
+    {
+      "name": "typeless-number-keywords-apply",
+      "allowed": false,
+      "schema": { "minimum": 10 },
+      "response": 5
+    },
+    {
+      "name": "unique-object-key-order",
+      "allowed": false,
+      "schema": { "type": "array", "uniqueItems": true },
+      "response": [{ "a": 1, "b": 2 }, { "b": 2, "a": 1 }]
+    }
+  ]
+}

@@ -7,10 +7,10 @@ from pathlib import Path
 
 import pytest
 
-from binliquid.model_providers.errors import InvalidProviderConfig
-from binliquid.model_providers.models import ResolvedProviderRegistry
-from binliquid.model_providers.registry import resolve_model_provider_registry
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.model_providers.errors import InvalidProviderConfig
+from imperaos.model_providers.models import ResolvedProviderRegistry
+from imperaos.model_providers.registry import resolve_model_provider_registry
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_schema_generator_writes_model_provider_contracts() -> None:

@@ -255,8 +255,8 @@
     },
     "RuntimeKind": {
       "enum": [
-        "binliquid_core",
-        "binliquid_team",
+        "imperaos_core",
+        "imperaos_team",
         "external_stdio",
         "external_http",
         "computer_use_adapter"

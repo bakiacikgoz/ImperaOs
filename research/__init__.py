@@ -1,1 +1,1 @@
-"""Research modules for BinLiquid."""
+"""Research modules for ImperaOS."""

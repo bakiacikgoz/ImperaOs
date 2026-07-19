@@ -6,7 +6,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
+from imperaos.cli import app
 
 runner = CliRunner()
 
@@ -34,7 +34,7 @@ def test_computer_use_summary_handles_missing_root(tmp_path: Path) -> None:
 
     assert result.exit_code == 0
     payload = json.loads(result.stdout)
-    assert payload["contractVersion"] == "2.0"
+    assert payload["contractVersion"] == "3.0"
     assert payload["status"] == "ok"
     assert payload["window"]["observed"] == 0
     assert payload["counts"] == {

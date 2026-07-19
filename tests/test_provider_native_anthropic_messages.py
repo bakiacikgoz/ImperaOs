@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-from binliquid.control_plane.provider_conformance import run_provider_native_conformance
-from binliquid.control_plane.providers.anthropic_messages import AnthropicMessagesAdapter
-from binliquid.model_providers.errors import ProviderPolicyError, ProviderSchemaError
-from binliquid.model_providers.models import (
+from imperaos.control_plane.provider_conformance import run_provider_native_conformance
+from imperaos.control_plane.providers.anthropic_messages import AnthropicMessagesAdapter
+from imperaos.model_providers.errors import ProviderPolicyError, ProviderSchemaError
+from imperaos.model_providers.models import (
     ChatMessage,
     DataClass,
     ModelProviderRecord,
@@ -13,11 +13,11 @@ from binliquid.model_providers.models import (
     ProviderKind,
     ProviderPolicy,
 )
-from binliquid.model_providers.native.anthropic_messages import (
+from imperaos.model_providers.native.anthropic_messages import (
     build_anthropic_messages_payload,
     normalize_anthropic_messages_result,
 )
-from binliquid.model_providers.native.types import (
+from imperaos.model_providers.native.types import (
     ProviderRequestedTool,
     ProviderRequestedToolType,
     ProviderStoragePolicy,
@@ -37,7 +37,10 @@ def test_anthropic_messages_request_builder_uses_messages_contract_without_raw_p
     assert request.raw_persistence is False
     assert request.native_payload["messages"][0]["role"] == "user"
     assert request.native_payload["messages"][0]["content"][0]["type"] == "text"
-    assert request.native_payload["metadata"]["binliquid_retention"] == "hash_only_store_false"
+    metadata = request.native_payload["metadata"]
+    assert metadata["imperaos_retention"] == "hash_only_store_false"
+    former_key = "bin" + "liquid_retention"
+    assert former_key not in metadata
     assert request.native_payload["tools"][0]["execution_mode"] == "proposal_only"
     assert request.tool_policy.server_tools_policy == "denied"
     assert request.retention_policy.evidence_mode == "hash_only"

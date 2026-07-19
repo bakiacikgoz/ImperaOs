@@ -31,9 +31,9 @@
 Each sqlite-backed store must expose a schema version metadata record.
 Migration tooling must support:
 
-- `binliquid migrate plan --dry-run`
-- `binliquid migrate apply --dry-run`
-- `binliquid migrate apply --no-dry-run`
+- `imperaos migrate plan --dry-run`
+- `imperaos migrate apply --dry-run`
+- `imperaos migrate apply --no-dry-run`
 
 ## Backup Contract
 
@@ -58,10 +58,10 @@ Restore verification must validate:
 ## Commands
 
 ```bash
-uv run binliquid migrate plan --profile enterprise --json
-uv run binliquid migrate apply --profile enterprise --dry-run --json
-uv run binliquid backup create --profile enterprise --json
-uv run binliquid restore verify --profile enterprise --backup-dir .binliquid/enterprise/backups/<backup-id> --json
+uv run imperaos migrate plan --profile enterprise --json
+uv run imperaos migrate apply --profile enterprise --dry-run --json
+uv run imperaos backup create --profile enterprise --json
+uv run imperaos restore verify --profile enterprise --backup-dir .imperaos/enterprise/backups/<backup-id> --json
 ```
 
 ## Mandatory Drills Before GA

@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.computer_use.models import ComputerUseMode, RiskClass
-from binliquid.computer_use.vision_runtime.models import (
+from imperaos.computer_use.models import ComputerUseMode, RiskClass
+from imperaos.computer_use.vision_runtime.models import (
     ExecutionResult,
     InputActionType,
     VerificationResult,
@@ -14,14 +14,14 @@ from binliquid.computer_use.vision_runtime.models import (
     VisionRunRequest,
     VisionStepResult,
 )
-from binliquid.computer_use.vision_runtime.recorder import RedactedVisionAuditRecorder
-from binliquid.computer_use.vision_runtime.replay import load_replay_summary, verify_replay
-from binliquid.computer_use.vision_runtime.runtime import VisionComputerUseRuntime
-from binliquid.computer_use.vision_runtime.runtime_gate import (
+from imperaos.computer_use.vision_runtime.recorder import RedactedVisionAuditRecorder
+from imperaos.computer_use.vision_runtime.replay import load_replay_summary, verify_replay
+from imperaos.computer_use.vision_runtime.runtime import VisionComputerUseRuntime
+from imperaos.computer_use.vision_runtime.runtime_gate import (
     ComputerUseOperationIntent,
     RuntimePreflightContext,
 )
-from binliquid.runtime.config import ComputerUseRuntimeConfig
+from imperaos.runtime.config import ComputerUseRuntimeConfig
 
 
 def _step(step_index: int) -> VisionStepResult:

@@ -450,7 +450,7 @@ def _risk_area(path: str) -> str:
         return "contracts"
     if path.startswith("apps/operator-panel/"):
         return "ui"
-    if path.startswith("binliquid/"):
+    if path.startswith("imperaos/"):
         return "backend"
     if path.startswith("docs/"):
         return "docs"
@@ -608,7 +608,7 @@ def build_remote_commands(
     pr_body_path: Path,
     output_path: Path,
 ) -> str:
-    pr_url = f"https://github.com/bakiacikgoz/BinLiquidAI/pull/new/{branch}"
+    pr_url = f"https://github.com/bakiacikgoz/ImperaOS/pull/new/{branch}"
     text = (
         "# Enterprise Workspace Remote Commands\n\n"
         "These commands are prepared for an explicit approval step. They were not "

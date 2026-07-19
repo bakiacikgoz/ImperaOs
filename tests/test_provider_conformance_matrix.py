@@ -5,9 +5,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-from binliquid.model_providers.conformance import build_provider_conformance_matrix
-from binliquid.model_providers.registry import resolve_model_provider_registry
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.model_providers.conformance import build_provider_conformance_matrix
+from imperaos.model_providers.registry import resolve_model_provider_registry
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_provider_conformance_matrix_covers_configured_profiles() -> None:

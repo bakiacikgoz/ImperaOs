@@ -109,7 +109,7 @@ SUPERVISOR_LOG_PATH="${RUN_DIR}/supervisor.nohup.log"
 LOCK_DIR="${STATE_ROOT}/.running.lock"
 case "${RUNNER}" in
   auto)
-    if [[ -x ".venv/bin/binliquid" ]]; then
+    if [[ -x ".venv/bin/imperaos" ]]; then
       RESOLVED_RUNNER="venv"
     else
       RESOLVED_RUNNER="uv"
@@ -126,7 +126,7 @@ esac
 
 if [[ "${RESOLVED_RUNNER}" == "venv" ]]; then
   COMMAND=(
-    .venv/bin/python -m binliquid qualification run
+    .venv/bin/python -m imperaos qualification run
     --profile "${PROFILE}"
     --mode "${MODE}"
     --soak-hours "${SOAK_HOURS}"
@@ -135,7 +135,7 @@ if [[ "${RESOLVED_RUNNER}" == "venv" ]]; then
   )
 else
   COMMAND=(
-    uv run binliquid qualification run
+    uv run imperaos qualification run
     --profile "${PROFILE}"
     --mode "${MODE}"
     --soak-hours "${SOAK_HOURS}"
@@ -222,7 +222,7 @@ if [[ "${LAUNCHD}" -eq 1 ]]; then
     exit 64
   fi
   mkdir -p "${RUN_DIR}"
-  LAUNCHD_LABEL="com.binliquid.qualification-soak.${RUN_ID//[^A-Za-z0-9]/-}"
+  LAUNCHD_LABEL="com.imperaos.qualification-soak.${RUN_ID//[^A-Za-z0-9]/-}"
   PLIST_PATH="${RUN_DIR}/${LAUNCHD_LABEL}.plist"
   LAUNCHD_STDOUT_PATH="${RUN_DIR}/launchd.stdout.log"
   LAUNCHD_STDERR_PATH="${RUN_DIR}/launchd.stderr.log"

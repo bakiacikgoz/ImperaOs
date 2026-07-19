@@ -1,0 +1,409 @@
+.artifact-workspace {
+  --aw-background: var(--surface-panel);
+  --aw-background-strong: var(--surface-panel-strong);
+  --aw-muted: var(--surface-field);
+  --aw-muted-hover: var(--surface-control-hover);
+  --aw-foreground: var(--text-primary);
+  --aw-foreground-muted: var(--text-secondary);
+  --aw-border: var(--line-default);
+  --aw-ring: var(--color-info);
+  --aw-primary: var(--color-info);
+  --aw-primary-foreground: #ffffff;
+  --aw-success: var(--color-success);
+  --aw-warning: var(--color-warning);
+  --aw-destructive: var(--color-error);
+  --aw-radius-sm: var(--radius-sm);
+  --aw-radius-md: var(--radius-md);
+  --aw-shadow: 0 16px 44px rgba(0, 0, 0, 0.14);
+
+  color: var(--aw-foreground);
+  font-family: var(--font-sans);
+}
+
+.artifact-workspace .aw-panel {
+  min-width: 0;
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-md);
+  background: var(--aw-background);
+  box-shadow: var(--aw-shadow);
+}
+
+.artifact-workspace .aw-button {
+  display: inline-flex;
+  min-height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--aw-radius-sm);
+  padding: 0.5rem 0.875rem;
+  font: inherit;
+  font-size: var(--text-body-sm);
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.artifact-workspace .aw-button:focus-visible {
+  outline: 2px solid var(--aw-ring);
+  outline-offset: 2px;
+}
+
+.artifact-workspace .aw-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.artifact-workspace .aw-button--primary {
+  background: var(--aw-primary);
+  color: var(--aw-primary-foreground);
+}
+
+.artifact-workspace .aw-button--secondary {
+  border-color: var(--aw-border);
+  background: var(--aw-muted);
+  color: var(--aw-foreground);
+}
+
+.artifact-workspace .aw-button--ghost {
+  background: transparent;
+  color: var(--aw-foreground-muted);
+}
+
+.artifact-workspace .aw-button--destructive {
+  background: var(--aw-destructive);
+  color: #ffffff;
+}
+
+.artifact-workspace .aw-button:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.artifact-workspace .aw-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid var(--aw-border);
+  border-radius: var(--radius-pill);
+  padding: 0.2rem 0.55rem;
+  background: var(--aw-muted);
+  color: var(--aw-foreground-muted);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+}
+
+.artifact-workspace .aw-badge--success {
+  border-color: color-mix(in srgb, var(--aw-success) 45%, var(--aw-border));
+  color: var(--aw-success);
+}
+
+.artifact-workspace .aw-badge--warning {
+  border-color: color-mix(in srgb, var(--aw-warning) 45%, var(--aw-border));
+  color: var(--aw-warning);
+}
+
+.artifact-workspace .aw-badge--error {
+  border-color: color-mix(in srgb, var(--aw-destructive) 45%, var(--aw-border));
+  color: var(--aw-destructive);
+}
+
+.artifact-workspace .aw-badge--info {
+  border-color: color-mix(in srgb, var(--aw-primary) 45%, var(--aw-border));
+  color: var(--aw-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .artifact-workspace .aw-button {
+    transition: none;
+  }
+}
+
+.artifact-workspace-panel {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-md);
+  background: var(--aw-background);
+}
+
+.artifact-workspace-panel-head,
+.artifact-workspace-history > header,
+.artifact-workspace-status-row,
+.artifact-export-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.artifact-workspace-panel-head h2,
+.artifact-workspace-history h3 {
+  margin: 0;
+  font-size: var(--text-body-sm);
+}
+
+.artifact-workspace-panel-head .mc-button,
+.artifact-workspace-history > header .mc-button {
+  margin-left: auto;
+}
+
+.artifact-workspace-panel .artifact-workspace-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(2, minmax(8rem, 0.45fr));
+  gap: var(--space-2);
+}
+
+.artifact-workspace-panel .artifact-workspace-filters input,
+.artifact-workspace-panel .artifact-workspace-filters select {
+  min-width: 0;
+  min-height: 2.25rem;
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-sm);
+  padding: 0 var(--space-2);
+  background: var(--aw-muted);
+  color: var(--aw-foreground);
+  font: inherit;
+}
+
+.artifact-workspace-panel .artifact-workspace-navigator {
+  display: grid;
+  max-height: 14rem;
+  gap: var(--space-2);
+  overflow: auto;
+}
+
+.artifact-workspace-panel .artifact-workspace-navigator > button {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: var(--space-2);
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-sm);
+  background: var(--aw-muted);
+  color: var(--aw-foreground);
+  text-align: left;
+}
+
+.artifact-workspace-panel .artifact-workspace-navigator span,
+.artifact-workspace-panel .artifact-workspace-history article,
+.artifact-workspace-panel .artifact-workspace-banner {
+  color: var(--aw-foreground-muted);
+  font-size: var(--text-caption);
+}
+
+.artifact-workspace-panel .artifact-workspace-tabs {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+}
+
+.artifact-workspace-panel .artifact-workspace-tab-button {
+  flex: 0 0 auto;
+  min-height: 2rem;
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-sm);
+  padding: 0 var(--space-2);
+  background: var(--aw-muted);
+  color: var(--aw-foreground);
+}
+
+.artifact-workspace-panel .artifact-workspace-tab-button[aria-selected="true"] {
+  border-color: var(--aw-primary);
+  background: color-mix(in srgb, var(--aw-primary) 12%, var(--aw-background));
+}
+
+.artifact-workspace-panel .artifact-workspace-active,
+.artifact-workspace-panel .artifact-workspace-history,
+.artifact-workspace-panel .artifact-workspace-history article {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.artifact-export-dialog-backdrop {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-3);
+  background: rgb(0 0 0 / 0.48);
+}
+
+.artifact-export-dialog {
+  display: grid;
+  width: min(100%, 29rem);
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-md);
+  background: var(--aw-background-strong);
+  box-shadow: var(--aw-shadow);
+}
+
+.artifact-export-dialog h3,
+.artifact-export-dialog p {
+  margin: 0;
+}
+
+.artifact-export-dialog label {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--aw-foreground-muted);
+  font-size: var(--text-caption);
+  font-weight: 700;
+}
+
+.artifact-export-dialog select,
+.artifact-export-dialog button {
+  min-height: 2.25rem;
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-sm);
+  padding: 0 var(--space-2);
+  background: var(--aw-muted);
+  color: var(--aw-foreground);
+  font: inherit;
+}
+
+.artifact-export-dialog-actions {
+  justify-content: end;
+}
+
+.spreadsheet-artifact-editor {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.spreadsheet-artifact-editor > header,
+.spreadsheet-artifact-editor [role="toolbar"],
+.spreadsheet-sheet-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.spreadsheet-grid {
+  max-height: 32rem;
+  overflow: auto;
+  border: 1px solid var(--aw-border);
+}
+
+.spreadsheet-grid-row {
+  display: grid;
+  grid-template-columns: 3.25rem repeat(100, minmax(7.5rem, 1fr));
+  min-width: max-content;
+}
+
+.spreadsheet-grid-row > span,
+.spreadsheet-grid-row > input {
+  min-height: 2rem;
+  box-sizing: border-box;
+  border: 0;
+  border-right: 1px solid var(--aw-border);
+  border-bottom: 1px solid var(--aw-border);
+  padding: 0 var(--space-1);
+  background: var(--aw-background);
+  color: var(--aw-foreground);
+  font: inherit;
+}
+
+.spreadsheet-grid-header > span,
+.spreadsheet-grid-row > span {
+  background: var(--aw-muted);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .artifact-workspace-panel .artifact-workspace-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .artifact-export-dialog-actions > * {
+    flex: 1 1 100%;
+  }
+}
+
+.document-artifact-editor {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-2);
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-md);
+  overflow: hidden;
+  background: var(--aw-background);
+}
+
+.document-artifact-toolbar {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--aw-border);
+  background: var(--aw-muted);
+}
+
+.document-artifact-toolbar button {
+  min-height: 1.9rem;
+  border: 1px solid var(--aw-border);
+  border-radius: var(--aw-radius-sm);
+  padding: 0.25rem 0.55rem;
+  background: var(--aw-background);
+  color: var(--aw-foreground);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--text-caption);
+  font-weight: 700;
+}
+
+.document-artifact-toolbar button:focus-visible {
+  outline: 2px solid var(--aw-ring);
+  outline-offset: 1px;
+}
+
+.document-artifact-toolbar button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.document-artifact-toolbar [role="status"] {
+  margin-left: auto;
+  color: var(--aw-foreground-muted);
+  font-size: var(--text-caption);
+  font-weight: 700;
+}
+
+.document-artifact-blocknote {
+  min-height: 280px;
+  max-height: min(58vh, 760px);
+  overflow: auto;
+  background: var(--aw-background);
+  color: var(--aw-foreground);
+}
+
+.document-artifact-blocknote .bn-editor {
+  min-height: 260px;
+  padding: 1.25rem clamp(1rem, 4vw, 3rem);
+  background: transparent;
+  color: inherit;
+}
+
+.artifact-editor-loading,
+.artifact-editor-placeholder {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--aw-border);
+  border-radius: var(--aw-radius-md);
+  padding: var(--space-4);
+  color: var(--aw-foreground-muted);
+  text-align: center;
+}

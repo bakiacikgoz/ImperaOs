@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "name": "simple-local-form",
+      "allowed": true,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string", "maxLength": 100 },
+            "contact": { "$ref": "#/definitions/contact" }
+          },
+          "required": ["name"],
+          "additionalProperties": false,
+          "definitions": {
+            "contact": {
+              "type": "object",
+              "properties": { "email": { "type": "string", "format": "email" } }
+            }
+          }
+        },
+        "uiSchema": { "name": { "ui:widget": "text" } },
+        "behavior": { "submitMode": "explicit", "externalContinuation": "deny" },
+        "sensitivePaths": []
+      }
+    },
+    {
+      "name": "remote-ref",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": { "$ref": "https://invalid.example/private-schema" }
+      }
+    },
+    {
+      "name": "missing-local-ref",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": { "$ref": "#/definitions/missing" }
+      }
+    },
+    {
+      "name": "prototype-property",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": {
+          "type": "object",
+          "properties": { "__proto__": { "type": "string" } }
+        }
+      }
+    },
+    {
+      "name": "nested-quantifier",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": {
+          "type": "object",
+          "properties": { "value": { "type": "string", "pattern": "(a+)+$" } }
+        }
+      }
+    },
+    {
+      "name": "network-widget",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": { "type": "object", "properties": {} },
+        "uiSchema": { "field": { "ui:widget": "html", "src": "https://invalid.example/x" } }
+      }
+    },
+    {
+      "name": "prototype-named-missing-ref",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": { "$ref": "#/definitions/toString", "definitions": {} }
+      }
+    },
+    {
+      "name": "invalid-behavior-envelope",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": { "type": "object", "properties": {} },
+        "behavior": "anything"
+      }
+    },
+    {
+      "name": "required-wrong-type",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": { "type": "object", "properties": {}, "required": "name" }
+      }
+    },
+    {
+      "name": "cyclic-local-ref",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": {
+          "$ref": "#/definitions/a",
+          "definitions": { "a": { "$ref": "#/definitions/a" } }
+        }
+      }
+    },
+    {
+      "name": "unsupported-dialect",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": { "$schema": "https://json-schema.org/draft/2020-12/schema" }
+      }
+    },
+    {
+      "name": "invalid-type-keyword",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": { "type": 7 }
+      }
+    },
+    {
+      "name": "non-object-root",
+      "allowed": false,
+      "content": {
+        "kind": "form",
+        "schemaVersion": 1,
+        "schema": { "type": "string" }
+      }
+    }
+  ]
+}

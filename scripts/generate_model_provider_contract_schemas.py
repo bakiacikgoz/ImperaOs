@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pydantic import TypeAdapter
 
-from binliquid.model_providers.models import (
+from imperaos.model_providers.models import (
     ModelProviderRecord,
     NativeAdapterV2Request,
     NativeAdapterV2Response,
@@ -17,7 +17,7 @@ from binliquid.model_providers.models import (
     ProviderRouteShadowDecision,
     ResolvedProviderRegistry,
 )
-from binliquid.model_providers.native.types import (
+from imperaos.model_providers.native.types import (
     AnthropicMessagesRequest,
     AnthropicMessagesResult,
     OpenAIResponsesRequest,

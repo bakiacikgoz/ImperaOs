@@ -4,14 +4,14 @@ import json
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
+from imperaos.cli import app
 
 runner = CliRunner()
 
 
 def test_setup_first_run_reports_safe_diagnostic(monkeypatch) -> None:
     monkeypatch.setattr(
-        "binliquid.cli._assistant_models_contract",
+        "imperaos.cli._assistant_models_contract",
         lambda *, profile, provider: {
             "schemaVersion": "assistant.provider-models/v1",
             "profile": profile,

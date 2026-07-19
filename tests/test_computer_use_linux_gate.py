@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from binliquid.computer_use.vision_runtime.drivers import linux
-from binliquid.computer_use.vision_runtime.errors import VisionRuntimeError
-from binliquid.runtime.config import ComputerUseRuntimeConfig
+from imperaos.computer_use.vision_runtime.drivers import linux
+from imperaos.computer_use.vision_runtime.errors import VisionRuntimeError
+from imperaos.runtime.config import ComputerUseRuntimeConfig
 
 
 def test_linux_gate_reports_wayland_not_qualified_without_evidence() -> None:

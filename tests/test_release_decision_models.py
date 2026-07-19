@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from binliquid.release_decision.models import (
+from imperaos.release_decision.models import (
     EvidenceRef,
     HumanSignoffRecord,
     ReleaseDecisionDossier,

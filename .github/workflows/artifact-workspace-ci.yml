@@ -1,0 +1,44 @@
+name: Artifact Workspace CI
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "imperaos/artifacts/**"
+      - "contracts/artifacts/**"
+      - "apps/operator-panel/**"
+      - "scripts/run_artifact_workspace_release_gate.py"
+      - ".github/workflows/artifact-workspace-ci.yml"
+  push:
+    branches: [main]
+
+jobs:
+  release-gate:
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+      # setup-node's pnpm cache probes the executable during setup.
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+      - run: uv sync --python 3.11 --extra dev
+      - run: corepack pnpm@10.29.2 install --frozen-lockfile
+      - run: corepack pnpm@10.29.2 --dir apps/operator-panel exec playwright install chromium
+      - name: Run immutable artifact workspace release gate
+        run: uv run python scripts/run_artifact_workspace_release_gate.py --gate workspace-release --profile enterprise --json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: artifact-workspace-release-${{ matrix.os }}
+          path: artifacts/artifact-workspace-release/

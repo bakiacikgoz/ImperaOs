@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.control_plane.models import ActionProposal
-from binliquid.control_plane.policy_simulator import PolicySimulator
-from binliquid.control_plane.registry import load_agent_spec
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.control_plane.models import ActionProposal
+from imperaos.control_plane.policy_simulator import PolicySimulator
+from imperaos.control_plane.registry import load_agent_spec
+from imperaos.runtime.config import RuntimeConfig
 
 
 def _config_with_policy(tmp_path: Path) -> RuntimeConfig:

@@ -1,0 +1,107 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/code.v2.schema.json",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "text": {
+            "pattern": "^[^\\r]*$"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "lineEnding": {
+            "const": "crlf"
+          }
+        },
+        "required": [
+          "lineEnding"
+        ]
+      },
+      "then": {
+        "properties": {
+          "text": {
+            "pattern": "^(?![\\s\\S]*(?:\\r(?!\\n)|[^\\r]\\n|^\\n))[\\s\\S]*$"
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "executionPolicy": {
+      "const": "deny",
+      "default": "deny",
+      "title": "Executionpolicy",
+      "type": "string"
+    },
+    "filename": {
+      "maxLength": 255,
+      "minLength": 1,
+      "pattern": "^(?![ .])(?!.*[ .]$)(?!(?:[Cc][Oo][Nn]|[Pp][Rr][Nn]|[Aa][Uu][Xx]|[Nn][Uu][Ll]|[Cc][Oo][Mm][1-9]|[Ll][Pp][Tt][1-9])(?:\\.|$))[^<>:\\\"/\\\\|?*\\u0000-\\u001f\\u007f-\\u009f­؀-؅؜۝܏࢐-࢑࣢᠎​-‏‪-‮⁠-⁤⁦-⁯﻿￹-￻𑂽𑃍𓐰-𓐿𛲠-𛲣𝅳-𝅺󠀁󠀠-󠁿]+$",
+      "title": "Filename",
+      "type": "string"
+    },
+    "kind": {
+      "const": "code",
+      "default": "code",
+      "title": "Kind",
+      "type": "string"
+    },
+    "language": {
+      "enum": [
+        "plaintext",
+        "bat",
+        "c",
+        "cpp",
+        "csharp",
+        "css",
+        "go",
+        "html",
+        "java",
+        "javascript",
+        "json",
+        "markdown",
+        "powershell",
+        "python",
+        "rust",
+        "shell",
+        "sql",
+        "typescript",
+        "xml",
+        "yaml"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "lineEnding": {
+      "default": "lf",
+      "enum": [
+        "lf",
+        "crlf"
+      ],
+      "title": "Lineending",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 2,
+      "default": 2,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "text": {
+      "maxLength": 5242880,
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "filename",
+    "language",
+    "text"
+  ],
+  "title": "CodeContentV2",
+  "type": "object",
+  "x-imperaos-contract": "code.v2"
+}

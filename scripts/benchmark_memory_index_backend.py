@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 
-from binliquid.memory.indexes.turbovec_optional import TurboVecOptionalIndex
+from imperaos.memory.indexes.turbovec_optional import TurboVecOptionalIndex
 
 
 def main() -> None:

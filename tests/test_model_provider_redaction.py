@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from binliquid.model_providers.models import (
+from imperaos.model_providers.models import (
     ChatMessage,
     DataClass,
     ProviderCallRequest,
     ProviderDecisionStatus,
     ProviderPolicyDecision,
 )
-from binliquid.model_providers.redaction import redact_provider_input
+from imperaos.model_providers.redaction import redact_provider_input
 
 
 def test_redaction_removes_email_and_secret_markers() -> None:

@@ -10,7 +10,7 @@ Validated commands:
 - `pnpm lint`
 - `cargo test -q`
 - `uv run python scripts/generate_operator_contract_schemas.py`
-- `uv run python -m compileall binliquid`
+- `uv run python -m compileall imperaos`
 
 Observed result:
 

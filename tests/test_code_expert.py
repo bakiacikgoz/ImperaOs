@@ -1,5 +1,5 @@
-from binliquid.experts.code_lite import CodeLiteExpert
-from binliquid.schemas.models import ExpertRequest, TaskType
+from imperaos.experts.code_lite import CodeLiteExpert
+from imperaos.schemas.models import ExpertRequest, TaskType
 
 
 def test_code_lite_expert_returns_snippet() -> None:

@@ -83,8 +83,8 @@ def _run_command(command: list[str]) -> tuple[int, str]:
 def build_command_plan(profile: str, *, full: bool = False) -> list[dict[str, Any]]:
     plan = [
         {
-            "name": "binliquid_version",
-            "command": ["uv", "run", "python", "-m", "binliquid", "--version"],
+            "name": "imperaos_version",
+            "command": ["uv", "run", "python", "-m", "imperaos", "--version"],
             "required": True,
         },
         {
@@ -94,7 +94,7 @@ def build_command_plan(profile: str, *, full: bool = False) -> list[dict[str, An
                 "run",
                 "python",
                 "-m",
-                "binliquid",
+                "imperaos",
                 "setup",
                 "first-run",
                 "--profile",
@@ -112,7 +112,7 @@ def build_command_plan(profile: str, *, full: bool = False) -> list[dict[str, An
                 "run",
                 "python",
                 "-m",
-                "binliquid",
+                "imperaos",
                 "assistant",
                 "models",
                 "--profile",
@@ -128,7 +128,7 @@ def build_command_plan(profile: str, *, full: bool = False) -> list[dict[str, An
                 "run",
                 "python",
                 "-m",
-                "binliquid",
+                "imperaos",
                 "assistant",
                 "doctor",
                 "--profile",
@@ -144,7 +144,7 @@ def build_command_plan(profile: str, *, full: bool = False) -> list[dict[str, An
                 "run",
                 "python",
                 "-m",
-                "binliquid",
+                "imperaos",
                 "computer-use",
                 "doctor",
                 "--json",

@@ -42,7 +42,7 @@ def _write_pr_fixture(path: Path, *, head: str = HEAD, draft: bool = True) -> No
         json.dumps(
             {
                 "number": 42,
-                "url": "https://github.com/bakiacikgoz/BinLiquidAI/pull/42",
+                "url": "https://github.com/bakiacikgoz/ImperaOS/pull/42",
                 "title": "Enterprise Workspace Onboarding & Agent Enrollment v1",
                 "isDraft": draft,
                 "baseRefName": "main",

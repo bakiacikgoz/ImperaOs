@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from binliquid.memory.authority import build_memory_authority, proposal_from_cli
-from binliquid.memory.runtime_bridge import MemoryRuntimeBridge, RuntimeMemoryRequest
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.memory.authority import build_memory_authority, proposal_from_cli
+from imperaos.memory.runtime_bridge import MemoryRuntimeBridge, RuntimeMemoryRequest
+from imperaos.runtime.config import RuntimeConfig
 
 
 def _config(tmp_path: Path) -> RuntimeConfig:

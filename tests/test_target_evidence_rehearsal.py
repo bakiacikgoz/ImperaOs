@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.control_plane.models import TargetEvidenceBundle
-from binliquid.control_plane.target_evidence import (
+from imperaos.control_plane.models import TargetEvidenceBundle
+from imperaos.control_plane.target_evidence import (
     REQUIRED_BLOCKED_CLAIMS,
     collect_target_evidence_rehearsal,
     prepare_target_evidence_session,

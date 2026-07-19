@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.release.gate_models import GateEvidenceLedger
+from imperaos.release.gate_models import GateEvidenceLedger
 
 
 def test_release_gate_contract_fixtures_validate() -> None:

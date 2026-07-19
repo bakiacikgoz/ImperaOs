@@ -9,7 +9,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.target_evidence import collect_target_evidence_rehearsal  # noqa: E402
+from imperaos.control_plane.target_evidence import collect_target_evidence_rehearsal  # noqa: E402
+from imperaos.runtime.paths import CONTROL_PLANE_STATE_ROOT  # noqa: E402
 
 
 def main() -> None:
@@ -18,7 +19,7 @@ def main() -> None:
     )
     parser.add_argument("--session", required=True)
     parser.add_argument("--output-root", default="artifacts/design-partner-target-evidence")
-    parser.add_argument("--state-root", default=".binliquid/control-plane")
+    parser.add_argument("--state-root", default=CONTROL_PLANE_STATE_ROOT)
     parser.add_argument("--evidence-root", default="artifacts")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()

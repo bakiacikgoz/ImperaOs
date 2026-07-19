@@ -30,7 +30,7 @@ const emptyContext: AssistantContextSnapshot = {
 describe('useAssistantSession runtime metadata', () => {
   beforeEach(() => {
     bridgeMocks.startAssistantTurn.mockResolvedValue({
-      contractVersion: '2.0',
+      contractVersion: '3.0',
       assistantTurnId: 'turn-test',
       sessionId: 'session-test',
       processId: null,
@@ -38,7 +38,7 @@ describe('useAssistantSession runtime metadata', () => {
     });
     bridgeMocks.listenAssistantEvents.mockResolvedValue(() => undefined);
     bridgeMocks.cancelAssistantTurn.mockResolvedValue({
-      contractVersion: '2.0',
+      contractVersion: '3.0',
       assistantTurnId: 'turn-test',
       sessionId: 'session-test',
       processId: null,
@@ -124,5 +124,74 @@ describe('useAssistantSession runtime metadata', () => {
     await waitFor(() => expect(result.current.state.status).toBe('cancelled'));
     expect(bridgeMocks.cancelAssistantTurn).toHaveBeenCalledWith(expect.any(Object), expect.stringMatching(/^assistant-turn-/));
     expect(result.current.state.error).toBeNull();
+  });
+
+  it('synchronizes a decided approval into the canonical assistant session', async () => {
+    const { result } = renderHook(() => useAssistantSession({ ...DEFAULT_SETTINGS }, () => emptyContext));
+
+    await act(async () => {
+      await result.current.actions.send('Propose a governed action.');
+    });
+    const turn = result.current.state.turns[0];
+    act(() => {
+      result.current.actions.applyEvent({
+        contractVersion: '3.0',
+        assistantTurnId: turn.id,
+        sessionId: result.current.state.sessionId,
+        event: 'approval_pending',
+        sequence: 1,
+        timestampUtc: '2026-07-16T07:00:00Z',
+        data: { approval_id: 'approval-sync', title: 'Approval required' },
+      });
+    });
+    await waitFor(() => expect(result.current.state.pendingApprovalId).toBe('approval-sync'));
+
+    act(() => result.current.actions.updateApprovalStatus('approval-sync', 'approved'));
+
+    expect(result.current.state.pendingApprovalId).toBeNull();
+    expect(result.current.state.status).toBe('completed');
+    expect(result.current.state.turns[0].status).toBe('completed');
+    expect(result.current.state.turns[0].assistantMessage.approval?.status).toBe('approved');
+  });
+
+  it('synchronizes proposal approval and execution without a renderer grant boolean', async () => {
+    const { result } = renderHook(() => useAssistantSession({ ...DEFAULT_SETTINGS }, () => emptyContext));
+
+    await act(async () => {
+      await result.current.actions.send('Propose an artifact patch.');
+    });
+    const turn = result.current.state.turns[0];
+    act(() => {
+      result.current.actions.applyEvent({
+        contractVersion: '3.0',
+        eventId: 'event-proposal',
+        assistantTurnId: turn.id,
+        sessionId: result.current.state.sessionId,
+        event: 'artifact_patch_proposed',
+        sequence: 1,
+        timestampUtc: '2026-07-16T07:00:00Z',
+        traceId: 'trace-proposal',
+        dataClass: 'internal',
+        data: {
+          artifactId: 'artifact-1',
+          proposalId: 'proposal-1',
+          approvalId: 'approval-proposal',
+          actionHash: 'a'.repeat(64),
+          baseRevisionNumber: 1,
+          kind: 'document',
+        },
+      });
+    });
+    await waitFor(() => expect(result.current.state.turns[0].assistantMessage.parts).toHaveLength(2));
+
+    act(() => result.current.actions.updateApprovalStatus('approval-proposal', 'approved'));
+    expect(result.current.state.turns[0].assistantMessage.parts[1]).toEqual(
+      expect.objectContaining({ type: 'artifact-proposal', status: 'approved' }),
+    );
+
+    act(() => result.current.actions.updateApprovalStatus('approval-proposal', 'executed'));
+    expect(result.current.state.turns[0].assistantMessage.parts[1]).toEqual(
+      expect.objectContaining({ type: 'artifact-proposal', status: 'applied' }),
+    );
   });
 });

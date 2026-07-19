@@ -3,15 +3,15 @@
 ## Inspect Providers
 
 ```bash
-uv run binliquid provider registry list --profile balanced --json
-uv run binliquid provider doctor --profile balanced --provider-id local-ollama --json
-uv run binliquid provider models --profile balanced --provider all --json
+uv run imperaos provider registry list --profile balanced --json
+uv run imperaos provider doctor --profile balanced --provider-id local-ollama --json
+uv run imperaos provider models --profile balanced --provider all --json
 ```
 
 ## Simulate Policy
 
 ```bash
-uv run binliquid provider policy simulate \
+uv run imperaos provider policy simulate \
   --profile enterprise \
   --provider-id openai-public \
   --data-class confidential \

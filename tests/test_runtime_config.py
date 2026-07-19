@@ -1,4 +1,4 @@
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_runtime_config_loads_balanced_profile() -> None:

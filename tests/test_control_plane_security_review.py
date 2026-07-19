@@ -5,13 +5,13 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.security_review import (
+from imperaos.cli import app
+from imperaos.control_plane.security_review import (
     _claim_consistency,
     generate_security_review_pack,
     scan_no_secrets,
 )
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.runtime.config import RuntimeConfig
 
 runner = CliRunner()
 

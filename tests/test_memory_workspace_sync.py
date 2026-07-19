@@ -1,13 +1,13 @@
 from pathlib import Path
 
-from binliquid.memory.workspace_models import (
+from imperaos.memory.workspace_models import (
     MemoryPrincipal,
     MemoryWorkspace,
     MemoryWorkspaceMembership,
     WorkspaceMemoryRecord,
 )
-from binliquid.memory.workspace_store import WorkspaceMemoryStore
-from binliquid.memory.workspace_sync import WorkspaceMemorySyncCoordinator
+from imperaos.memory.workspace_store import WorkspaceMemoryStore
+from imperaos.memory.workspace_sync import WorkspaceMemorySyncCoordinator
 
 
 def _store(tmp_path: Path) -> WorkspaceMemoryStore:

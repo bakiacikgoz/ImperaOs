@@ -7,18 +7,18 @@ computer-use, call live provider APIs, or execute destructive actions.
 Build and verify:
 
 ```bash
-uv run binliquid pilot ops drill \
+uv run imperaos pilot ops drill \
   --profile enterprise \
   --output-root artifacts/design-partner-handoff \
   --json
 
-uv run binliquid release handoff build \
+uv run imperaos release handoff build \
   --profile enterprise \
   --environment-label design-partner-rc-local \
   --output-root artifacts/design-partner-handoff \
   --json
 
-uv run binliquid release handoff verify \
+uv run imperaos release handoff verify \
   --manifest artifacts/design-partner-handoff/manifest.json \
   --json
 ```

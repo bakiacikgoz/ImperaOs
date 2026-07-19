@@ -5,8 +5,8 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.policy_packs import (
+from imperaos.cli import app
+from imperaos.control_plane.policy_packs import (
     diff_policy_packs,
     load_policy_pack_manifest,
     promote_policy_pack_dry_run,

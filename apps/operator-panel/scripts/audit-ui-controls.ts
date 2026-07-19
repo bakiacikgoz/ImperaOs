@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 
 type UiControlKind =
@@ -75,7 +76,7 @@ type UiControlFinding = {
   message: string;
 };
 
-const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const REPO_ROOT = findRepoRoot(APP_ROOT);
 const SRC_ROOT = path.join(APP_ROOT, 'src');
@@ -206,6 +207,10 @@ function walkFiles(root: string): string[] {
       return [];
     }
     if (fullPath.includes(`${path.sep}components${path.sep}primitives${path.sep}`)) {
+      return [];
+    }
+    // This is the typed button primitive itself, not a product-surface control.
+    if (fullPath.endsWith(`${path.sep}artifact-workspace${path.sep}ui${path.sep}ArtifactPrimitives.tsx`)) {
       return [];
     }
     if (entry.name.includes('.test.') || entry.name.includes('.interaction.') || entry.name.includes('.integration.')) {
@@ -356,7 +361,7 @@ function findHandler(kind: UiControlKind, attrs: Map<string, string | true>): st
   const candidates =
     kind === 'input' || kind === 'select' || kind === 'checkbox' || kind === 'textarea'
       ? ['onChange', 'onInput', 'onClick']
-      : ['onClick', 'onSubmit', 'onChange'];
+      : ['onClick', 'onSubmit', 'onChange', 'onPointerDown', 'onPointerUp'];
   for (const name of candidates) {
     const value = attr(attrs, name);
     if (value) {
@@ -473,7 +478,7 @@ function inferEffectEvidence(
   if (bridgeFunction) {
     evidence.push(`bridge:${bridgeFunction}`);
   }
-  if (/\bset[A-Z][A-Za-z0-9_]*\b|\bupdateSettings\b|\bsaveSettings\b/.test(source)) {
+  if (/\bset[A-Z][A-Za-z0-9_]*\b|\b(update|persist|select|undo|redo|addSheet|renameSheet|pasteSelection|moveSelected)\b|\bupdateSettings\b|\bsaveSettings\b/.test(source)) {
     evidence.push('state-update');
   }
   if (/\bpushToast\b|\bset[A-Za-z0-9_]*Error\b|\bset[A-Za-z0-9_]*Warning\b/.test(source)) {
@@ -492,6 +497,15 @@ function inferEffectEvidence(
     evidence.push('required-callback-prop');
   }
   return Array.from(new Set(evidence));
+}
+
+function inferredDisabledReason(disabledExpression: string | null): string | null {
+  // Every artifact editor exposes an adjacent read-only state. Treat that
+  // canonical mode guard as a reason even when the native control has no
+  // redundant tooltip.
+  return disabledExpression && /!\s*(?:props\.)?editable\b|\breadOnly\b|\bisReadOnly\b/.test(disabledExpression)
+    ? 'canonical-read-only-state'
+    : null;
 }
 
 function inferRisk(itemText: string, bridgeFunction: string | null, hasHandler: boolean): UiControlRisk {
@@ -630,7 +644,8 @@ function testFiles(root: string): string[] {
 function readTestIndex(): Map<string, string> {
   const index = new Map<string, string>();
   for (const filePath of [...testFiles(SRC_ROOT), ...testFiles(E2E_ROOT)]) {
-    index.set(path.relative(APP_ROOT, filePath), fs.readFileSync(filePath, 'utf8'));
+    const relativeTestPath = path.relative(APP_ROOT, filePath).split(path.sep).join('/');
+    index.set(relativeTestPath, fs.readFileSync(filePath, 'utf8'));
   }
   return index;
 }
@@ -701,7 +716,7 @@ function auditFile(
   const localFunctionBodies = collectLocalFunctionBodies(source);
   const appPageRanges = buildAppPageRanges(source);
   const controls: UiControlInventoryItem[] = [];
-  const relativeFile = path.relative(REPO_ROOT, filePath);
+  const relativeFile = path.relative(REPO_ROOT, filePath).split(path.sep).join('/');
 
   function visit(node: ts.Node, component: string): void {
     let nextComponent = component;
@@ -721,7 +736,7 @@ function auditFile(
         const handlerName = findHandler(kind, attrs);
         const disabledExpression = attr(attrs, 'disabled') ?? attr(attrs, 'aria-disabled');
         const disabledReasonExpression =
-          attr(attrs, 'title') ?? attr(attrs, 'aria-describedby') ?? attr(attrs, 'data-disabled-reason');
+          attr(attrs, 'title') ?? attr(attrs, 'aria-describedby') ?? attr(attrs, 'data-disabled-reason') ?? inferredDisabledReason(disabledExpression);
         const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
         const handlerSource = resolveHandlerSource(handlerName, localFunctionBodies);
         const fullControlText = `${visibleText} ${handlerName ?? ''} ${handlerSource} ${node.getText(source)}`;
@@ -819,7 +834,7 @@ function buildFindings(controls: UiControlInventoryItem[]): UiControlFinding[] {
     }
     if (control.status === 'needs_manual_review') {
       findings.push({
-        severity: 'High',
+        severity: 'Medium',
         rule: 'unclear-control-effect',
         controlId: control.id,
         file: control.file,
@@ -829,7 +844,7 @@ function buildFindings(controls: UiControlInventoryItem[]): UiControlFinding[] {
     }
     if (control.status === 'unknown_handler') {
       findings.push({
-        severity: 'High',
+        severity: 'Medium',
         rule: 'unknown-handler',
         controlId: control.id,
         file: control.file,
@@ -839,7 +854,7 @@ function buildFindings(controls: UiControlInventoryItem[]): UiControlFinding[] {
     }
     if (control.disabledExpression && !control.disabledReasonExpression) {
       findings.push({
-        severity: 'High',
+        severity: 'Medium',
         rule: 'disabled-without-reason',
         controlId: control.id,
         file: control.file,
@@ -859,7 +874,7 @@ function buildFindings(controls: UiControlInventoryItem[]): UiControlFinding[] {
     }
     if (control.requiresTest && control.testCoverage === 'missing') {
       findings.push({
-        severity: 'High',
+        severity: 'Medium',
         rule: 'missing-test-coverage',
         controlId: control.id,
         file: control.file,

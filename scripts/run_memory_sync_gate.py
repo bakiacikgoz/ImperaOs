@@ -3,9 +3,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.memory.sync_importer import import_memory_sync_pack
-from binliquid.memory.sync_pack import export_memory_sync_pack, verify_memory_sync_pack
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.memory.sync_importer import import_memory_sync_pack
+from imperaos.memory.sync_pack import export_memory_sync_pack, verify_memory_sync_pack
+from imperaos.runtime.config import RuntimeConfig
 
 
 def main() -> None:

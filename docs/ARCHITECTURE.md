@@ -20,15 +20,15 @@
 
 ## Core Components
 
-- `binliquid/core/planner.py`: strict planner + deterministic fallback.
-- `binliquid/core/orchestrator.py`: fallback logic, guardrails, synthesis, shadow metrics.
-- `binliquid/governance/*`: policy engine, approval queue, audit/redaction pipeline.
-- `binliquid/team/*`: team supervisor, DAG scheduler, handoff protocol, replay/export artifacts.
-- `binliquid/router/rule_router.py`: deterministic active routing baseline.
-- `binliquid/router/sltc_router.py`: temporal/spiking-inspired router.
-- `binliquid/experts/*`: typed expert payload producers.
-- `binliquid/memory/*`: salience gate + store + retrieval ranking.
-- `binliquid/telemetry/tracer.py`: trace events and router samples.
+- `imperaos/core/planner.py`: strict planner + deterministic fallback.
+- `imperaos/core/orchestrator.py`: fallback logic, guardrails, synthesis, shadow metrics.
+- `imperaos/governance/*`: policy engine, approval queue, audit/redaction pipeline.
+- `imperaos/team/*`: team supervisor, DAG scheduler, handoff protocol, replay/export artifacts.
+- `imperaos/router/rule_router.py`: deterministic active routing baseline.
+- `imperaos/router/sltc_router.py`: temporal/spiking-inspired router.
+- `imperaos/experts/*`: typed expert payload producers.
+- `imperaos/memory/*`: salience gate + store + retrieval ranking.
+- `imperaos/telemetry/tracer.py`: trace events and router samples.
 
 ## Team Runtime Path
 
@@ -47,7 +47,7 @@
 
 ## Vision-First Computer-Use Foundation
 
-The existing bounded computer-use pilot remains the default runtime. A new additive package, `binliquid/computer_use/vision_runtime/`, introduces typed ports and contracts for a future vision-first desktop/web/file action loop.
+The existing bounded computer-use pilot remains the default runtime. A new additive package, `imperaos/computer_use/vision_runtime/`, introduces typed ports and contracts for a future vision-first desktop/web/file action loop.
 
 The foundation is structured around:
 
@@ -60,7 +60,7 @@ Production defaults keep this path fail-closed: `runtime_mode="legacy_pilot"`, `
 The operator panel receives an additive `computerUseVisionRuntime` capability next to the existing `computerUsePilot` field, allowing the UI to surface readiness without enabling live execution.
 ## Vision-First Computer-Use Phase 2
 
-The vision-first runtime lives under `binliquid/computer_use/vision_runtime/`. Phase 2 adds macOS-specific readiness, screenshot capture, guarded input execution, an Ollama-compatible strict JSON vision interpreter, approval snapshot validation, replay verification, and qualification reporting. These components are additive to the legacy Safari/Finder/TextEdit pilot and do not enable Windows or Linux live execution.
+The vision-first runtime lives under `imperaos/computer_use/vision_runtime/`. Phase 2 adds macOS-specific readiness, screenshot capture, guarded input execution, an Ollama-compatible strict JSON vision interpreter, approval snapshot validation, replay verification, and qualification reporting. These components are additive to the legacy Safari/Finder/TextEdit pilot and do not enable Windows or Linux live execution.
 
 Default architecture remains fail-closed:
 

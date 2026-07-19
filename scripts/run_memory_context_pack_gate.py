@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.memory.context_pack import MemoryContextPack
+from imperaos.memory.context_pack import MemoryContextPack
 
 
 def main() -> None:

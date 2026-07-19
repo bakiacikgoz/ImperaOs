@@ -50,11 +50,11 @@ jobs:
 
       - name: Verify bundled runtime
         run: |
-          RUNTIME_ROOT="apps/operator-panel/src-tauri/resources/binliquid-runtime"
+          RUNTIME_ROOT="apps/operator-panel/src-tauri/resources/imperaos-runtime"
           test -f "${RUNTIME_ROOT}/RUNTIME_MANIFEST.txt"
           test -f "${RUNTIME_ROOT}/README.txt"
           test -x "${RUNTIME_ROOT}/python/bin/python"
-          "${RUNTIME_ROOT}/python/bin/python" -m binliquid --version
+          "${RUNTIME_ROOT}/python/bin/python" -m imperaos --version
 
       - name: Build internal unsigned binary
         run: pnpm --dir apps/operator-panel exec tauri build --debug --no-bundle
@@ -62,12 +62,12 @@ jobs:
       - name: Stage internal unsigned artifact
         run: |
           STAGE_ROOT="artifacts/operator-panel-internal-unsigned/macos-${{ matrix.arch }}"
-          RUNTIME_ROOT="apps/operator-panel/src-tauri/resources/binliquid-runtime"
+          RUNTIME_ROOT="apps/operator-panel/src-tauri/resources/imperaos-runtime"
           mkdir -p "${STAGE_ROOT}/resources"
           install -m 755 \
-            apps/operator-panel/src-tauri/target/debug/aegisos_operator_panel \
-            "${STAGE_ROOT}/aegisos_operator_panel"
-          cp -R "${RUNTIME_ROOT}" "${STAGE_ROOT}/resources/binliquid-runtime"
+            apps/operator-panel/src-tauri/target/debug/imperaos_operator_panel \
+            "${STAGE_ROOT}/imperaos_operator_panel"
+          cp -R "${RUNTIME_ROOT}" "${STAGE_ROOT}/resources/imperaos-runtime"
 
       - name: Write internal unsigned evidence
         run: |
@@ -176,7 +176,7 @@ jobs:
       - name: Verify bundled runtime
         shell: pwsh
         run: |
-          $runtime = "apps/operator-panel/src-tauri/resources/binliquid-runtime"
+          $runtime = "apps/operator-panel/src-tauri/resources/imperaos-runtime"
           pwsh apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 -RuntimeDir $runtime
 
       - name: Build internal unsigned binary
@@ -189,10 +189,10 @@ jobs:
         shell: pwsh
         run: |
           $stageRoot = "artifacts/operator-panel-internal-unsigned/windows-x64"
-          $runtimeRoot = "apps/operator-panel/src-tauri/resources/binliquid-runtime"
+          $runtimeRoot = "apps/operator-panel/src-tauri/resources/imperaos-runtime"
           New-Item -ItemType Directory -Force -Path "$stageRoot/resources" | Out-Null
-          Copy-Item -LiteralPath "apps/operator-panel/src-tauri/target/debug/aegisos_operator_panel.exe" -Destination "$stageRoot/aegisos_operator_panel.exe" -Force
-          Copy-Item -LiteralPath $runtimeRoot -Destination "$stageRoot/resources/binliquid-runtime" -Recurse -Force
+          Copy-Item -LiteralPath "apps/operator-panel/src-tauri/target/debug/imperaos_operator_panel.exe" -Destination "$stageRoot/imperaos_operator_panel.exe" -Force
+          Copy-Item -LiteralPath $runtimeRoot -Destination "$stageRoot/resources/imperaos-runtime" -Recurse -Force
 
       - name: Write internal unsigned evidence
         shell: pwsh

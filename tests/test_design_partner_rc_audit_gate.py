@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from binliquid.control_plane.design_partner_rc import evaluate_design_partner_rc_audit
+from imperaos.control_plane.design_partner_rc import evaluate_design_partner_rc_audit
 
 
 def _manifest(

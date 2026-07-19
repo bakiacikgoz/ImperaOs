@@ -1,0 +1,55 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/document.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "blocks": {
+      "items": {
+        "additionalProperties": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "title": "Blocks",
+      "type": "array"
+    },
+    "kind": {
+      "const": "document",
+      "default": "document",
+      "title": "Kind",
+      "type": "string"
+    },
+    "language": {
+      "maxLength": 16,
+      "minLength": 2,
+      "pattern": "^[a-z]{2,3}(?:-[A-Z]{2})?$",
+      "title": "Language",
+      "type": "string"
+    },
+    "pageMode": {
+      "default": "document",
+      "enum": [
+        "document",
+        "paginated"
+      ],
+      "title": "Pagemode",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "language",
+    "blocks"
+  ],
+  "title": "DocumentContentV1",
+  "type": "object",
+  "x-imperaos-contract": "document.v1"
+}

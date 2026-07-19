@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from binliquid.control_plane.provider_conformance import run_provider_native_gate
+from imperaos.control_plane.provider_conformance import run_provider_native_gate
 
 
 def test_provider_conformance_artifacts_do_not_persist_raw_prompt_or_secrets(

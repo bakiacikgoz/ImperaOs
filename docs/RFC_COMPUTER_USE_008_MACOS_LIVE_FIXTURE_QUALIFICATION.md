@@ -23,10 +23,10 @@ qualified for live execution.
 The live fixture command must see explicit one-run opt-in values:
 
 ```text
-BINLIQUID_COMPUTER_USE_LIVE_MACOS=1
-BINLIQUID_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1
-BINLIQUID_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1
-BINLIQUID_COMPUTER_USE_ACK=I understand BinLiquid will control my macOS desktop only for local supervised fixtures.
+IMPERAOS_COMPUTER_USE_LIVE_MACOS=1
+IMPERAOS_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1
+IMPERAOS_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1
+IMPERAOS_COMPUTER_USE_ACK=I understand ImperaOS will control my macOS desktop only for local supervised fixtures.
 ```
 
 Without those exact values, the report is `blocked`, `qualificationPassed=false`,
@@ -48,7 +48,7 @@ persistence must remain `0`.
 Replay verification:
 
 ```bash
-uv run binliquid computer-use replay \
+uv run imperaos computer-use replay \
   --report artifacts/computer_use/macos_qualification_report.json \
   --verify \
   --json

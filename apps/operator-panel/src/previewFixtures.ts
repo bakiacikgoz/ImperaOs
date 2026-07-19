@@ -18,7 +18,7 @@ function cloneValue<T>(value: T): T {
 
 function replaceRootInValue(value: JsonValue, rootDir: string): JsonValue {
   if (typeof value === 'string') {
-    return value.replaceAll('.binliquid/team/jobs', rootDir);
+    return value.replaceAll('.imperaos/team/jobs', rootDir);
   }
   if (Array.isArray(value)) {
     return value.map((item) => replaceRootInValue(item, rootDir));
@@ -94,8 +94,8 @@ function previewComputerUseStatus(settings: PanelSettings, jobId?: string) {
     deferred_until_safe_checkpoint: false,
   };
   job.job_id = resolvedJobId;
-  job.team_id = 'aegis-computer-use';
-  job.request = job.request || 'open "https://preview.aegis.local/form"\nclick "#start"\ntype "Preview operator" into "#name"';
+  job.team_id = 'imperaos-computer-use';
+  job.request = job.request || 'open "https://preview.imperaos.local/form"\nclick "#start"\ntype "Preview operator" into "#name"';
   job.status = 'blocked';
   runPayload.computer_use = {
     mode: 'step_approval',
@@ -103,9 +103,9 @@ function previewComputerUseStatus(settings: PanelSettings, jobId?: string) {
     lifecycle_state: 'awaiting_approval',
     stage: 'require_approval',
     active_action: 'click',
-    current_url: 'https://preview.aegis.local/form',
+    current_url: 'https://preview.imperaos.local/form',
     active_app: 'browser:safari',
-    active_window: 'safari:Aegis Preview Form',
+    active_window: 'safari:ImperaOS Preview Form',
     pending_approval_id: 'apr_20260308_device_action',
     paused: true,
     stopped: false,
@@ -116,7 +116,7 @@ function previewComputerUseStatus(settings: PanelSettings, jobId?: string) {
     last_control_command: lastControlCommand,
     last_control_result: lastControlResult,
     last_processed_command_id: 'ctrl-preview-resume',
-    last_verified_effect: 'Open https://preview.aegis.local/form.',
+    last_verified_effect: 'Open https://preview.imperaos.local/form.',
     last_error: null,
     last_verification_result: {
       verified: true,
@@ -135,17 +135,17 @@ function previewComputerUseStatus(settings: PanelSettings, jobId?: string) {
       last_known_status: 'blocked',
       execution_state: 'awaiting_approval',
       active_window: {
-        window_identity: 'safari:Aegis Preview Form',
+        window_identity: 'safari:ImperaOS Preview Form',
         app_identity: 'browser:safari',
         surface_kind: 'browser',
         focused: true,
       },
       open_windows: [],
       active_application_identity: 'browser:safari',
-      active_surface: 'browser:safari:https://preview.aegis.local/form',
-      focused_window_title: 'Aegis Preview Form',
-      current_url: 'https://preview.aegis.local/form',
-      browser_tab_title: 'Aegis Preview Form',
+      active_surface: 'browser:safari:https://preview.imperaos.local/form',
+      focused_window_title: 'ImperaOS Preview Form',
+      current_url: 'https://preview.imperaos.local/form',
+      browser_tab_title: 'ImperaOS Preview Form',
       observed_targets: [],
       visible_target_set: ['#start', '#name', '#resume'],
       changed_resources: [],
@@ -158,7 +158,7 @@ function previewComputerUseStatus(settings: PanelSettings, jobId?: string) {
       },
       filesystem_result_set: [],
       last_completed_action: 'open_url',
-      last_verified_effect: 'Open https://preview.aegis.local/form.',
+      last_verified_effect: 'Open https://preview.imperaos.local/form.',
       last_verification_result: {
         verified: true,
         summary: 'Verified the preview form URL before requesting approval.',
@@ -268,7 +268,7 @@ export function previewComputerUseControl(jobId: string, requested: 'pause' | 'r
         ? 'approval_not_executed'
         : null;
   return {
-    contract_version: '2.0',
+    contract_version: '3.0',
     job_id: jobId,
     requested,
     command_id: `ctrl-preview-${requested}`,
@@ -376,7 +376,7 @@ export function previewTailEvents() {
       event_id: 'evt-preview-cu-1',
       event_seq: 1,
       timestamp: '2026-03-08T09:10:00Z',
-      team_id: 'aegis-computer-use',
+      team_id: 'imperaos-computer-use',
       case_id: 'case-preview',
       job_id: 'job-ui-preview-cu-1',
       phase: 'computer_use',
@@ -393,7 +393,7 @@ export function previewTailEvents() {
       event_id: 'evt-preview-cu-2',
       event_seq: 2,
       timestamp: '2026-03-08T09:10:02Z',
-      team_id: 'aegis-computer-use',
+      team_id: 'imperaos-computer-use',
       case_id: 'case-preview',
       job_id: 'job-ui-preview-cu-1',
       phase: 'computer_use',
@@ -401,8 +401,8 @@ export function previewTailEvents() {
       status_after: 'running',
       data: {
         action_id: 'open_url',
-        current_url: 'https://preview.aegis.local/form',
-        window_identity: 'safari:Aegis Preview Form',
+        current_url: 'https://preview.imperaos.local/form',
+        window_identity: 'safari:ImperaOS Preview Form',
       },
     },
     {
@@ -411,7 +411,7 @@ export function previewTailEvents() {
       event_id: 'evt-preview-cu-3',
       event_seq: 3,
       timestamp: '2026-03-08T09:10:03Z',
-      team_id: 'aegis-computer-use',
+      team_id: 'imperaos-computer-use',
       case_id: 'case-preview',
       job_id: 'job-ui-preview-cu-1',
       phase: 'computer_use',
@@ -428,7 +428,7 @@ export function previewTailEvents() {
       event_id: 'evt-preview-cu-4',
       event_seq: 4,
       timestamp: '2026-03-08T09:10:04Z',
-      team_id: 'aegis-computer-use',
+      team_id: 'imperaos-computer-use',
       case_id: 'case-preview',
       job_id: 'job-ui-preview-cu-1',
       phase: 'computer_use',
@@ -447,7 +447,7 @@ export function previewTailEvents() {
       event_id: 'evt-preview-cu-5',
       event_seq: 5,
       timestamp: '2026-03-08T09:10:05Z',
-      team_id: 'aegis-computer-use',
+      team_id: 'imperaos-computer-use',
       case_id: 'case-preview',
       job_id: 'job-ui-preview-cu-1',
       phase: 'computer_use',
@@ -465,7 +465,7 @@ export function previewTailEvents() {
       event_id: 'evt-preview-cu-6',
       event_seq: 6,
       timestamp: '2026-03-08T09:10:05Z',
-      team_id: 'aegis-computer-use',
+      team_id: 'imperaos-computer-use',
       case_id: 'case-preview',
       job_id: 'job-ui-preview-cu-1',
       phase: 'computer_use',
@@ -482,7 +482,7 @@ export function previewTailEvents() {
       event_id: 'evt-preview-cu-7',
       event_seq: 7,
       timestamp: '2026-03-08T09:10:08Z',
-      team_id: 'aegis-computer-use',
+      team_id: 'imperaos-computer-use',
       case_id: 'case-preview',
       job_id: 'job-ui-preview-cu-1',
       phase: 'computer_use',
@@ -507,7 +507,7 @@ export function previewTailEvents() {
       event_id: 'evt-preview-cu-8',
       event_seq: 8,
       timestamp: '2026-03-08T09:10:08Z',
-      team_id: 'aegis-computer-use',
+      team_id: 'imperaos-computer-use',
       case_id: 'case-preview',
       job_id: 'job-ui-preview-cu-1',
       phase: 'computer_use',
@@ -575,7 +575,7 @@ export function previewInstallRehearsal(targetRoot?: string, output?: string) {
     version: 'control-plane.install-rehearsal/v1',
     rehearsalId: 'rehearsal-preview',
     status: 'pass',
-    targetRoot: targetRoot || '.binliquid/rehearsal/design-partner',
+    targetRoot: targetRoot || '.imperaos/rehearsal/design-partner',
     outputPath: output || 'artifacts/install-rehearsal/report.json',
     supportBundleSafe: true,
     rollbackPlanPresent: true,
@@ -668,7 +668,7 @@ export function previewControlPlaneAgentList() {
       {
         agent_id: 'governed-ops',
         display_name: 'Governed Ops Agent',
-        runtime_kind: 'binliquid_team',
+        runtime_kind: 'imperaos_team',
         agent_type: 'internal',
         status: 'registered',
         readiness: 'policy_simulated',

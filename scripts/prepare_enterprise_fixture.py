@@ -9,14 +9,15 @@ from pathlib import Path
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-from binliquid.enterprise.signing import canonical_payload_hash
+from imperaos.enterprise.signing import canonical_payload_hash
+from imperaos.runtime.paths import enterprise_state_path
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Prepare enterprise signing and identity fixtures."
     )
-    parser.add_argument("--root", default=".", help="Workspace root for .binliquid assets")
+    parser.add_argument("--root", default=".", help="Workspace root for .imperaos assets")
     parser.add_argument("--actor-id", default="enterprise-admin", help="Actor id")
     parser.add_argument("--subject", default="enterprise-admin@example.local", help="Subject")
     parser.add_argument("--issuer", default="idp.local", help="Assertion issuer")
@@ -50,16 +51,16 @@ def main() -> None:
     args = parser.parse_args()
 
     root = Path(args.root).resolve()
-    keys_root = root / ".binliquid" / "keys"
+    keys_root = root / enterprise_state_path("keys")
     private_dir = keys_root / "private"
     trusted_dir = keys_root / "trusted"
-    identity_dir = root / ".binliquid" / "identity"
+    identity_dir = root / enterprise_state_path("identity")
     private_dir.mkdir(parents=True, exist_ok=True)
     trusted_dir.mkdir(parents=True, exist_ok=True)
     identity_dir.mkdir(parents=True, exist_ok=True)
 
     private_seed = hashlib.sha256(
-        f"binliquid-enterprise-fixture:{args.key_id}".encode()
+        f"imperaos-enterprise-fixture:{args.key_id}".encode()
     ).digest()
     private_key = Ed25519PrivateKey.from_private_bytes(private_seed)
     private_raw = private_key.private_bytes_raw()

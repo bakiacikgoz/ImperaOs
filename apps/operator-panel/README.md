@@ -1,6 +1,6 @@
-# AegisOS Operator Panel (v0.5.0-beta)
+# ImperaOS Operator Panel (v0.5.0-beta)
 
-Tauri 2 + React control plane for BinLiquid core.
+Tauri 2 + React control plane for ImperaOS core.
 
 ## Dev Mode (External CLI)
 
@@ -12,7 +12,7 @@ pnpm tauri:dev
 Settings defaults:
 - `mode=auto`
 - profile `balanced`
-- root dir `.binliquid/team/jobs`
+- root dir `.imperaos/team/jobs`
 
 ## Frontend QA Gate
 
@@ -38,7 +38,7 @@ or local server is intentionally unavailable.
 In `auto` mode, bridge resolution order is:
 1. configured `cliPath`
 2. bundled runtime python
-3. `binliquid` on PATH
+3. `imperaos` on PATH
 
 ## Release Mode (Bundled Runtime)
 
@@ -51,23 +51,23 @@ apps/operator-panel/scripts/build_bundled_runtime_macos.sh x86_64
 
 macOS runtime entrypoint used by bridge:
 
-`Contents/Resources/binliquid-runtime/python/bin/python -m binliquid ...`
+`Contents/Resources/imperaos-runtime/python/bin/python -m imperaos ...`
 
 Build Windows x64 runtime payload into Tauri resources:
 
 ```powershell
 pwsh apps/operator-panel/scripts/build_bundled_runtime_windows.ps1 -Arch x64
 pwsh apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 `
-  -RuntimeDir apps/operator-panel/src-tauri/resources/binliquid-runtime
-apps/operator-panel/src-tauri/resources/binliquid-runtime/python/Scripts/python.exe -m binliquid --version
+  -RuntimeDir apps/operator-panel/src-tauri/resources/imperaos-runtime
+apps/operator-panel/src-tauri/resources/imperaos-runtime/python/Scripts/python.exe -m imperaos --version
 pnpm --dir apps/operator-panel exec tauri build --config src-tauri/tauri.windows.conf.json --bundles nsis
 ```
 
 Windows runtime entrypoint used by bridge:
 
-`binliquid-runtime/python/Scripts/python.exe -m binliquid ...`
+`imperaos-runtime/python/Scripts/python.exe -m imperaos ...`
 
-Generated runtime contents under `resources/binliquid-runtime/python/` are build
+Generated runtime contents under `resources/imperaos-runtime/python/` are build
 artifacts. Do not commit the generated venv/runtime tree; produce it through the
 script or CI and keep `RUNTIME_MANIFEST.txt` as evidence artifact output.
 

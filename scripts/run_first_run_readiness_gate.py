@@ -99,7 +99,7 @@ def run_first_run_gate(
             "run",
             "python",
             "-m",
-            "binliquid",
+            "imperaos",
             "setup",
             "first-run",
             "--profile",

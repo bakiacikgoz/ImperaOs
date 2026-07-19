@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from binliquid.control_plane.claim_guard import ClaimGuard
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.control_plane.claim_guard import ClaimGuard
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_claim_guard_blocks_public_desktop_and_cross_platform_computer_use(tmp_path) -> None:

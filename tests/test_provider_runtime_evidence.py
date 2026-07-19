@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.control_plane.provider_runtime_evidence import ProviderEvidenceWriter
+from imperaos.control_plane.provider_runtime_evidence import ProviderEvidenceWriter
 
 
 def test_provider_evidence_writer_persists_hash_only_artifact(tmp_path: Path) -> None:

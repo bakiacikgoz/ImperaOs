@@ -25,7 +25,7 @@ Out of scope for the pilot:
 
 ## Subsystem
 
-The subsystem lives under `binliquid/computer_use/` and is split into:
+The subsystem lives under `imperaos/computer_use/` and is split into:
 
 - `session.py`: orchestrates guarded dry-run and step-approval sessions
 - `planner.py`: emits bounded browser task plans

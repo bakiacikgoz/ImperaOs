@@ -1,0 +1,47 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-export-preflight-command.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "basename": {
+      "maxLength": 255,
+      "minLength": 1,
+      "title": "Basename",
+      "type": "string"
+    },
+    "exportId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Exportid",
+      "type": "string"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Idempotencykey",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "sizeBytes": {
+      "maximum": 104857600,
+      "minimum": 0,
+      "title": "Sizebytes",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "exportId",
+    "basename",
+    "sha256",
+    "sizeBytes",
+    "idempotencyKey"
+  ],
+  "title": "PreflightArtifactExportCommand",
+  "type": "object",
+  "x-imperaos-contract": "artifact-export-preflight-command.v1"
+}

@@ -3,35 +3,35 @@
 ## 1. Resolve Config
 
 ```bash
-uv run binliquid config resolve --profile balanced --json
+uv run imperaos config resolve --profile balanced --json
 ```
 
 ## 2. Health Check
 
 ```bash
-uv run binliquid doctor --profile balanced
-uv run binliquid doctor --profile balanced --provider auto --model qwen3.5:4b --hf-model-id Qwen/Qwen3.5-4B-Instruct
+uv run imperaos doctor --profile balanced
+uv run imperaos doctor --profile balanced --provider auto --model qwen3.5:4b --hf-model-id Qwen/Qwen3.5-4B-Instruct
 ```
 
 ## 3. Functional Smoke
 
 ```bash
-uv run binliquid chat --profile balanced --once "selam" --stream --fast-path
-uv run binliquid chat --profile balanced --provider ollama --model qwen3.5:4b --once "uzun plan çıkar"
-uv run binliquid benchmark smoke --mode all --profile balanced
+uv run imperaos chat --profile balanced --once "selam" --stream --fast-path
+uv run imperaos chat --profile balanced --provider ollama --model qwen3.5:4b --once "uzun plan çıkar"
+uv run imperaos benchmark smoke --mode all --profile balanced
 ```
 
 ## 4. Quality Ablation
 
 ```bash
-uv run binliquid benchmark ablation --mode all --profile balanced --suite quality
+uv run imperaos benchmark ablation --mode all --profile balanced --suite quality
 ```
 
 ## 5. Energy Check
 
 ```bash
-uv run binliquid benchmark energy --profile balanced --energy-mode measured
-uv run binliquid benchmark energy --profile balanced --energy-mode measured --provider auto --model qwen3.5:4b --hf-model-id Qwen/Qwen3.5-4B-Instruct
+uv run imperaos benchmark energy --profile balanced --energy-mode measured
+uv run imperaos benchmark energy --profile balanced --energy-mode measured --provider auto --model qwen3.5:4b --hf-model-id Qwen/Qwen3.5-4B-Instruct
 ```
 
 If measured mode cannot run due permissions, confirm deterministic `error_reason` in JSON output.
@@ -39,8 +39,8 @@ If measured mode cannot run due permissions, confirm deterministic `error_reason
 ## 6. Research Calibration
 
 ```bash
-uv run binliquid research train-router --dataset .binliquid/research/router_dataset.jsonl
-uv run binliquid research eval-router --dataset .binliquid/research/router_dataset.jsonl
+uv run imperaos research train-router --dataset .imperaos/research/router_dataset.jsonl
+uv run imperaos research eval-router --dataset .imperaos/research/router_dataset.jsonl
 ```
 
 ## 7. Artifact Verification
@@ -56,9 +56,9 @@ Check that all files exist:
 ## 8. Operator Panel Compatibility Check
 
 ```bash
-uv run binliquid --version
-uv run binliquid operator capabilities --json
-uv run binliquid team list --root-dir .binliquid/team/jobs --json
+uv run imperaos --version
+uv run imperaos operator capabilities --json
+uv run imperaos team list --root-dir .imperaos/team/jobs --json
 ```
 
 If capabilities contract or command flags are missing, keep UI mutations disabled.
@@ -115,7 +115,7 @@ Live monitor:
 
 ```bash
 scripts/watch_qualification_soak.sh \
-  --run-dir /private/tmp/binliquid_soak_final72h-YYYYMMDDTHHMMSSZ/artifacts/qualification/supervisor/final72h-YYYYMMDDTHHMMSSZ
+  --run-dir /private/tmp/imperaos_soak_final72h-YYYYMMDDTHHMMSSZ/artifacts/qualification/supervisor/final72h-YYYYMMDDTHHMMSSZ
 ```
 
 Do not claim final-GA pass until the long soak completes and the resulting
@@ -143,8 +143,8 @@ uv run pytest -q \
   tests/test_team_audit_envelope.py \
   tests/test_team_cli.py \
   tests/test_team_pilot_gate.py
-uv run binliquid team validate --spec examples/team/restricted_pilot.yaml --json
-uv run binliquid team pilot-check \
+uv run imperaos team validate --spec examples/team/restricted_pilot.yaml --json
+uv run imperaos team pilot-check \
   --spec examples/team/restricted_pilot.yaml \
   --profile restricted \
   --mode deterministic \
@@ -172,7 +172,7 @@ Shared `memory_target` writes use optimistic version checks and reject on confli
 Before a real restricted pilot, run one live-provider rehearsal in the target environment:
 
 ```bash
-uv run binliquid team pilot-check \
+uv run imperaos team pilot-check \
   --spec examples/team/restricted_pilot_live.yaml \
   --profile restricted \
   --mode live-provider \
@@ -189,13 +189,13 @@ Retain these artifacts for every pilot check and pilot rehearsal:
 
 - `artifacts/team_pilot_report.json`
 - `artifacts/team_pilot_live_report.json` when a live rehearsal is run
-- `.binliquid/team/jobs/<job_id>/status.json`
-- `.binliquid/team/jobs/<job_id>/events.jsonl`
-- `.binliquid/team/jobs/<job_id>/tasks.json`
-- `.binliquid/team/jobs/<job_id>/handoffs.json`
-- `.binliquid/team/jobs/<job_id>/audit_envelope.json`
+- `.imperaos/team/jobs/<job_id>/status.json`
+- `.imperaos/team/jobs/<job_id>/events.jsonl`
+- `.imperaos/team/jobs/<job_id>/tasks.json`
+- `.imperaos/team/jobs/<job_id>/handoffs.json`
+- `.imperaos/team/jobs/<job_id>/audit_envelope.json`
 - `artifacts/team_summary.json`
-- `uv run binliquid config resolve --profile restricted --json` output
+- `uv run imperaos config resolve --profile restricted --json` output
 - approval store snapshot or the approval summary embedded in the pilot report
 
 ### Incident Response
@@ -222,13 +222,13 @@ Retain these artifacts for every pilot check and pilot rehearsal:
 The supported hard stop for this slice is disabling Team Runtime entirely:
 
 ```bash
-BINLIQUID_TEAM_ENABLED=false uv run binliquid team run --spec examples/team/restricted_pilot.yaml --once "pilot disable check" --profile restricted --json
+IMPERAOS_TEAM_ENABLED=false uv run imperaos team run --spec examples/team/restricted_pilot.yaml --once "pilot disable check" --profile restricted --json
 ```
 
 Expected result: the command fails with Team Runtime disabled and no new team delegation starts.
 
 Operational fallback for this slice is the core single-agent runtime, not a degraded team mode.
-`BINLIQUID_TEAM_MAX_PARALLEL_TASKS=1` may help diagnosis, but it is not a rollback mechanism.
+`IMPERAOS_TEAM_MAX_PARALLEL_TASKS=1` may help diagnosis, but it is not a rollback mechanism.
 If bounded concurrency repeatedly falls back to serialized execution, treat that as a pilot warning. If drift/conflict repeats in the same workload, force serial diagnosis first; if it persists, disable Team Runtime entirely.
 
 ### Stop Conditions
@@ -247,23 +247,23 @@ Do not start or continue a pilot if any of the following occur:
 
 ```bash
 uv run python scripts/prepare_enterprise_fixture.py --root .
-uv run binliquid security baseline --profile enterprise --json
-uv run binliquid auth whoami --profile enterprise --json
-uv run binliquid auth check --profile enterprise --permission runtime.run --json
-uv run binliquid metrics snapshot --profile enterprise --json
-uv run binliquid qualification run --profile enterprise --mode mixed --soak-hours 6 --output-root artifacts/qualification --json
-uv run binliquid ga readiness --profile enterprise --report artifacts/ga_readiness_report.json --json
+uv run imperaos security baseline --profile enterprise --json
+uv run imperaos auth whoami --profile enterprise --json
+uv run imperaos auth check --profile enterprise --permission runtime.run --json
+uv run imperaos metrics snapshot --profile enterprise --json
+uv run imperaos qualification run --profile enterprise --mode mixed --soak-hours 6 --output-root artifacts/qualification --json
+uv run imperaos ga readiness --profile enterprise --report artifacts/ga_readiness_report.json --json
 ```
 
 ### Required Operator Drills
 
-- `uv run binliquid keys status --profile enterprise --json`
-- `uv run binliquid keys rotate-plan --profile enterprise --json`
-- `uv run binliquid migrate plan --profile enterprise --json`
-- `uv run binliquid backup create --profile enterprise --json`
-- `uv run binliquid restore verify --profile enterprise --backup-dir <backup_dir> --json`
-- `uv run binliquid support bundle export --profile enterprise --json`
-- `uv run binliquid qualification run --profile enterprise --mode mixed --soak-hours 6 --output-root artifacts/qualification --json`
+- `uv run imperaos keys status --profile enterprise --json`
+- `uv run imperaos keys rotate-plan --profile enterprise --json`
+- `uv run imperaos migrate plan --profile enterprise --json`
+- `uv run imperaos backup create --profile enterprise --json`
+- `uv run imperaos restore verify --profile enterprise --backup-dir <backup_dir> --json`
+- `uv run imperaos support bundle export --profile enterprise --json`
+- `uv run imperaos qualification run --profile enterprise --mode mixed --soak-hours 6 --output-root artifacts/qualification --json`
 
 ### Evidence To Retain
 
@@ -295,7 +295,7 @@ uv run binliquid ga readiness --profile enterprise --report artifacts/ga_readine
 
 ### Kill-Switch And Safe Fallback
 
-- disable Team Runtime entirely with `BINLIQUID_TEAM_ENABLED=false`
+- disable Team Runtime entirely with `IMPERAOS_TEAM_ENABLED=false`
 - keep enterprise CLI controls read-only until identity and signing checks return to `pass`
 - do not claim GA readiness while `ga readiness` is `yellow` or `red`
 - do not promote enterprise deployment claims without a signed `qualification_report.json`
@@ -317,8 +317,8 @@ platform_qualification_required = true
 ### Operator Checks
 
 ```bash
-uv run binliquid operator capabilities --json
-uv run binliquid computer-use run --once "read current screen" --runtime vision-first --json
+uv run imperaos operator capabilities --json
+uv run imperaos computer-use run --once "read current screen" --runtime vision-first --json
 ```
 
 Expected result without a configured vision provider: fail-closed with `VISION_RUNTIME_NOT_CONFIGURED` or `VISION_PROVIDER_UNAVAILABLE`; no raw screenshots are persisted.
@@ -335,13 +335,13 @@ Expected result without a configured vision provider: fail-closed with `VISION_R
 Use the vision-first runtime only as a supervised macOS pilot. Start with deterministic qualification:
 
 ```bash
-uv run binliquid computer-use qualify --runtime vision-first --suite smoke --mode deterministic --json
+uv run imperaos computer-use qualify --runtime vision-first --suite smoke --mode deterministic --json
 ```
 
 Before any live macOS run, inspect readiness:
 
 ```bash
-uv run binliquid computer-use vision doctor --profile balanced --json
+uv run imperaos computer-use vision doctor --profile balanced --json
 ```
 
 Do not automate macOS Screen Recording or Accessibility permission grants. If readiness reports missing permissions, the operator must grant them manually in macOS Privacy & Security. Windows live computer-use remains disabled with `WINDOWS_COMPUTER_USE_NOT_QUALIFIED`.

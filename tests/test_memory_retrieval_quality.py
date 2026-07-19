@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-from binliquid.memory.semantic.evaluator import run_retrieval_quality_suite
-from binliquid.memory.semantic.fixtures import build_semantic_fixture
+from imperaos.memory.semantic.evaluator import run_retrieval_quality_suite
+from imperaos.memory.semantic.fixtures import build_semantic_fixture
 
 
 def test_retrieval_quality_suite_passes_fixture(tmp_path: Path) -> None:

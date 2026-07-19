@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img">
+  <title>ImperaOS desktop icon</title>
+  <defs>
+    <linearGradient id="imperaos-surface" x1="3" y1="2" x2="21" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#111C36"/>
+      <stop offset="1" stop-color="#070B16"/>
+    </linearGradient>
+    <linearGradient id="imperaos-mark" x1="5" y1="4" x2="19" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#93C5FD"/>
+      <stop offset="0.52" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="22" height="22" rx="5" fill="url(#imperaos-surface)"/>
+  <path
+    d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"
+    fill="#2563EB"
+    fill-opacity="0.12"
+    stroke="url(#imperaos-mark)"
+    stroke-width="1.15"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M12 7.5l4 2.3v4.4l-4 2.3-4-2.3V9.8l4-2.3z"
+    fill="#0F1B34"
+    stroke="#BFDBFE"
+    stroke-width="0.85"
+    stroke-linejoin="round"
+  />
+  <path d="M12 7.5v9" fill="none" stroke="#60A5FA" stroke-width="0.8"/>
+  <circle cx="12" cy="12" r="1.15" fill="#EFF6FF"/>
+</svg>

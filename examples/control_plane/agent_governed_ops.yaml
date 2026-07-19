@@ -2,7 +2,7 @@ version: "control-plane.agent/v1"
 agent_id: "governed-ops"
 display_name: "Governed Ops Agent"
 description: "Approval-heavy internal ops workflow under policy control."
-runtime_kind: "binliquid_team"
+runtime_kind: "imperaos_team"
 profile: "enterprise"
 policy_profile: "enterprise"
 owner:

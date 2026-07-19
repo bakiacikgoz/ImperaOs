@@ -2,7 +2,7 @@ version: "control-plane.agent/v1"
 agent_id: "team-governed-ops"
 display_name: "Team Governed Ops"
 description: "Team runtime wrapper for the governed ops pilot workflow."
-runtime_kind: "binliquid_team"
+runtime_kind: "imperaos_team"
 profile: "restricted"
 policy_profile: "restricted"
 owner:

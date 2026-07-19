@@ -1,0 +1,620 @@
+{
+  "$defs": {
+    "SlideChartElementV2": {
+      "additionalProperties": false,
+      "properties": {
+        "categories": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Categories",
+          "type": "array"
+        },
+        "chartType": {
+          "enum": [
+            "bar",
+            "line",
+            "pie"
+          ],
+          "title": "Charttype",
+          "type": "string"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "maximum": 7.5,
+          "title": "Height",
+          "type": "number"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/SlideChartSeriesV2"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Series",
+          "type": "array"
+        },
+        "type": {
+          "const": "chart",
+          "title": "Type",
+          "type": "string"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "maximum": 13.333,
+          "title": "Width",
+          "type": "number"
+        },
+        "x": {
+          "maximum": 13.333,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 7.5,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "x",
+        "y",
+        "width",
+        "height",
+        "type",
+        "chartType",
+        "categories",
+        "series"
+      ],
+      "title": "SlideChartElementV2",
+      "type": "object"
+    },
+    "SlideChartSeriesV2": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "values": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "values"
+      ],
+      "title": "SlideChartSeriesV2",
+      "type": "object"
+    },
+    "SlideImageElementV2": {
+      "additionalProperties": false,
+      "properties": {
+        "altText": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Alttext",
+          "type": "string"
+        },
+        "assetId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Assetid",
+          "type": "string"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "maximum": 7.5,
+          "title": "Height",
+          "type": "number"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "const": "image",
+          "title": "Type",
+          "type": "string"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "maximum": 13.333,
+          "title": "Width",
+          "type": "number"
+        },
+        "x": {
+          "maximum": 13.333,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 7.5,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "x",
+        "y",
+        "width",
+        "height",
+        "type",
+        "assetId",
+        "altText"
+      ],
+      "title": "SlideImageElementV2",
+      "type": "object"
+    },
+    "SlideLineElementV2": {
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "default": "172033",
+          "pattern": "^[0-9A-F]{6}$",
+          "title": "Color",
+          "type": "string"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "maximum": 7.5,
+          "title": "Height",
+          "type": "number"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "lineWidth": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "title": "Linewidth",
+          "type": "number"
+        },
+        "type": {
+          "const": "line",
+          "title": "Type",
+          "type": "string"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "maximum": 13.333,
+          "title": "Width",
+          "type": "number"
+        },
+        "x": {
+          "maximum": 13.333,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 7.5,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "x",
+        "y",
+        "width",
+        "height",
+        "type"
+      ],
+      "title": "SlideLineElementV2",
+      "type": "object"
+    },
+    "SlideShapeElementV2": {
+      "additionalProperties": false,
+      "properties": {
+        "fillColor": {
+          "default": "FFFFFF",
+          "pattern": "^[0-9A-F]{6}$",
+          "title": "Fillcolor",
+          "type": "string"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "maximum": 7.5,
+          "title": "Height",
+          "type": "number"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "lineColor": {
+          "default": "172033",
+          "pattern": "^[0-9A-F]{6}$",
+          "title": "Linecolor",
+          "type": "string"
+        },
+        "shape": {
+          "enum": [
+            "rectangle",
+            "ellipse"
+          ],
+          "title": "Shape",
+          "type": "string"
+        },
+        "type": {
+          "const": "shape",
+          "title": "Type",
+          "type": "string"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "maximum": 13.333,
+          "title": "Width",
+          "type": "number"
+        },
+        "x": {
+          "maximum": 13.333,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 7.5,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "x",
+        "y",
+        "width",
+        "height",
+        "type",
+        "shape"
+      ],
+      "title": "SlideShapeElementV2",
+      "type": "object"
+    },
+    "SlideTableElementV2": {
+      "additionalProperties": false,
+      "properties": {
+        "height": {
+          "exclusiveMinimum": 0,
+          "maximum": 7.5,
+          "title": "Height",
+          "type": "number"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "rows": {
+          "items": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Rows",
+          "type": "array"
+        },
+        "type": {
+          "const": "table",
+          "title": "Type",
+          "type": "string"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "maximum": 13.333,
+          "title": "Width",
+          "type": "number"
+        },
+        "x": {
+          "maximum": 13.333,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 7.5,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "x",
+        "y",
+        "width",
+        "height",
+        "type",
+        "rows"
+      ],
+      "title": "SlideTableElementV2",
+      "type": "object"
+    },
+    "SlideTextElementV2": {
+      "additionalProperties": false,
+      "properties": {
+        "bold": {
+          "default": false,
+          "title": "Bold",
+          "type": "boolean"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9A-F]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "fontSize": {
+          "default": 18,
+          "maximum": 96,
+          "minimum": 6,
+          "title": "Fontsize",
+          "type": "number"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "maximum": 7.5,
+          "title": "Height",
+          "type": "number"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 20000,
+          "title": "Text",
+          "type": "string"
+        },
+        "type": {
+          "const": "text",
+          "title": "Type",
+          "type": "string"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "maximum": 13.333,
+          "title": "Width",
+          "type": "number"
+        },
+        "x": {
+          "maximum": 13.333,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 7.5,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "x",
+        "y",
+        "width",
+        "height",
+        "type",
+        "text"
+      ],
+      "title": "SlideTextElementV2",
+      "type": "object"
+    },
+    "SlideThemeV2": {
+      "additionalProperties": false,
+      "properties": {
+        "accentColor": {
+          "pattern": "^[0-9A-F]{6}$",
+          "title": "Accentcolor",
+          "type": "string"
+        },
+        "backgroundColor": {
+          "pattern": "^[0-9A-F]{6}$",
+          "title": "Backgroundcolor",
+          "type": "string"
+        },
+        "foregroundColor": {
+          "pattern": "^[0-9A-F]{6}$",
+          "title": "Foregroundcolor",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "backgroundColor",
+        "foregroundColor",
+        "accentColor"
+      ],
+      "title": "SlideThemeV2",
+      "type": "object"
+    },
+    "SlideV2": {
+      "additionalProperties": false,
+      "properties": {
+        "elements": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "chart": "#/$defs/SlideChartElementV2",
+                "image": "#/$defs/SlideImageElementV2",
+                "line": "#/$defs/SlideLineElementV2",
+                "shape": "#/$defs/SlideShapeElementV2",
+                "table": "#/$defs/SlideTableElementV2",
+                "text": "#/$defs/SlideTextElementV2"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/SlideTextElementV2"
+              },
+              {
+                "$ref": "#/$defs/SlideImageElementV2"
+              },
+              {
+                "$ref": "#/$defs/SlideShapeElementV2"
+              },
+              {
+                "$ref": "#/$defs/SlideLineElementV2"
+              },
+              {
+                "$ref": "#/$defs/SlideTableElementV2"
+              },
+              {
+                "$ref": "#/$defs/SlideChartElementV2"
+              }
+            ]
+          },
+          "maxItems": 500,
+          "title": "Elements",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SlideV2",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/slides.v2.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "assetIds": {
+      "items": {
+        "maxLength": 128,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "title": "Assetids",
+      "type": "array"
+    },
+    "kind": {
+      "const": "slides",
+      "default": "slides",
+      "title": "Kind",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 2,
+      "default": 2,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "slides": {
+      "items": {
+        "$ref": "#/$defs/SlideV2"
+      },
+      "maxItems": 200,
+      "minItems": 1,
+      "title": "Slides",
+      "type": "array"
+    },
+    "theme": {
+      "$ref": "#/$defs/SlideThemeV2"
+    }
+  },
+  "required": [
+    "theme",
+    "slides"
+  ],
+  "title": "SlidesContentV2",
+  "type": "object",
+  "x-imperaos-contract": "slides.v2"
+}

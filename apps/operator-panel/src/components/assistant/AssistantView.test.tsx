@@ -6,9 +6,9 @@ import { DEFAULT_ASSISTANT_RUNTIME_SETTINGS } from '../../settings';
 import { AssistantView, type AssistantViewCopy } from './AssistantView';
 
 const copy: AssistantViewCopy = {
-  title: 'AegisOS Assistant',
+  title: 'ImperaOS Assistant',
   subtitle: 'Ask about systems, runs, logs, policies, approvals, and artifacts.',
-  welcomeTitle: 'Welcome to AegisOS Assistant',
+  welcomeTitle: 'Welcome to ImperaOS Assistant',
   badgeLabel: 'Governed assistant',
   newChat: 'New Chat',
   messageLabel: 'Message',
@@ -54,7 +54,7 @@ describe('AssistantView', () => {
       <AssistantView copy={copy} state={getAssistantFixture('welcome')} {...requiredActionProps} />,
     );
 
-    expect(html).toContain('Welcome to AegisOS Assistant');
+    expect(html).toContain('Welcome to ImperaOS Assistant');
     expect(html).toContain('Read-only by default');
     expect(html).toContain('Referenced runs');
     expect(html).not.toContain('Summarize recent errors');
@@ -68,6 +68,41 @@ describe('AssistantView', () => {
     expect(html).toContain('Son run hatasını özetle');
     expect(html).toContain('The selected run is blocked by an approval gate.');
     expect(html).toContain('job-ui-preview-cu-1');
+  });
+
+  it('exposes committed workspace artifacts as open actions', () => {
+    const state = getAssistantFixture('running');
+    const html = renderToStaticMarkup(
+      <AssistantView
+        copy={copy}
+        state={{
+          ...state,
+          turns: state.turns.map((turn, index) =>
+            index === state.turns.length - 1
+              ? {
+                  ...turn,
+                  assistantMessage: {
+                    ...turn.assistantMessage,
+                    referencedArtifacts: [
+                      {
+                        name: 'Project brief',
+                        artifactId: 'artifact-project-brief',
+                        kind: 'document',
+                        openable: true,
+                        summary: 'Committed document artifact',
+                      },
+                    ],
+                  },
+                }
+              : turn,
+          ),
+        }}
+        onOpenArtifact={() => undefined}
+        {...requiredActionProps}
+      />,
+    );
+
+    expect(html).toContain('aria-label="Open Project brief"');
   });
 
   it('renders the approval-required state with guarded approval actions', () => {

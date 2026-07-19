@@ -7,7 +7,7 @@ import type {
 import type { AssistantProviderModelsResponse } from './modelDiscovery';
 import { createAssistantSession, createAssistantTurn } from './assistantMappers';
 
-const CONTRACT_VERSION = '2.0';
+const CONTRACT_VERSION = '3.0';
 const FIXTURE_SESSION_ID = 'assistant-preview-session';
 const FIXTURE_TURN_ID = 'assistant-preview-turn';
 
@@ -62,11 +62,47 @@ export function previewAssistantEvents(
     },
     {
       contractVersion: CONTRACT_VERSION,
+      eventId: 'event-preview-artifact-committed',
+      assistantTurnId,
+      sessionId,
+      event: 'artifact_committed',
+      sequence: 4,
+      timestampUtc: '2026-03-08T09:20:03Z',
+      traceId: 'trace-preview-assistant',
+      dataClass: 'internal',
+      data: {
+        artifactId: 'artifact-preview-document',
+        revisionId: 'revision-1',
+        kind: 'document',
+        title: 'Launch plan',
+        summary: 'Governed document artifact',
+      },
+    },
+    {
+      contractVersion: CONTRACT_VERSION,
+      eventId: 'event-preview-form-requested',
+      assistantTurnId,
+      sessionId,
+      event: 'form_requested',
+      sequence: 5,
+      timestampUtc: '2026-03-08T09:20:04Z',
+      traceId: 'trace-preview-assistant',
+      dataClass: 'confidential',
+      data: {
+        artifactId: 'artifact-preview-form',
+        revisionId: 'form-revision-1',
+        kind: 'form',
+        title: 'Intake form',
+        summary: 'Governed form artifact',
+      },
+    },
+    {
+      contractVersion: CONTRACT_VERSION,
       assistantTurnId,
       sessionId,
       event: 'final',
-      sequence: 4,
-      timestampUtc: '2026-03-08T09:20:03Z',
+      sequence: 6,
+      timestampUtc: '2026-03-08T09:20:05Z',
       data: {
         final_text:
           'The selected run is blocked by an approval gate. Review the pending approval before continuing.',
@@ -403,7 +439,7 @@ function approvalRequiredState(): AssistantSessionState {
   turn.assistantMessage.proposedAction = {
     id: 'click_start_button',
     title: 'Click preview form start button',
-    target: 'safari:Aegis Preview Form / #start',
+    target: 'safari:ImperaOS Preview Form / #start',
     risk: 'medium',
     dryRunSummary: 'Dry-run verified that the target is visible. Execution remains approval-gated.',
     commandPreview: 'computer-use action click --target #start',

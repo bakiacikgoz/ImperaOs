@@ -7,7 +7,7 @@ test('settings persist operator, locale, profile, and raw payload controls after
   await openPrimaryView(page, 'Ayarlar', 'Settings');
 
   await page.getByLabel('Operator ID').fill('ops-e2e');
-  await page.getByLabel('Jobs root').fill('.binliquid/e2e-updated/jobs');
+  await page.getByLabel('Jobs root').fill('.imperaos/e2e-updated/jobs');
   await page.getByLabel('Language').selectOption('en');
   await page.getByLabel('Enable raw payload mode').check();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -17,7 +17,7 @@ test('settings persist operator, locale, profile, and raw payload controls after
   await openPrimaryView(page, 'Ayarlar', 'Settings');
 
   await expect(page.getByLabel('Operator ID')).toHaveValue('ops-e2e');
-  await expect(page.getByLabel('Jobs root')).toHaveValue('.binliquid/e2e-updated/jobs');
+  await expect(page.getByLabel('Jobs root')).toHaveValue('.imperaos/e2e-updated/jobs');
   await expect(page.getByLabel('Enable raw payload mode')).toBeChecked();
 
   consoleHealth.assertNoCriticalErrors();

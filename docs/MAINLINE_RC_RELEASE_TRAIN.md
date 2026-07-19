@@ -6,12 +6,12 @@ design partner RC work. It is not an auto-merge process.
 Build the manifest and verification report:
 
 ```bash
-uv run binliquid release train manifest \
+uv run imperaos release train manifest \
   --profile enterprise \
   --output artifacts/design-partner-handoff/release_train_manifest.json \
   --json
 
-uv run binliquid release train verify \
+uv run imperaos release train verify \
   --profile enterprise \
   --manifest artifacts/design-partner-handoff/release_train_manifest.json \
   --output artifacts/design-partner-handoff/RELEASE_TRAIN_REPORT.json \

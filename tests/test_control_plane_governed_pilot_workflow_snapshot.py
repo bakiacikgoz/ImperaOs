@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.control_plane.pilot_workflow import (
+from imperaos.control_plane.pilot_workflow import (
     build_governed_pilot_workflow_snapshot,
     load_governed_pilot_workflow_spec,
     run_governed_pilot_workflow,
 )
-from binliquid.control_plane.snapshot import build_control_plane_snapshot
+from imperaos.control_plane.snapshot import build_control_plane_snapshot
 
 SPEC = Path("examples/pilot_workflows/enterprise_governed_memory_provider.yaml")
 

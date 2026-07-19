@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.governance.runtime import GovernanceRuntime
-from binliquid.runtime.config import RuntimeConfig
-from binliquid.schemas.models import OrchestratorResult
-from binliquid.team.models import TeamSpec
-from binliquid.team.supervisor import TeamSupervisor
+from imperaos.governance.runtime import GovernanceRuntime
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.schemas.models import OrchestratorResult
+from imperaos.team.models import TeamSpec
+from imperaos.team.supervisor import TeamSupervisor
 
 DENY_MEMORY_POLICY = """
 policy_schema_version = "1.0"

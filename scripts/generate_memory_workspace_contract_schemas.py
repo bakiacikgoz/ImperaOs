@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.memory.workspace_models import (
+from imperaos.memory.workspace_models import (
     LegacyMemoryMigrationPlanResult,
     MemoryAccessDecision,
     MemoryPrincipal,

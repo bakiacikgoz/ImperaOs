@@ -3,13 +3,13 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from pathlib import Path
 
-from binliquid.release.gate_ledger import write_gate_evidence_ledger
-from binliquid.release.gate_models import (
+from imperaos.release.gate_ledger import write_gate_evidence_ledger
+from imperaos.release.gate_models import (
     GateEvidenceLedger,
     GateRunResult,
     ReleaseGateTarget,
 )
-from binliquid.release.rc_freeze_backfill import build_rc_evidence_backfill_report
+from imperaos.release.rc_freeze_backfill import build_rc_evidence_backfill_report
 
 
 def test_backfill_marks_ready_when_missing_freeze_gates_are_in_ledger(tmp_path: Path) -> None:

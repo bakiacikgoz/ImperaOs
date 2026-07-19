@@ -4,12 +4,16 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from binliquid.control_plane.field_evidence import (
+import pytest
+from pydantic import ValidationError
+
+from imperaos.control_plane.field_evidence import (
+    OperatorAttestationBinding,
     collect_field_evidence_bundle,
     prepare_field_evidence_session,
     validate_independent_operator_attestation,
 )
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_operator_attestation_rejects_placeholder_operator(tmp_path: Path) -> None:
@@ -44,6 +48,18 @@ def test_operator_attestation_rejects_bundle_mismatch(tmp_path: Path) -> None:
     assert "ATTESTATION_BUNDLE_HASH_MISMATCH" in result.blocking_reasons
 
 
+def test_operator_attestation_accepts_only_imperaos_v2_identity(tmp_path: Path) -> None:
+    _, _, attestation_path = _field_fixture(tmp_path)
+    payload = json.loads(attestation_path.read_text(encoding="utf-8"))
+
+    assert payload["schemaVersion"] == "imperaos-non-developer-operator-attestation/v2"
+    OperatorAttestationBinding.model_validate(payload)
+
+    payload["schemaVersion"] = "bin" + "liquid-non-developer-operator-attestation/v1"
+    with pytest.raises(ValidationError):
+        OperatorAttestationBinding.model_validate(payload)
+
+
 def _field_fixture(tmp_path: Path):
     evidence_root = tmp_path / "artifacts"
     evidence_root.mkdir()
@@ -68,7 +84,7 @@ def _field_fixture(tmp_path: Path):
     attestation_path.write_text(
         json.dumps(
             {
-                "schemaVersion": "binliquid-non-developer-operator-attestation/v1",
+                "schemaVersion": "imperaos-non-developer-operator-attestation/v2",
                 "sessionId": session.session_id,
                 "releasePackId": "design-partner-rc-v1",
                 "targetEnvironmentLabelHash": session.target_environment.environment_label_hash,

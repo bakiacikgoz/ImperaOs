@@ -25,7 +25,7 @@ Windows and Linux live computer-use remain disabled and unqualified.
 Provider readiness uses only a generated local synthetic fixture image:
 
 ```bash
-uv run binliquid computer-use provider doctor \
+uv run imperaos computer-use provider doctor \
   --provider ollama \
   --model <local-vision-model> \
   --synthetic-fixture \
@@ -48,13 +48,13 @@ The doctor reports `manualGrantRequired` and `autoGrantAttempted=false`; it neve
 Live fixture execution requires all one-run environment values:
 
 ```bash
-BINLIQUID_COMPUTER_USE_LIVE_MACOS=1
-BINLIQUID_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1
-BINLIQUID_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1
-BINLIQUID_COMPUTER_USE_ACK="I understand BinLiquid will control my macOS desktop only for local supervised fixtures."
+IMPERAOS_COMPUTER_USE_LIVE_MACOS=1
+IMPERAOS_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1
+IMPERAOS_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1
+IMPERAOS_COMPUTER_USE_ACK="I understand ImperaOS will control my macOS desktop only for local supervised fixtures."
 ```
 
-The opt-in is not persisted to config. `BINLIQUID_COMPUTER_USE_LIVE_MACOS=1` alone is not sufficient.
+The opt-in is not persisted to config. `IMPERAOS_COMPUTER_USE_LIVE_MACOS=1` alone is not sufficient.
 
 ## Fixtures
 

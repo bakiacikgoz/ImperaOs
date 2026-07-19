@@ -5,8 +5,8 @@ import json
 import sys
 from pathlib import Path
 
-from binliquid.computer_use.vision_runtime.platforms import evaluate_platform_matrix
-from binliquid.runtime.config import ComputerUseRuntimeConfig
+from imperaos.computer_use.vision_runtime.platforms import evaluate_platform_matrix
+from imperaos.runtime.config import ComputerUseRuntimeConfig
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPO_ROOT / "scripts" / "evaluate_computer_use_platform_matrix.py"

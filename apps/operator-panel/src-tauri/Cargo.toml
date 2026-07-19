@@ -1,8 +1,8 @@
 [package]
-name = "aegisos_operator_panel"
+name = "imperaos_operator_panel"
 version = "0.5.0-beta.1"
-description = "AegisOS BinLiquid Operator Panel"
-authors = ["BinLiquid Contributors"]
+description = "ImperaOS Operator Panel"
+authors = ["ImperaOS Contributors"]
 license = ""
 repository = ""
 edition = "2021"
@@ -11,7 +11,7 @@ rust-version = "1.77.2"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-name = "operator_panel_lib"
+name = "imperaos_operator_panel_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
@@ -23,8 +23,14 @@ serde = { version = "1.0", features = ["derive"] }
 log = "0.4"
 tauri = { version = "2.10.0", features = [] }
 tauri-plugin-log = "2"
+tauri-plugin-dialog = "=2.7.1"
 tokio = { version = "1", features = ["time", "process", "io-util"] }
 time = { version = "=0.3.36", features = ["formatting"] }
+sha2 = "=0.10.9"
+uuid = { version = "=1.21.0", features = ["v4"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "=0.61.2", features = ["Win32_Storage_FileSystem"] }
 
 [dev-dependencies]
 tempfile = "3"

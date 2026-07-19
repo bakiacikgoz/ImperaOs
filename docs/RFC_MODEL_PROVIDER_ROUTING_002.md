@@ -10,7 +10,7 @@ shadow-only recommendation.
 The CLI surface is:
 
 ```bash
-uv run python -m binliquid provider route simulate \
+uv run python -m imperaos provider route simulate \
   --profile enterprise \
   --data-class confidential \
   --json
@@ -28,5 +28,5 @@ The output includes allowed providers, blocked providers, recommended provider,
 fallback candidate, policy reason, and optional evidence path when `--write-evidence`
 is used.
 
-Enforcement is out of scope for this sprint. `BINLIQUID_PROVIDER_ROUTER_ENFORCE` remains
+Enforcement is out of scope for this sprint. `IMPERAOS_PROVIDER_ROUTER_ENFORCE` remains
 unused and must default off.

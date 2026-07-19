@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from binliquid.memory.authority import build_memory_authority, proposal_from_cli
-from binliquid.memory.sync_pack import export_memory_sync_pack, verify_memory_sync_pack
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.memory.authority import build_memory_authority, proposal_from_cli
+from imperaos.memory.sync_pack import export_memory_sync_pack, verify_memory_sync_pack
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_sync_pack_export_verify_and_tamper_detection(tmp_path: Path) -> None:

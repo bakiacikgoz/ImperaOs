@@ -1,6 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
+import './zodCsp'
+
 // Import new modular CSS architecture
 import './styles/tokens.css'
 import './styles/themes/dark.css'
@@ -11,6 +13,7 @@ import './styles/premium-components.css'
 import './styles/premium-shell.css'
 import './styles/premium-mission.css'
 import './styles/premium-assistant.css'
+import './artifact-workspace/artifact-workspace.css'
 
 import App from './App.tsx'
 

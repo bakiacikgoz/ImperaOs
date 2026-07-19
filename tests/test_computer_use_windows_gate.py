@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from binliquid.computer_use.vision_runtime.drivers import windows
-from binliquid.computer_use.vision_runtime.errors import VisionRuntimeError
-from binliquid.runtime.config import ComputerUseRuntimeConfig
+from imperaos.computer_use.vision_runtime.drivers import windows
+from imperaos.computer_use.vision_runtime.errors import VisionRuntimeError
+from imperaos.runtime.config import ComputerUseRuntimeConfig
 
 
 def test_windows_gate_reports_not_qualified_without_evidence() -> None:

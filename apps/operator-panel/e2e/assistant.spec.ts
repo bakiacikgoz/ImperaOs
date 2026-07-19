@@ -4,7 +4,7 @@ import { gotoOperatorPanel, openPrimaryView } from './helpers';
 
 test('AI Assistant model selection is visible and used before sending a preview message', async ({ page }) => {
   const consoleHealth = await gotoOperatorPanel(page, { operatorId: 'qa-operator' });
-  await openPrimaryView(page, 'AI Assistant', 'Welcome to AegisOS Assistant');
+  await openPrimaryView(page, 'AI Assistant', 'Welcome to ImperaOS Assistant');
 
   await expect(page.getByRole('textbox', { name: 'Search' })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'Terminal' })).toBeEnabled();

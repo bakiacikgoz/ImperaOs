@@ -119,7 +119,7 @@ if [[ -z "${RUN_ID}" ]]; then
   RUN_ID="final72h-$(date -u +%Y%m%dT%H%M%SZ)"
 fi
 if [[ -z "${WORKSPACE_ROOT}" ]]; then
-  WORKSPACE_ROOT="/private/tmp/binliquid_soak_${RUN_ID}"
+  WORKSPACE_ROOT="/private/tmp/imperaos_soak_${RUN_ID}"
 fi
 
 SOURCE_ROOT="$(cd "${SOURCE_ROOT}" && pwd -P)"
@@ -159,8 +159,8 @@ copy_item "uv.lock"
 copy_item "README.md"
 copy_item "KEY_MANAGEMENT.md"
 copy_item ".venv"
-copy_item ".binliquid"
-copy_item "binliquid"
+copy_item ".imperaos"
+copy_item "imperaos"
 copy_item "config"
 copy_item "contracts"
 copy_item "examples"

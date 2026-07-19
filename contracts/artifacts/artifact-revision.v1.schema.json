@@ -1,0 +1,163 @@
+{
+  "$defs": {
+    "ArtifactMutationType": {
+      "enum": [
+        "create",
+        "replace_content",
+        "json_patch",
+        "text_edit",
+        "cell_patch",
+        "slide_patch",
+        "restore",
+        "duplicate",
+        "import_evidence"
+      ],
+      "title": "ArtifactMutationType",
+      "type": "string"
+    },
+    "PrincipalType": {
+      "enum": [
+        "user",
+        "assistant",
+        "system",
+        "import"
+      ],
+      "title": "PrincipalType",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-revision.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifactId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "authorId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Authorid",
+      "type": "string"
+    },
+    "authorType": {
+      "$ref": "#/$defs/PrincipalType"
+    },
+    "baseRevisionId": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Baserevisionid"
+    },
+    "changeSummary": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Changesummary",
+      "type": "string"
+    },
+    "contentEncoding": {
+      "enum": [
+        "utf-8",
+        "json",
+        "binary"
+      ],
+      "title": "Contentencoding",
+      "type": "string"
+    },
+    "contentRelpath": {
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Contentrelpath",
+      "type": "string"
+    },
+    "contentSha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Contentsha256",
+      "type": "string"
+    },
+    "contentSizeBytes": {
+      "maximum": 104857600,
+      "minimum": 0,
+      "title": "Contentsizebytes",
+      "type": "integer"
+    },
+    "createdAtUtc": {
+      "format": "date-time",
+      "title": "Createdatutc",
+      "type": "string"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Idempotencykey",
+      "type": "string"
+    },
+    "mutationType": {
+      "$ref": "#/$defs/ArtifactMutationType"
+    },
+    "parentRevisionId": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parentrevisionid"
+    },
+    "revisionId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Revisionid",
+      "type": "string"
+    },
+    "revisionNumber": {
+      "minimum": 1,
+      "title": "Revisionnumber",
+      "type": "integer"
+    },
+    "schemaVersion": {
+      "default": 1,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "revisionId",
+    "artifactId",
+    "revisionNumber",
+    "mutationType",
+    "contentRelpath",
+    "contentSha256",
+    "contentSizeBytes",
+    "contentEncoding",
+    "authorType",
+    "authorId",
+    "idempotencyKey",
+    "createdAtUtc"
+  ],
+  "title": "ArtifactRevisionDescriptor",
+  "type": "object",
+  "x-imperaos-contract": "artifact-revision.v1"
+}

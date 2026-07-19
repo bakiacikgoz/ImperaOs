@@ -6,14 +6,14 @@ Resolved runtime config uses this strict order:
 
 1. defaults (model)
 2. profile TOML (`config/<profile>.toml`)
-3. env vars (`BINLIQUID_*`)
+3. env vars (`IMPERAOS_*`)
 4. CLI overrides
 
 Command:
 
 ```bash
-uv run binliquid config resolve --profile balanced --json
-uv run binliquid config resolve --profile balanced --provider auto --model qwen3.5:4b --hf-model-id Qwen/Qwen3.5-4B-Instruct
+uv run imperaos config resolve --profile balanced --json
+uv run imperaos config resolve --profile balanced --provider auto --model qwen3.5:4b --hf-model-id Qwen/Qwen3.5-4B-Instruct
 ```
 
 ## Important Fields
@@ -85,23 +85,23 @@ Memory salience/retrieval tuning:
 Examples:
 
 ```bash
-export BINLIQUID_LLM_PROVIDER=ollama
-export BINLIQUID_FALLBACK_PROVIDER=transformers
-export BINLIQUID_ROUTER_MODE=rule
-export BINLIQUID_SHADOW_ROUTER_ENABLED=true
-export BINLIQUID_FAST_PATH_REGRET_WINDOW=2
-export BINLIQUID_PLANNER_REPAIR_ENABLED=true
-export BINLIQUID_PLANNER_PROMPT_VARIANT=strict_v3
-export BINLIQUID_CODE_VERIFY_TIMEOUT_S=20
-export BINLIQUID_SLTC_ROUTER_MODE=shadow
-export BINLIQUID_MEMORY_RANK_SALIENCE_WEIGHT=0.72
-export BINLIQUID_GOVERNANCE_ENABLED=true
-export BINLIQUID_GOVERNANCE_POLICY_PATH=config/policies/balanced.toml
-export BINLIQUID_GOVERNANCE_POLICY_FAIL_MODE=fail_closed
-export BINLIQUID_GOVERNANCE_APPROVAL_TTL_SECONDS=86400
-export BINLIQUID_PROVIDER_REGISTRY_ENABLED=true
-export BINLIQUID_PROVIDER_REGISTRY_PATH=config/providers.toml
-export BINLIQUID_REMOTE_PROVIDERS_ENABLED=false
+export IMPERAOS_LLM_PROVIDER=ollama
+export IMPERAOS_FALLBACK_PROVIDER=transformers
+export IMPERAOS_ROUTER_MODE=rule
+export IMPERAOS_SHADOW_ROUTER_ENABLED=true
+export IMPERAOS_FAST_PATH_REGRET_WINDOW=2
+export IMPERAOS_PLANNER_REPAIR_ENABLED=true
+export IMPERAOS_PLANNER_PROMPT_VARIANT=strict_v3
+export IMPERAOS_CODE_VERIFY_TIMEOUT_S=20
+export IMPERAOS_SLTC_ROUTER_MODE=shadow
+export IMPERAOS_MEMORY_RANK_SALIENCE_WEIGHT=0.72
+export IMPERAOS_GOVERNANCE_ENABLED=true
+export IMPERAOS_GOVERNANCE_POLICY_PATH=config/policies/balanced.toml
+export IMPERAOS_GOVERNANCE_POLICY_FAIL_MODE=fail_closed
+export IMPERAOS_GOVERNANCE_APPROVAL_TTL_SECONDS=86400
+export IMPERAOS_PROVIDER_REGISTRY_ENABLED=true
+export IMPERAOS_PROVIDER_REGISTRY_PATH=config/providers.toml
+export IMPERAOS_REMOTE_PROVIDERS_ENABLED=false
 ```
 
 ## Model Override Rules (v0.3.1)
@@ -118,7 +118,7 @@ export BINLIQUID_REMOTE_PROVIDERS_ENABLED=false
 
 Provider registry config lives in `config/providers.toml`. If that file is absent, CLI inspection commands can read `config/providers.example.toml` as a non-secret example. Public cloud and aggregator providers must use HTTPS base URLs and `api_key_env`; inline `api_key`, `token`, `secret`, `password`, or `authorization` values are rejected.
 
-Remote providers are disabled unless `remote_providers_enabled=true` is set in config or `BINLIQUID_REMOTE_PROVIDERS_ENABLED=true` is present in the environment.
+Remote providers are disabled unless `remote_providers_enabled=true` is set in config or `IMPERAOS_REMOTE_PROVIDERS_ENABLED=true` is present in the environment.
 
 Native preview providers remain disabled by default. The example registry includes disabled `openai_responses` and `anthropic_messages` rows for Operator Panel trust visibility and offline conformance only. Anthropic live canary evidence requires an `ANTHROPIC_API_KEY` environment variable plus all live canary opt-ins; CI and default gates do not make live Anthropic calls.
 

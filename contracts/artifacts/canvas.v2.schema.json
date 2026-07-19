@@ -1,0 +1,154 @@
+{
+  "$defs": {
+    "CanvasObjectV2": {
+      "additionalProperties": false,
+      "properties": {
+        "assetId": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assetid"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000000,
+          "title": "Height",
+          "type": "number"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "type": {
+          "enum": [
+            "rectangle",
+            "ellipse",
+            "text",
+            "line",
+            "arrow",
+            "note",
+            "image"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000000,
+          "title": "Width",
+          "type": "number"
+        },
+        "x": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "title": "CanvasObjectV2",
+      "type": "object"
+    },
+    "CanvasSnapshotV2": {
+      "additionalProperties": false,
+      "properties": {
+        "objects": {
+          "items": {
+            "$ref": "#/$defs/CanvasObjectV2"
+          },
+          "maxItems": 10000,
+          "title": "Objects",
+          "type": "array"
+        }
+      },
+      "title": "CanvasSnapshotV2",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/canvas.v2.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "assetIds": {
+      "items": {
+        "maxLength": 128,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "title": "Assetids",
+      "type": "array"
+    },
+    "embeds": {
+      "const": "deny",
+      "default": "deny",
+      "title": "Embeds",
+      "type": "string"
+    },
+    "kind": {
+      "const": "canvas",
+      "default": "canvas",
+      "title": "Kind",
+      "type": "string"
+    },
+    "remoteAssets": {
+      "const": "deny",
+      "default": "deny",
+      "title": "Remoteassets",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 2,
+      "default": 2,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "snapshot": {
+      "$ref": "#/$defs/CanvasSnapshotV2"
+    }
+  },
+  "required": [
+    "snapshot"
+  ],
+  "title": "CanvasContentV2",
+  "type": "object",
+  "x-imperaos-contract": "canvas.v2"
+}

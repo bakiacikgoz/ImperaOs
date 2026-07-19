@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from binliquid.core.llm_ollama import StubLLM
-from binliquid.core.orchestrator import Orchestrator
-from binliquid.core.planner import PlannerRun
-from binliquid.experts.base import ExpertBase
-from binliquid.router.rule_router import RuleRouter
-from binliquid.router.sltc_router import SLTCRouter
-from binliquid.runtime.config import RuntimeConfig
-from binliquid.schemas.models import (
+from imperaos.core.llm_ollama import StubLLM
+from imperaos.core.orchestrator import Orchestrator
+from imperaos.core.planner import PlannerRun
+from imperaos.experts.base import ExpertBase
+from imperaos.router.rule_router import RuleRouter
+from imperaos.router.sltc_router import SLTCRouter
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.schemas.models import (
     ExpertName,
     ExpertRequest,
     ExpertResult,
@@ -16,8 +16,8 @@ from binliquid.schemas.models import (
     ResponseMode,
     TaskType,
 )
-from binliquid.schemas.reason_codes import ReasonCode
-from binliquid.telemetry.tracer import Tracer
+from imperaos.schemas.reason_codes import ReasonCode
+from imperaos.telemetry.tracer import Tracer
 
 
 class StaticPlanner:

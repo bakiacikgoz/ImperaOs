@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from binliquid.computer_use.models import RiskClass
-from binliquid.computer_use.vision_runtime.models import (
+from imperaos.computer_use.models import RiskClass
+from imperaos.computer_use.vision_runtime.models import (
     InputActionType,
     NormalizedBBox,
     SurfaceKind,
@@ -13,7 +13,7 @@ from binliquid.computer_use.vision_runtime.models import (
     VisionObservation,
     VisionRunArtifact,
 )
-from binliquid.runtime.config import ComputerUseRuntimeConfig, RuntimeConfig, resolve_runtime_config
+from imperaos.runtime.config import ComputerUseRuntimeConfig, RuntimeConfig, resolve_runtime_config
 
 
 def test_computer_use_runtime_config_defaults_are_safe() -> None:
@@ -38,11 +38,11 @@ def test_runtime_config_loads_computer_use_profile_block_and_env_override() -> N
         profile="balanced",
         root_dir=None,
         env={
-            "BINLIQUID_COMPUTER_USE_RUNTIME_MODE": "vision_first",
-            "BINLIQUID_COMPUTER_USE_VISION_ENABLED": "true",
-            "BINLIQUID_COMPUTER_USE_VISION_PROVIDER": "mock",
-            "BINLIQUID_COMPUTER_USE_MACOS_LIVE_ENABLED": "true",
-            "BINLIQUID_COMPUTER_USE_MAX_STEPS": "12",
+            "IMPERAOS_COMPUTER_USE_RUNTIME_MODE": "vision_first",
+            "IMPERAOS_COMPUTER_USE_VISION_ENABLED": "true",
+            "IMPERAOS_COMPUTER_USE_VISION_PROVIDER": "mock",
+            "IMPERAOS_COMPUTER_USE_MACOS_LIVE_ENABLED": "true",
+            "IMPERAOS_COMPUTER_USE_MAX_STEPS": "12",
         },
     )
 

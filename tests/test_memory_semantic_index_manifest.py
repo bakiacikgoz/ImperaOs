@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from binliquid.memory.semantic.index_manifest import read_manifest, write_manifest
-from binliquid.memory.semantic.models import SemanticIndexManifest
+from imperaos.memory.semantic.index_manifest import read_manifest, write_manifest
+from imperaos.memory.semantic.models import SemanticIndexManifest
 
 
 def test_manifest_round_trips(tmp_path: Path) -> None:

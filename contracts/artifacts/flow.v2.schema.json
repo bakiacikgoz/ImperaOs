@@ -1,0 +1,229 @@
+{
+  "$defs": {
+    "FlowEdgeV2": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "source": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "target"
+      ],
+      "title": "FlowEdgeV2",
+      "type": "object"
+    },
+    "FlowNodeDataV2": {
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifactid"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "label": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "FlowNodeDataV2",
+      "type": "object"
+    },
+    "FlowNodeV2": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/FlowNodeDataV2"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/FlowPositionV2"
+        },
+        "type": {
+          "enum": [
+            "input",
+            "output",
+            "process",
+            "decision",
+            "note",
+            "group",
+            "artifact"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "position",
+        "data"
+      ],
+      "title": "FlowNodeV2",
+      "type": "object"
+    },
+    "FlowPositionV2": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "FlowPositionV2",
+      "type": "object"
+    },
+    "FlowViewportV2": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "Y",
+          "type": "number"
+        },
+        "zoom": {
+          "maximum": 8.0,
+          "minimum": 0.05,
+          "title": "Zoom",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "zoom"
+      ],
+      "title": "FlowViewportV2",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/flow.v2.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "edges": {
+      "items": {
+        "$ref": "#/$defs/FlowEdgeV2"
+      },
+      "maxItems": 10000,
+      "title": "Edges",
+      "type": "array"
+    },
+    "kind": {
+      "const": "flow",
+      "default": "flow",
+      "title": "Kind",
+      "type": "string"
+    },
+    "nodes": {
+      "items": {
+        "$ref": "#/$defs/FlowNodeV2"
+      },
+      "maxItems": 5000,
+      "title": "Nodes",
+      "type": "array"
+    },
+    "schemaVersion": {
+      "const": 2,
+      "default": 2,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "viewport": {
+      "$ref": "#/$defs/FlowViewportV2"
+    }
+  },
+  "required": [
+    "nodes",
+    "edges",
+    "viewport"
+  ],
+  "title": "FlowContentV2",
+  "type": "object",
+  "x-imperaos-contract": "flow.v2"
+}

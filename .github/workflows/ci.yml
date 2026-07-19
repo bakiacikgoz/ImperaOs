@@ -22,18 +22,21 @@ jobs:
       - name: Sync dependencies
         run: uv sync --python 3.11 --extra dev
 
+      - name: ImperaOS brand consistency gate
+        run: make brand-consistency-gate
+
       - name: Lint
         run: uv run ruff check .
 
       - name: Tests
-        run: uv run pytest -q
+        run: uv run --extra dev python -m pytest -q
 
       - name: Config resolve gate
-        run: uv run binliquid config resolve --profile balanced --json
+        run: uv run imperaos config resolve --profile balanced --json
 
       - name: Provider governance gates
         env:
-          BINLIQUID_PROVIDER_LIVE_CANARY_OPT_IN: "0"
+          IMPERAOS_PROVIDER_LIVE_CANARY_OPT_IN: "0"
         run: |
           make provider-native-gate
           make provider-runtime-gate
@@ -57,7 +60,7 @@ jobs:
           PY
 
       - name: Smoke benchmark gate
-        run: uv run binliquid benchmark smoke --mode A --profile balanced --task-limit 1
+        run: uv run imperaos benchmark smoke --mode A --profile balanced --task-limit 1
 
   pilot-gate:
     runs-on: ubuntu-latest
@@ -88,8 +91,8 @@ jobs:
 
       - name: Team runtime pilot gate
         run: |
-          uv run binliquid team validate --spec examples/team/restricted_pilot.yaml --json
-          uv run binliquid team pilot-check \
+          uv run imperaos team validate --spec examples/team/restricted_pilot.yaml --json
+          uv run imperaos team pilot-check \
             --spec examples/team/restricted_pilot.yaml \
             --profile restricted \
             --mode deterministic \
@@ -114,24 +117,24 @@ jobs:
         run: uv sync --python 3.11 --extra dev
 
       - name: Enterprise CLI tests
-        run: uv run pytest -q tests/test_enterprise_cli.py tests/test_enterprise_qualification.py
+        run: uv run python -m pytest -q tests/test_enterprise_cli.py tests/test_enterprise_qualification.py
 
       - name: Prepare enterprise fixture
         run: |
-          rm -rf .binliquid/keys .binliquid/identity
+          rm -rf .imperaos/enterprise/keys .imperaos/enterprise/identity
           rm -f artifacts/qualification_report.json artifacts/QUALIFICATION_REPORT.md
           uv run python scripts/prepare_enterprise_fixture.py --root .
 
       - name: Enterprise baseline and GA readiness
         run: |
-          uv run binliquid security baseline --profile enterprise --json
-          uv run binliquid auth whoami --profile enterprise --json
-          uv run binliquid auth check --profile enterprise --permission runtime.run --json
-          uv run binliquid keys verify --profile enterprise --path artifacts/security_posture.json --json
-          uv run binliquid metrics snapshot --profile enterprise --json
-          uv run binliquid ga readiness --profile enterprise --report artifacts/ga_readiness_report.json --json
-          uv run binliquid keys verify --profile enterprise --path artifacts/ga_readiness_report.json --json
-          uv run binliquid support bundle export --profile enterprise --json
+          uv run imperaos security baseline --profile enterprise --json
+          uv run imperaos auth whoami --profile enterprise --json
+          uv run imperaos auth check --profile enterprise --permission runtime.run --json
+          uv run imperaos keys verify --profile enterprise --path artifacts/security_posture.json --json
+          uv run imperaos metrics snapshot --profile enterprise --json
+          uv run imperaos ga readiness --profile enterprise --report artifacts/ga_readiness_report.json --json
+          uv run imperaos keys verify --profile enterprise --path artifacts/ga_readiness_report.json --json
+          uv run imperaos support bundle export --profile enterprise --json
 
   provider-governance-gate:
     runs-on: ubuntu-latest
@@ -181,13 +184,13 @@ jobs:
           uv run --extra dev python scripts/run_provider_governance_gate.py --profile enterprise --json
           uv run --extra dev python scripts/run_provider_canary_fixture.py --profile enterprise --json
           uv run --extra dev python scripts/generate_provider_canary_evidence.py --profile enterprise --json
-          uv run --extra dev python -m binliquid provider canary verify --evidence-root artifacts/model-provider-governance/canary --json
+          uv run --extra dev python -m imperaos provider canary verify --evidence-root artifacts/model-provider-governance/canary --json
           uv run --extra dev python scripts/generate_model_provider_governance_evidence.py --profile enterprise --json
           uv run --extra dev python scripts/generate_provider_conformance_matrix.py --profile enterprise --mode offline --output-root artifacts/model-provider-governance/conformance --json
           uv run --extra dev python scripts/verify_provider_release_closure.py --profile enterprise --evidence-root artifacts/model-provider-governance/v1_1 --json
           uv run --extra dev python scripts/run_provider_native_adapter_gate.py --profile enterprise --output-root artifacts/model-provider-governance/native-v2 --json
-          uv run --extra dev python -m binliquid provider native conformance run --profile enterprise --provider-kind anthropic_messages --offline --json
-          uv run --extra dev python -m binliquid provider native conformance verify --input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json --json
+          uv run --extra dev python -m imperaos provider native conformance run --profile enterprise --provider-kind anthropic_messages --offline --json
+          uv run --extra dev python -m imperaos provider native conformance verify --input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json --json
 
   provider-governance-windows-script:
     runs-on: windows-latest
@@ -212,9 +215,9 @@ jobs:
           uv run --extra dev python scripts/generate_model_provider_contract_schemas.py
           uv run --extra dev python scripts/run_provider_governance_gate.py --profile enterprise --json
           uv run --extra dev python scripts/run_provider_canary_fixture.py --profile enterprise --json
-          uv run --extra dev python -m binliquid provider canary verify --evidence-root artifacts/model-provider-governance/canary --json
+          uv run --extra dev python -m imperaos provider canary verify --evidence-root artifacts/model-provider-governance/canary --json
           uv run --extra dev python scripts/generate_provider_conformance_matrix.py --profile enterprise --mode offline --output-root artifacts/model-provider-governance/conformance --json
           uv run --extra dev python scripts/verify_provider_release_closure.py --profile enterprise --evidence-root artifacts/model-provider-governance/v1_1 --json
           uv run --extra dev python scripts/run_provider_native_adapter_gate.py --profile enterprise --output-root artifacts/model-provider-governance/native-v2 --json
-          uv run --extra dev python -m binliquid provider native conformance run --profile enterprise --provider-kind anthropic_messages --offline --json
-          uv run --extra dev python -m binliquid provider native conformance verify --input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json --json
+          uv run --extra dev python -m imperaos provider native conformance run --profile enterprise --provider-kind anthropic_messages --offline --json
+          uv run --extra dev python -m imperaos provider native conformance verify --input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json --json

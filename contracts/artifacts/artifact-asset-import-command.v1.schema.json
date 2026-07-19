@@ -1,0 +1,61 @@
+{
+  "$defs": {
+    "ArtifactDataClass": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "regulated"
+      ],
+      "title": "ArtifactDataClass",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-asset-import-command.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "contentBase64": {
+      "maxLength": 28000000,
+      "minLength": 1,
+      "title": "Contentbase64",
+      "type": "string"
+    },
+    "dataClass": {
+      "$ref": "#/$defs/ArtifactDataClass"
+    },
+    "declaredMediaType": {
+      "enum": [
+        "image/png",
+        "image/jpeg",
+        "image/gif",
+        "image/webp",
+        "image/svg+xml"
+      ],
+      "title": "Declaredmediatype",
+      "type": "string"
+    },
+    "fileName": {
+      "maxLength": 255,
+      "minLength": 1,
+      "title": "Filename",
+      "type": "string"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Idempotencykey",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fileName",
+    "declaredMediaType",
+    "contentBase64",
+    "dataClass",
+    "idempotencyKey"
+  ],
+  "title": "ImportArtifactAssetCommand",
+  "type": "object",
+  "x-imperaos-contract": "artifact-asset-import-command.v1"
+}

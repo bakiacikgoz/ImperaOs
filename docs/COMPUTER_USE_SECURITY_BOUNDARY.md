@@ -28,7 +28,7 @@ verification or approval policy.
 
 ## macOS Permission Boundary
 
-BinLiquid can detect and report permission blockers. It must not grant permissions automatically or bypass macOS consent controls.
+ImperaOS can detect and report permission blockers. It must not grant permissions automatically or bypass macOS consent controls.
 
 ## Platform Boundary
 

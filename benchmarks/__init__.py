@@ -1,1 +1,1 @@
-"""Benchmark helpers for BinLiquid."""
+"""Benchmark helpers for ImperaOS."""
