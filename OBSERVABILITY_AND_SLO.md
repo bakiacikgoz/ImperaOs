@@ -65,5 +65,5 @@ Observability is acceptable only if an operator can answer the following from th
 ## Command
 
 ```bash
-uv run binliquid metrics snapshot --profile enterprise --json
+uv run imperaos metrics snapshot --profile enterprise --json
 ```

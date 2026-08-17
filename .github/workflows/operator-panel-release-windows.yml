@@ -117,7 +117,7 @@ jobs:
       - name: Verify bundled runtime
         shell: pwsh
         run: |
-          $runtime = "apps/operator-panel/src-tauri/resources/binliquid-runtime"
+          $runtime = "apps/operator-panel/src-tauri/resources/imperaos-runtime"
           pwsh apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 -RuntimeDir $runtime |
             Tee-Object -FilePath artifacts/windows-release-evidence/runtime_verify.txt
           Copy-Item "$runtime/RUNTIME_MANIFEST.txt" artifacts/windows-release-evidence/runtime_manifest.txt

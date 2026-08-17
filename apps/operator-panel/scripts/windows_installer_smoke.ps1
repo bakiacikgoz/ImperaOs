@@ -2,7 +2,7 @@ param(
   [Parameter(Mandatory = $true)]
   [string]$InstallerPath,
   [string]$ExpectedInstallerSha256 = "",
-  [string]$ExpectedProductName = "AegisOS Operator Panel",
+  [string]$ExpectedProductName = "ImperaOS Operator Panel",
   [string]$OutputDir = "artifacts/windows-installer-smoke",
   [switch]$AllowUnsignedSmoke,
   [switch]$RunInstall,
@@ -199,17 +199,17 @@ if ($AppExe) {
     }
   }
 
-  $resourceRoot = Join-Path (Split-Path -Parent $AppExe) "resources\binliquid-runtime"
+  $resourceRoot = Join-Path (Split-Path -Parent $AppExe) "resources\imperaos-runtime"
   $runtimePython = Join-Path $resourceRoot "python\Scripts\python.exe"
   if (Test-Path -LiteralPath $runtimePython -PathType Leaf) {
-    & $runtimePython -m binliquid --version | Set-Content -LiteralPath (Join-Path $OutputDir "binliquid-version.txt")
+    & $runtimePython -m imperaos --version | Set-Content -LiteralPath (Join-Path $OutputDir "imperaos-version.txt")
     if ($LASTEXITCODE -eq 0) {
       $RuntimeStatus = "pass"
     } else {
       $RuntimeStatus = "fail"
     }
 
-    & $runtimePython -m binliquid operator capabilities --json |
+    & $runtimePython -m imperaos operator capabilities --json |
       Set-Content -LiteralPath (Join-Path $OutputDir "operator_capabilities.json")
     if ($LASTEXITCODE -eq 0) {
       $CapabilitiesStatus = "pass"
@@ -222,7 +222,7 @@ if ($AppExe) {
       $CapabilitiesStatus = "fail"
     }
 
-    & $runtimePython -m binliquid doctor --profile balanced --json |
+    & $runtimePython -m imperaos doctor --profile balanced --json |
       Set-Content -LiteralPath (Join-Path $OutputDir "doctor_balanced.json")
     if ($LASTEXITCODE -eq 0) {
       try {

@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from binliquid.cli import _is_realtime_candidate
-from binliquid.core.llm_ollama import StubLLM
-from binliquid.core.orchestrator import Orchestrator
-from binliquid.core.planner import PlannerRun
-from binliquid.router.rule_router import RuleRouter
-from binliquid.runtime.config import RuntimeConfig, RuntimeLimits
-from binliquid.schemas.models import PlannerOutput, ResponseMode, TaskType
-from binliquid.schemas.reason_codes import ReasonCode
-from binliquid.telemetry.tracer import Tracer
+from imperaos.cli import _is_realtime_candidate
+from imperaos.core.llm_ollama import StubLLM
+from imperaos.core.orchestrator import Orchestrator
+from imperaos.core.planner import PlannerRun
+from imperaos.router.rule_router import RuleRouter
+from imperaos.runtime.config import RuntimeConfig, RuntimeLimits
+from imperaos.schemas.models import PlannerOutput, ResponseMode, TaskType
+from imperaos.schemas.reason_codes import ReasonCode
+from imperaos.telemetry.tracer import Tracer
 
 
 class DummyPlanner:
@@ -46,7 +46,7 @@ def _config() -> RuntimeConfig:
         privacy_mode=True,
         enable_persistent_memory=False,
         web_enabled=False,
-        trace_dir=".binliquid/test-traces",
+        trace_dir=".imperaos/test-traces",
         limits=limits,
     )
 

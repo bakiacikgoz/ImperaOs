@@ -56,7 +56,7 @@ function seedSettings(overrides: Partial<PanelSettings> = {}) {
     JSON.stringify({
       ...DEFAULT_SETTINGS,
       locale: 'en',
-      rootDir: '.binliquid/test-ui/jobs',
+      rootDir: '.imperaos/test-ui/jobs',
       ...overrides,
     }),
   );

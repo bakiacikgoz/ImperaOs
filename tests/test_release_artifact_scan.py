@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.control_plane.release_artifact_scan import scan_release_artifacts
+from imperaos.control_plane.release_artifact_scan import scan_release_artifacts
 
 
 def test_release_artifact_scan_blocks_secret_marker(tmp_path: Path) -> None:

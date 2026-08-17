@@ -26,6 +26,14 @@ describe('routeRegistry', () => {
     }
   });
 
+  it('keeps the product journey ahead of administration and internal release tooling', () => {
+    expect(routeGroups.map((group) => group.title)).toEqual([
+      'WORKSPACE', 'RUNS', 'APPROVALS', 'EVIDENCE', 'ADMINISTRATION', 'ADVANCED / INTERNAL',
+    ]);
+    expect(routeGroups[0].routes[0].routeId).toBe('workspace');
+    expect(routeGroups.at(-1)?.routes.map((route) => route.routeId)).toContain('rc-release-decision');
+  });
+
   it('exposes enterprise workspace onboarding routes', () => {
     const routeIds = routes.map((route) => route.routeId);
 

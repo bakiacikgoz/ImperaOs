@@ -4,9 +4,9 @@ import json
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.rbac_admin import build_rbac_matrix, check_permission
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.cli import app
+from imperaos.control_plane.rbac_admin import build_rbac_matrix, check_permission
+from imperaos.runtime.config import RuntimeConfig
 
 runner = CliRunner()
 

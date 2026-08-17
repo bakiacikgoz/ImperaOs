@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from binliquid.router.sltc_interface import FeatureMappedSLTCRouter, PlaceholderSLTCRouter
-from binliquid.schemas.models import ExpertName
+from imperaos.router.sltc_interface import FeatureMappedSLTCRouter, PlaceholderSLTCRouter
+from imperaos.schemas.models import ExpertName
 
 
 def test_feature_mapped_sltc_router_maps_features() -> None:

@@ -32,7 +32,7 @@ fi
 
 if ! pgrep -x ollama >/dev/null 2>&1; then
   log "Starting Ollama daemon..."
-  nohup ollama serve >/tmp/binliquid-ollama.log 2>&1 &
+  nohup ollama serve >/tmp/imperaos-ollama.log 2>&1 &
   sleep 2
 fi
 

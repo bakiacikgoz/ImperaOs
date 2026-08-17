@@ -1,0 +1,203 @@
+{
+  "$defs": {
+    "ArtifactDataClass": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "regulated"
+      ],
+      "title": "ArtifactDataClass",
+      "type": "string"
+    },
+    "ArtifactKind": {
+      "enum": [
+        "document",
+        "form",
+        "code",
+        "flow",
+        "spreadsheet",
+        "canvas",
+        "slides"
+      ],
+      "title": "ArtifactKind",
+      "type": "string"
+    },
+    "ArtifactStatus": {
+      "enum": [
+        "draft",
+        "active",
+        "archived",
+        "blocked",
+        "corrupt"
+      ],
+      "title": "ArtifactStatus",
+      "type": "string"
+    },
+    "JsonValue": {},
+    "PrincipalType": {
+      "enum": [
+        "user",
+        "assistant",
+        "system",
+        "import"
+      ],
+      "title": "PrincipalType",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-descriptor.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "archivedAtUtc": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Archivedatutc"
+    },
+    "artifactId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "createdAtUtc": {
+      "format": "date-time",
+      "title": "Createdatutc",
+      "type": "string"
+    },
+    "createdById": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Createdbyid",
+      "type": "string"
+    },
+    "createdByType": {
+      "$ref": "#/$defs/PrincipalType"
+    },
+    "currentRevisionId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Currentrevisionid",
+      "type": "string"
+    },
+    "currentRevisionNumber": {
+      "minimum": 1,
+      "title": "Currentrevisionnumber",
+      "type": "integer"
+    },
+    "dataClass": {
+      "$ref": "#/$defs/ArtifactDataClass"
+    },
+    "etag": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Etag",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/ArtifactKind"
+    },
+    "metadata": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Metadata",
+      "type": "object"
+    },
+    "schemaVersion": {
+      "default": 1,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "sourceSessionId": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sourcesessionid"
+    },
+    "sourceTurnId": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sourceturnid"
+    },
+    "status": {
+      "$ref": "#/$defs/ArtifactStatus",
+      "default": "draft"
+    },
+    "title": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "updatedAtUtc": {
+      "format": "date-time",
+      "title": "Updatedatutc",
+      "type": "string"
+    },
+    "updatedById": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Updatedbyid",
+      "type": "string"
+    },
+    "workspaceId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Workspaceid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifactId",
+    "workspaceId",
+    "kind",
+    "title",
+    "dataClass",
+    "currentRevisionId",
+    "currentRevisionNumber",
+    "createdByType",
+    "createdById",
+    "updatedById",
+    "createdAtUtc",
+    "updatedAtUtc",
+    "etag"
+  ],
+  "title": "ArtifactDescriptor",
+  "type": "object",
+  "x-imperaos-contract": "artifact-descriptor.v1"
+}

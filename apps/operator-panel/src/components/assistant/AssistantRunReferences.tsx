@@ -9,11 +9,13 @@ export function AssistantRunReferences({
   artifacts,
   emptyRunLabel,
   locale = 'en',
+  onOpenArtifact,
 }: {
   runs: AssistantRunRef[];
   artifacts: AssistantArtifactRef[];
   emptyRunLabel: string;
   locale?: UiLocale;
+  onOpenArtifact?: (artifactId: string) => void;
 }) {
   const text = assistantUiText[locale];
   if (runs.length === 0 && artifacts.length === 0) {
@@ -38,15 +40,32 @@ export function AssistantRunReferences({
             </span>
           </div>
         ))}
-        {artifacts.map((artifact) => (
-          <div className="assistant-reference-row" key={`${artifact.name}-${artifact.path ?? ''}`}>
-            <StatusDot tone="success" />
-            <span>
-              <strong>{artifact.name}</strong>
-              <em>{translateAssistantText(artifact.summary || artifact.path || 'Referenced artifact', locale)}</em>
-            </span>
-          </div>
-        ))}
+        {artifacts.map((artifact) => {
+          const content = (
+            <>
+              <StatusDot tone="success" />
+              <span>
+                <strong>{artifact.name}</strong>
+                <em>{translateAssistantText(artifact.summary || artifact.path || 'Referenced artifact', locale)}</em>
+              </span>
+            </>
+          );
+          return artifact.artifactId && artifact.openable === true && onOpenArtifact ? (
+            <button
+              type="button"
+              className="assistant-reference-row"
+              aria-label={`Open ${artifact.name}`}
+              key={`${artifact.artifactId}-${artifact.revisionId ?? ''}`}
+              onClick={() => onOpenArtifact(artifact.artifactId as string)}
+            >
+              {content}
+            </button>
+          ) : (
+            <div className="assistant-reference-row" key={`${artifact.name}-${artifact.path ?? ''}`}>
+              {content}
+            </div>
+          );
+        })}
       </div>
     </Card>
   );

@@ -41,7 +41,7 @@ artifacts/pilot-readiness/tauri-smoke/report.json
 
 The supported claim is narrow:
 
-> AegisOS can be shown as a constrained self-hosted Agent Control Plane pilot
+> ImperaOS can be shown as a constrained self-hosted Agent Control Plane pilot
 > for policy, approval, identity, audit, replay, and signed evidence workflows.
 
 The following claims remain blocked or conditional:

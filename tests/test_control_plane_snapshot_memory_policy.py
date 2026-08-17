@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from binliquid.memory.runtime_bridge import RuntimeMemoryRequest
-from binliquid.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
-from binliquid.memory.runtime_policy_snapshot import build_memory_policy_enforcement_snapshot
+from imperaos.memory.runtime_bridge import RuntimeMemoryRequest
+from imperaos.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
+from imperaos.memory.runtime_policy_snapshot import build_memory_policy_enforcement_snapshot
 
 
 def test_control_plane_snapshot_includes_memory_policy_enforcement(tmp_path: Path) -> None:

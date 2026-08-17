@@ -78,7 +78,7 @@ xcrun stapler staple "${DMG_PATH}"
 xcrun stapler validate "${DMG_PATH}"
 
 echo "[release] local quarantine/spctl check"
-QUARANTINE_TAG="0081;$(date +%s);AegisOS;"
+QUARANTINE_TAG="0081;$(date +%s);ImperaOS;"
 xattr -w com.apple.quarantine "${QUARANTINE_TAG}" "${APP_PATH}"
 spctl --assess --type execute --verbose=4 "${APP_PATH}"
 

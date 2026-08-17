@@ -4,19 +4,19 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from binliquid.control_plane.field_evidence import (
+from imperaos.control_plane.field_evidence import (
     collect_field_evidence_bundle,
     prepare_field_evidence_session,
     validate_independent_operator_attestation,
     verify_field_evidence_bundle,
 )
-from binliquid.control_plane.pilot_workflow import (
+from imperaos.control_plane.pilot_workflow import (
     load_governed_pilot_workflow_spec,
     run_governed_pilot_workflow,
 )
-from binliquid.control_plane.snapshot import build_control_plane_snapshot
-from binliquid.control_plane.strict_rc_promotion import promote_strict_rc
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.control_plane.snapshot import build_control_plane_snapshot
+from imperaos.control_plane.strict_rc_promotion import promote_strict_rc
+from imperaos.runtime.config import RuntimeConfig
 
 SPEC = Path("examples/pilot_workflows/enterprise_governed_memory_provider.yaml")
 
@@ -86,7 +86,7 @@ def _seed_ready_field_evidence(tmp_path: Path) -> Path:
     attestation_path.write_text(
         json.dumps(
             {
-                "schemaVersion": "binliquid-non-developer-operator-attestation/v1",
+                "schemaVersion": "imperaos-non-developer-operator-attestation/v2",
                 "sessionId": session.session_id,
                 "releasePackId": "design-partner-rc-v1",
                 "targetEnvironmentLabelHash": session.target_environment.environment_label_hash,

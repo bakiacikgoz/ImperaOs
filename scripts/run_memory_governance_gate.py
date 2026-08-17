@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.memory.authority import build_memory_authority, proposal_from_cli
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.memory.authority import build_memory_authority, proposal_from_cli
+from imperaos.runtime.config import RuntimeConfig
 
 
 def main() -> None:
@@ -27,7 +27,7 @@ def main() -> None:
             actor="governance-gate",
             scope="organization",
             owner_type="org",
-            owner="binliquid",
+            owner="imperaos",
             visibility="organization",
             text="organization policy memory",
             role="Research Analyst Agent",

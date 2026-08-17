@@ -10,9 +10,9 @@
 - Orchestrator enforces timeout, retries, fallback, circuit-breaker, tool budget, recursion depth
 - Governance engine enforces task/tool policy (`allow|deny|require_approval`)
 - Async approval queue stores operator decisions with replay/idempotency guards
-- Per-run privacy-safe audit artifact is emitted under `.binliquid/audit/`
+- Per-run privacy-safe audit artifact is emitted under `.imperaos/audit/`
 - Team runtime supports DAG task orchestration with governed handoffs and scoped memory writes
-- Team run artifacts are emitted under `.binliquid/team/jobs/<job_id>/`
+- Team run artifacts are emitted under `.imperaos/team/jobs/<job_id>/`
 
 ## Memory Path
 

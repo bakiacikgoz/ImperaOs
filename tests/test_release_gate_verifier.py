@@ -4,14 +4,14 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from binliquid.release.gate_ledger import write_gate_evidence_ledger
-from binliquid.release.gate_models import (
+from imperaos.release.gate_ledger import write_gate_evidence_ledger
+from imperaos.release.gate_models import (
     GateArtifactRef,
     GateEvidenceLedger,
     GateRunResult,
     ReleaseGateTarget,
 )
-from binliquid.release.gate_verifier import verify_gate_evidence_ledger
+from imperaos.release.gate_verifier import verify_gate_evidence_ledger
 
 
 def _target() -> ReleaseGateTarget:
@@ -41,7 +41,7 @@ def test_verifier_marks_complete_ledger_ready(tmp_path: Path) -> None:
     path = tmp_path / "artifacts" / "release-gates" / "mainline-rc" / "gate.json"
     path.parent.mkdir(parents=True)
     path.write_text("{}\n", encoding="utf-8")
-    from binliquid.control_plane.storage import file_sha256
+    from imperaos.control_plane.storage import file_sha256
 
     ledger = GateEvidenceLedger(
         repoHeadSha="1" * 40,

@@ -9,29 +9,29 @@ attestation.
 ## Commands
 
 ```bash
-uv run binliquid pilot field prepare \
+uv run imperaos pilot field prepare \
   --profile enterprise \
   --mode target-environment \
   --ack-target-environment \
   --target-environment-label design-partner-field-target-redacted \
   --output-root artifacts/design-partner-field-evidence
 
-uv run binliquid pilot field collect \
+uv run imperaos pilot field collect \
   --session artifacts/design-partner-field-evidence/session.json \
   --evidence-root artifacts \
   --output-root artifacts/design-partner-field-evidence
 
-uv run binliquid pilot field verify \
+uv run imperaos pilot field verify \
   --bundle artifacts/design-partner-field-evidence/target_evidence_bundle.json \
   --output artifacts/design-partner-field-evidence/verification.json
 
-uv run binliquid pilot field attest-verify \
+uv run imperaos pilot field attest-verify \
   --session artifacts/design-partner-field-evidence/session.json \
   --bundle artifacts/design-partner-field-evidence/target_evidence_bundle.json \
   --operator-attestation artifacts/design-partner-field-evidence/operator_attestation.json \
   --output artifacts/design-partner-field-evidence/attestation_validation.json
 
-uv run binliquid pilot field promote-rc \
+uv run imperaos pilot field promote-rc \
   --profile enterprise \
   --field-root artifacts/design-partner-field-evidence \
   --rc-root artifacts/design-partner-rc

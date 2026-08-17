@@ -3,18 +3,18 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.control_plane.agent_enrollment import EnrolledAgent
-from binliquid.control_plane.enterprise_workspace import (
+from imperaos.control_plane.agent_enrollment import EnrolledAgent
+from imperaos.control_plane.enterprise_workspace import (
     EnterpriseDevice,
     EnterprisePrincipal,
     hash_identity_ref,
     utc_now,
 )
-from binliquid.control_plane.enterprise_workspace_store import EnterpriseWorkspaceStore
-from binliquid.control_plane.external_contracts import ExternalActionRequest
-from binliquid.control_plane.external_gateway import ExternalAgentGateway
-from binliquid.control_plane.registry import AgentRegistry, load_agent_spec
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.control_plane.enterprise_workspace_store import EnterpriseWorkspaceStore
+from imperaos.control_plane.external_contracts import ExternalActionRequest
+from imperaos.control_plane.external_gateway import ExternalAgentGateway
+from imperaos.control_plane.registry import AgentRegistry, load_agent_spec
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_external_gateway_accepts_read_only_request(tmp_path: Path) -> None:

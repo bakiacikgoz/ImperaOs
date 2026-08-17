@@ -1,9 +1,13 @@
+import { PRODUCT_IDENTITY } from './productIdentity.ts';
+
 export type UiLocale = 'en' | 'tr';
 
 export type Dictionary = Record<string, string>;
 
+const productDisplayName = PRODUCT_IDENTITY.displayName;
+
 const en: Dictionary = {
-  appTitle: 'AegisOS Agent Control Plane',
+  appTitle: `${productDisplayName} Agent Control Plane`,
   appSubtitle: 'Self-hosted governance console for agent production readiness',
   brandChip: 'control plane',
   navigation: 'Navigation',
@@ -21,9 +25,9 @@ const en: Dictionary = {
   systemMeta: 'Doctor, config resolve, and runtime contract',
   operationsMeta: 'Qualification, support, keys, and recovery',
   settingsMeta: 'Runtime paths, locale, and safety toggles',
-  assistantTitle: 'AegisOS Assistant',
+  assistantTitle: `${productDisplayName} Assistant`,
   assistantSubtitle: 'Ask about systems, runs, logs, policies, approvals, and artifacts without leaving the governed shell.',
-  assistantWelcomeTitle: 'Welcome to AegisOS Assistant',
+  assistantWelcomeTitle: `Welcome to ${productDisplayName} Assistant`,
   assistantBadgeLabel: 'Governed assistant',
   assistantNewChat: 'New Chat',
   assistantMessageLabel: 'Message',
@@ -276,7 +280,7 @@ const en: Dictionary = {
 };
 
 const tr: Dictionary = {
-  appTitle: 'AegisOS Agent Control Plane',
+  appTitle: `${productDisplayName} Agent Control Plane`,
   appSubtitle: 'Agent üretim hazırlığı için self-hosted yönetişim konsolu',
   brandChip: 'control plane',
   navigation: 'Gezinme',
@@ -294,9 +298,9 @@ const tr: Dictionary = {
   systemMeta: 'Doctor, config resolve ve çalışma sözleşmesi',
   operationsMeta: 'Qualification, destek, anahtarlar ve kurtarma',
   settingsMeta: 'Çalışma yolları, dil ve güvenlik bayrakları',
-  assistantTitle: 'AegisOS Assistant',
+  assistantTitle: `${productDisplayName} Assistant`,
   assistantSubtitle: 'Yönetişimli kabuktan ayrılmadan sistemler, çalıştırmalar, loglar, policyler, onaylar ve artefaktlar hakkında sorun.',
-  assistantWelcomeTitle: 'AegisOS Assistant’a hoş geldiniz',
+  assistantWelcomeTitle: `${productDisplayName} Assistant’a hoş geldiniz`,
   assistantBadgeLabel: 'Yönetişimli asistan',
   assistantNewChat: 'Yeni Sohbet',
   assistantMessageLabel: 'Mesaj',

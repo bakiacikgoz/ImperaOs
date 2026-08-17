@@ -5,8 +5,8 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.pilot_operations import (
+from imperaos.cli import app
+from imperaos.control_plane.pilot_operations import (
     build_code_intelligence_summary,
     build_design_partner_beta_status,
     generate_pilot_operations_artifacts,

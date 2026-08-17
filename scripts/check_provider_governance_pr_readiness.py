@@ -10,11 +10,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.design_partner_rc import (  # noqa: E402
+from imperaos.control_plane.design_partner_rc import (  # noqa: E402
     EXPECTED_RC_AUDIT_CONDITIONALS,
     evaluate_design_partner_rc_audit,
 )
-from binliquid.control_plane.provider_conformance import run_provider_native_gate  # noqa: E402
+from imperaos.control_plane.provider_conformance import run_provider_native_gate  # noqa: E402
 
 
 def main() -> None:

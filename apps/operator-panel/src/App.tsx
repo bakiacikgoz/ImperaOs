@@ -1,4 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+import type { AssistantArtifactProposalPart } from './assistant/assistantTypes';
+import type { ArtifactSelection } from './artifact-workspace/editors/ArtifactEditorHost';
 
 import {
   type BridgeErrorPayload,
@@ -84,7 +87,12 @@ import {
   buildSystemHealthSummary,
   mapWorkspaceStageToMissionStage,
 } from './missionMappers';
-import { useAssistantSession } from './assistant/useAssistantSession';
+import { useAssistantRuntimeSession } from './assistant/useAssistantRuntimeSession';
+import { useAssistantArtifactWorkspaceController } from './artifact-workspace/useAssistantArtifactWorkspaceController';
+import { AssistantInlineFormPart } from './artifact-workspace/AssistantInlineFormPart';
+import { resolveArtifactFeatureFlags, resolveEffectiveArtifactFeatureFlags } from './artifact-workspace/artifactFeatureFlags';
+import { artifactBridge } from './artifact-workspace/artifactBridge';
+import type { ArtifactRuntimeCapabilitySnapshot } from './artifact-workspace/artifactContracts';
 import { useAssistantModels } from './assistant/useAssistantModels';
 import type { AssistantProviderKind } from './assistant/modelDiscovery';
 import { MissionControlView } from './components/mission/MissionControlView';
@@ -360,6 +368,12 @@ function mergeRunStatusWithSessionState(runStatusPayload: unknown, sessionStateP
 
 function AppContent({ settings, updateSettings }: AppContentProps) {
   const previewMode = isBridgePreviewMode();
+  const rendererArtifactFeatureFlags = resolveArtifactFeatureFlags(import.meta.env, {
+    // These are bundled fallback adapters. Deployment policy is still enforced
+    // by the backend rollout snapshot and the explicit VITE enable flags.
+    spreadsheet: true,
+    canvas: true,
+  });
 
   const [activeView, setActiveView] = useState<ViewKey>('workspace');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -375,7 +389,19 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
   const [askBeforeSend, setAskBeforeSend] = useState(true);
 
   const [handshakeData, setHandshakeData] = useState<unknown>(null);
+  const [artifactCapabilitySnapshot, setArtifactCapabilitySnapshot] = useState<ArtifactRuntimeCapabilitySnapshot | null>(null);
+  const [artifactCapabilityStatus, setArtifactCapabilityStatus] = useState<'loading' | 'ready' | 'failed'>(
+    previewMode ? 'ready' : 'loading',
+  );
   const [configData, setConfigData] = useState<unknown>(null);
+  const artifactFeatureFlags = useMemo(
+    () => resolveEffectiveArtifactFeatureFlags(
+      rendererArtifactFeatureFlags,
+      artifactCapabilityStatus === 'ready' ? artifactCapabilitySnapshot : null,
+      previewMode,
+    ),
+    [artifactCapabilitySnapshot, artifactCapabilityStatus, previewMode, rendererArtifactFeatureFlags],
+  );
   const [handshakeError, setHandshakeError] = useState<BridgeErrorPayload | null>(null);
   const [controlPlaneDoctor, setControlPlaneDoctor] = useState<unknown>(null);
   const [controlPlaneAgents, setControlPlaneAgents] = useState<unknown>({ agents: [] });
@@ -397,11 +423,12 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
   const [runReplay, setRunReplay] = useState<unknown>(null);
   const [artifactsByName, setArtifactsByName] = useState<Record<string, unknown>>({});
   const [selectedArtifactName, setSelectedArtifactName] = useState<string>('status.json');
+  const [artifactEditorSelection, setArtifactEditorSelection] = useState<ArtifactSelection | null>(null);
+  const [governedArtifactContext, setGovernedArtifactContext] = useState<Record<string, unknown> | null>(null);
   const [showRawArtifact, setShowRawArtifact] = useState(false);
   const [exportModalOpen, setExportModalOpen] = useState(false);
   const [exportPath, setExportPath] = useState('');
   const [exportSubmitting, setExportSubmitting] = useState(false);
-  const [assistantWorkbenchOpen, setAssistantWorkbenchOpen] = useState(false);
 
   const [events, setEvents] = useState<unknown[]>([]);
   const [eventsCursor, setEventsCursor] = useState(0);
@@ -518,7 +545,7 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
   const controlRegistry = asRecord(asRecord(computerUseState).registry);
   const runStatusValue = readString(runJob, 'status');
   const isComputerUseRun =
-    Object.keys(runComputerUse).length > 0 || readString(runJob, 'team_id') === 'aegis-computer-use';
+    Object.keys(runComputerUse).length > 0 || readString(runJob, 'team_id') === 'imperaos-computer-use';
   const linkedApprovals = pendingApprovals.filter(
     (item) => readString(asRecord(item), 'run_id') === selectedRunId,
   );
@@ -725,6 +752,31 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
   useEffect(() => {
     void refreshCore();
   }, [settings.mode, settings.cliPath, settings.bundledPythonPath, settings.profile, settings.rootDir]);
+
+  useEffect(() => {
+    if (previewMode || !rendererArtifactFeatureFlags.workspace) {
+      setArtifactCapabilitySnapshot(null);
+      setArtifactCapabilityStatus('ready');
+      return;
+    }
+    let cancelled = false;
+    setArtifactCapabilitySnapshot(null);
+    setArtifactCapabilityStatus('loading');
+    void artifactBridge.getRuntimeCapabilitySnapshot()
+      .then((snapshot) => {
+        if (!cancelled) {
+          setArtifactCapabilitySnapshot(snapshot);
+          setArtifactCapabilityStatus('ready');
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setArtifactCapabilitySnapshot(null);
+          setArtifactCapabilityStatus('failed');
+        }
+      });
+    return () => { cancelled = true; };
+  }, [previewMode, rendererArtifactFeatureFlags.workspace, settings.profile, settings.rootDir]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -969,7 +1021,7 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
             job_id: jobId,
             request: taskForm.request,
             status: 'running',
-            team_id: 'aegis-computer-use',
+            team_id: 'imperaos-computer-use',
           },
           computer_use: {
             mode,
@@ -1544,14 +1596,36 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
     setActiveView('runs');
     setRunTab('stream');
   }
-  const assistantSession = useAssistantSession(settings, () => ({
+  const assistantSession = useAssistantRuntimeSession(settings, () => ({
     selectedRunId,
     selectedRunStatus: runStatus,
     selectedRunEvents: events,
     selectedArtifacts: artifactsByName,
+    artifactContextRequest: governedArtifactContext,
     pendingApproval: approvalDetail || activeApproval,
     systemHealth,
-  }));
+  }), { enabled: artifactFeatureFlags.aiSdkTauriTransport });
+  const assistantArtifactWorkspace = useAssistantArtifactWorkspaceController({
+    assistantState: assistantSession.state,
+    legacyArtifacts: assistantWorkbenchArtifacts,
+    selectedLegacyArtifactName: selectedArtifactName,
+    onSelectLegacyArtifact: setSelectedArtifactName,
+  });
+
+  useEffect(() => {
+    const tab = assistantArtifactWorkspace.activeTab;
+    setGovernedArtifactContext(tab ? {
+      artifactId: tab.artifact.artifactId,
+      revisionId: tab.revision.revisionId,
+      purpose: 'edit',
+      allowedScopes: ['selection', 'metadata'],
+      selection: artifactEditorSelection,
+    } : null);
+  }, [
+    artifactEditorSelection,
+    assistantArtifactWorkspace.activeTab?.artifact.artifactId,
+    assistantArtifactWorkspace.activeTab?.revision.revisionId,
+  ]);
 
   useEffect(() => {
     const approvalId = assistantSession.state.pendingApprovalId;
@@ -1588,6 +1662,7 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
     try {
       await decideApproval(settings, approvalId, approve, settings.operatorId, 'assistant approval action');
       pushToast('ok', `${label} OK`);
+      assistantSession.actions.updateApprovalStatus(approvalId, approve ? 'approved' : 'rejected');
       assistantSession.actions.appendSystemMessage(
         approve
           ? locale === 'tr'
@@ -1624,6 +1699,7 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
     try {
       await executeApproval(settings, approvalId, settings.operatorId);
       pushToast('ok', `${t.execute} OK`);
+      assistantSession.actions.updateApprovalStatus(approvalId, 'executed');
       assistantSession.actions.appendSystemMessage(
         locale === 'tr'
           ? 'Onaylı aksiyon yönetişim yaşam döngüsü üzerinden yürütüldü'
@@ -1638,6 +1714,34 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
       if (parsed) {
         pushToast('error', `${parsed.code}: ${parsed.message}`);
       }
+    }
+  }
+
+  async function onApplyAssistantProposal(proposal: AssistantArtifactProposalPart) {
+    if (!canMutate) {
+      pushToast('error', approvalDisabledReason || t.setOperatorId);
+      return;
+    }
+    try {
+      await assistantArtifactWorkspace.actions.applyProposal({
+        proposalId: proposal.proposalId,
+        artifactId: proposal.artifactId,
+        approvalId: proposal.approvalId,
+        baseRevisionNumber: proposal.baseRevisionNumber,
+      });
+      assistantSession.actions.updateApprovalStatus(proposal.approvalId, 'executed');
+      pushToast(
+        'ok',
+        locale === 'tr'
+          ? 'OnaylÄ± artifact Ã¶nerisi uygulandÄ±'
+          : 'Approved artifact proposal applied',
+      );
+    } catch (error) {
+      const parsed = getErrorPayload(error);
+      pushToast(
+        'error',
+        parsed ? `${parsed.code}: ${parsed.message}` : 'ARTIFACT_PROPOSAL_APPLY_FAILED',
+      );
     }
   }
 
@@ -1672,15 +1776,70 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
       onViewRuns={() => setActiveView('runs')}
     />
   );
-  const assistantWorkbenchAvailable = assistantSession.state.turns.length > 0;
+  const assistantWorkbenchAvailable = artifactFeatureFlags.workspace && assistantArtifactWorkspace.available;
   const assistantWorkbench =
-    assistantWorkbenchAvailable && assistantWorkbenchOpen ? (
+    assistantWorkbenchAvailable && assistantArtifactWorkspace.open ? (
       <AssistantWorkbench
         state={assistantSession.state}
-        artifacts={assistantWorkbenchArtifacts}
-        selectedArtifactName={selectedArtifactName}
+        artifacts={assistantArtifactWorkspace.legacyArtifacts}
+        selectedArtifactName={assistantArtifactWorkspace.selectedLegacyArtifactName}
         locale={locale}
-        onSelectArtifact={setSelectedArtifactName}
+        onSelectArtifact={assistantArtifactWorkspace.actions.selectLegacyArtifact}
+        artifactFeatureFlags={artifactFeatureFlags}
+        workspaceState={assistantArtifactWorkspace.state}
+        catalog={assistantArtifactWorkspace.catalog}
+        catalogNextCursor={assistantArtifactWorkspace.catalogNextCursor}
+        catalogLoading={assistantArtifactWorkspace.catalogLoading}
+        history={assistantArtifactWorkspace.history}
+        historyNextCursor={assistantArtifactWorkspace.historyNextCursor}
+        historyLoading={Boolean(assistantArtifactWorkspace.historyLoadingArtifactId)}
+        comparison={assistantArtifactWorkspace.comparison}
+        conflictResolving={assistantArtifactWorkspace.conflictResolving}
+        workspaceError={assistantArtifactWorkspace.error}
+        operationNotice={assistantArtifactWorkspace.operationNotice}
+        formRuntime={assistantArtifactWorkspace.formRuntime}
+        onSubmitForm={assistantArtifactWorkspace.actions.submitForm}
+        onEditorSelectionChange={setArtifactEditorSelection}
+        onOpenArtifact={(artifactId) => void assistantArtifactWorkspace.actions.openArtifact(artifactId)}
+        onActivateArtifact={assistantArtifactWorkspace.actions.activate}
+        onRequestClose={assistantArtifactWorkspace.actions.requestClose}
+        onLoadCatalog={() => void assistantArtifactWorkspace.actions.loadCatalog()}
+        onLoadMoreCatalog={() => void assistantArtifactWorkspace.actions.loadMoreCatalog()}
+        onLoadHistory={(artifactId) => void assistantArtifactWorkspace.actions.loadHistory(artifactId)}
+        onLoadMoreHistory={(artifactId) => void assistantArtifactWorkspace.actions.loadMoreHistory(artifactId)}
+        onCompareRevision={(artifactId, revisionId) =>
+          void assistantArtifactWorkspace.actions.compareRevision(artifactId, revisionId)
+        }
+        onCloseComparison={assistantArtifactWorkspace.actions.closeComparison}
+        onRefreshConflict={(artifactId) => void assistantArtifactWorkspace.actions.refreshConflict(artifactId)}
+        onCompareConflict={assistantArtifactWorkspace.actions.compareConflict}
+        onReloadConflict={(artifactId) => void assistantArtifactWorkspace.actions.reloadConflict(artifactId)}
+        onForkConflict={(artifactId) => void assistantArtifactWorkspace.actions.forkConflict(artifactId)}
+        onEditArtifact={assistantArtifactWorkspace.actions.edit}
+        onRetrySave={(artifactId) => void assistantArtifactWorkspace.actions.retrySave(artifactId)}
+        onRestoreArtifact={(artifactId, revisionId) =>
+          void assistantArtifactWorkspace.actions.restore(artifactId, revisionId)
+        }
+        onImportAsset={assistantArtifactWorkspace.actions.importAsset}
+        onResolveAsset={assistantArtifactWorkspace.actions.resolveAsset}
+        onExportArtifact={(artifactId, format, sheetId) => {
+          const artifactKind = assistantArtifactWorkspace.state.tabs.find(
+            (tab) => tab.artifact.artifactId === artifactId,
+          )?.artifact.kind;
+          if (format === 'source' || format === 'txt') void assistantArtifactWorkspace.actions.exportCode(artifactId, format);
+          else if (format === 'pptx') void assistantArtifactWorkspace.actions.exportSlides(artifactId);
+          else if (format === 'submission-json' || (artifactKind === 'form' && (format === 'json' || format === 'csv'))
+            || ((artifactKind === 'document' || artifactKind === 'slides') && format === 'json')) {
+            void assistantArtifactWorkspace.actions.exportStructured(artifactId, format);
+          }
+          else if (artifactKind === 'canvas' && (format === 'json' || format === 'svg' || format === 'png')) {
+            void assistantArtifactWorkspace.actions.exportCanvas(artifactId, format);
+          } else if (format === 'json' || format === 'svg' || format === 'png') {
+            void assistantArtifactWorkspace.actions.exportFlow(artifactId, format);
+          } else if (format === 'csv' || format === 'xlsx') {
+            void assistantArtifactWorkspace.actions.exportSpreadsheet(artifactId, format, sheetId);
+          } else void assistantArtifactWorkspace.actions.exportDocument(artifactId, format);
+        }}
         onViewRuns={() => {
           setRunTab('artifacts');
           setActiveView('runs');
@@ -1942,24 +2101,50 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
             rightRail={assistantRightRail}
             workbench={assistantWorkbench}
             workbenchAvailable={assistantWorkbenchAvailable}
-            workbenchOpen={assistantWorkbenchOpen}
+            workbenchOpen={assistantWorkbenchAvailable && assistantArtifactWorkspace.open}
             runtimeSettings={assistantRuntimeSettings}
             modelDiscovery={assistantModels}
             locale={locale}
+            assistantUiRuntimeEnabled={artifactFeatureFlags.assistantUiRuntime}
+            activeArtifactKind={assistantArtifactWorkspace.activeTab?.artifact.kind}
             onRuntimeSettingsChange={updateSettings}
             onSend={(message, runtimeSettings, controls) =>
               void assistantSession.actions.send(message, runtimeSettings, controls)
             }
             onNewChat={() => {
-              setAssistantWorkbenchOpen(false);
+              assistantArtifactWorkspace.actions.reset();
               assistantSession.actions.newChat();
             }}
-            onToggleWorkbench={() => setAssistantWorkbenchOpen((value) => !value)}
+            onToggleWorkbench={assistantWorkbenchAvailable ? assistantArtifactWorkspace.actions.toggle : undefined}
             onReviewApproval={onReviewAssistantApproval}
             onApprove={(approvalId) => void onDecideAssistantApproval(approvalId, true)}
             onReject={(approvalId) => void onDecideAssistantApproval(approvalId, false)}
             onExecute={(approvalId) => void onExecuteAssistantApproval(approvalId)}
+            onApplyProposal={(proposal) => void onApplyAssistantProposal(proposal)}
             onRegenerate={(turnId) => void assistantSession.actions.regenerate(turnId, assistantRuntimeSettings)}
+            onOpenArtifact={artifactFeatureFlags.workspace
+              ? (artifactId) => void assistantArtifactWorkspace.actions.openArtifact(artifactId)
+              : undefined}
+            renderInlineArtifact={(artifact) => {
+              if (!artifactFeatureFlags.workspace || !artifactFeatureFlags.form || artifact.kind !== 'form' || !artifact.artifactId) return null;
+              const inlineTab = assistantArtifactWorkspace.state.tabs.find(
+                (tab) => tab.artifact.artifactId === artifact.artifactId,
+              ) ?? null;
+              return (
+                <AssistantInlineFormPart
+                  artifactId={artifact.artifactId}
+                  tab={inlineTab}
+                  loading={assistantArtifactWorkspace.loadingArtifactId === artifact.artifactId}
+                  locale={locale}
+                  formRuntime={assistantArtifactWorkspace.formRuntime}
+                  onLoad={assistantArtifactWorkspace.actions.openInlineArtifact}
+                  onExpand={assistantArtifactWorkspace.actions.openArtifact}
+                  onSubmit={assistantArtifactWorkspace.actions.submitForm}
+                  workspaceEnabled={artifactFeatureFlags.workspace}
+                  formEnabled={artifactFeatureFlags.form}
+                />
+              );
+            }}
             onCancel={() => void onCancelAssistantTurn()}
             onOpenTerminal={openRunTerminalView}
           />
@@ -2945,7 +3130,7 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
                       onClick={() =>
                         void runOperation('qualification', () =>
                           runInstallRehearsal(settings, {
-                            targetRoot: '.binliquid/rehearsal/design-partner',
+                            targetRoot: '.imperaos/rehearsal/design-partner',
                             output: 'artifacts/install-rehearsal/report.json',
                             mode: 'source-cli',
                           }),
@@ -3376,37 +3561,47 @@ function AppContent({ settings, updateSettings }: AppContentProps) {
                       spellCheck={false}
                     />
                   </label>
-                  <label className="operator-setting-row">
+                  <div className="operator-setting-row" role="note">
                     <div>
-                      <span>OpenAI API key</span>
-                      <small>{locale === 'tr' ? 'Sadece local bridge env içine aktarılır.' : 'Passed only into the local bridge environment.'}</small>
+                      <span>{locale === 'tr' ? 'Provider kimlik bilgileri' : 'Provider credentials'}</span>
+                      <small>
+                        {locale === 'tr'
+                          ? 'Kimlik bilgileri güvenilir backend ortamında yönetilir; renderer tarafında saklanmaz.'
+                          : 'Credentials are managed by the trusted backend environment and are never stored in the renderer.'}
+                      </small>
                     </div>
-                    <input
-                      aria-label="OpenAI API key"
-                      type="password"
-                      value={settings.assistantOpenAiApiKey}
-                      onChange={(event) => updateSettings({ assistantOpenAiApiKey: event.target.value })}
-                      placeholder="sk-..."
-                      autoComplete="off"
-                      spellCheck={false}
-                    />
-                  </label>
-                  <label className="operator-setting-row">
-                    <div>
-                      <span>DeepSeek API key</span>
-                      <small>{locale === 'tr' ? 'DeepSeek provider girilen key ile etkinleşir.' : 'The DeepSeek provider is enabled when this key is set.'}</small>
-                    </div>
-                    <input
-                      aria-label="DeepSeek API key"
-                      type="password"
-                      value={settings.assistantDeepSeekApiKey}
-                      onChange={(event) => updateSettings({ assistantDeepSeekApiKey: event.target.value })}
-                      placeholder="sk-..."
-                      autoComplete="off"
-                      spellCheck={false}
-                    />
-                  </label>
+                  </div>
                 </div>
+              </article>
+
+              <article className="operator-work-card" aria-label="Artifact Workspace capabilities">
+                <h3>Artifact Workspace</h3>
+                <dl className="metric-list">
+                  <div className="metric-row"><dt>Rollout</dt><dd>{artifactCapabilityStatus === 'failed' ? 'capability unavailable (ARTIFACT_CAPABILITY_UNAVAILABLE)' : artifactCapabilitySnapshot?.rolloutStage ?? (previewMode ? 'preview' : rendererArtifactFeatureFlags.workspace ? artifactCapabilityStatus : 'disabled')}</dd></div>
+                  <div className="metric-row"><dt>Workspace</dt><dd>{artifactFeatureFlags.workspace ? 'enabled' : 'disabled'}</dd></div>
+                  <div className="metric-row"><dt>Assistant UI runtime</dt><dd>{(artifactCapabilitySnapshot?.features['assistant_ui_runtime.enabled'] ?? artifactFeatureFlags.assistantUiRuntime) ? 'enabled' : 'disabled'}</dd></div>
+                  <div className="metric-row"><dt>AI SDK transport</dt><dd>{(artifactCapabilitySnapshot?.features['ai_sdk_tauri_transport.enabled'] ?? artifactFeatureFlags.aiSdkTauriTransport) ? 'enabled' : 'disabled'}</dd></div>
+                  <div className="metric-row"><dt>Export</dt><dd>{(artifactCapabilitySnapshot?.features['artifact_workspace.export.enabled'] ?? artifactFeatureFlags.export) ? 'enabled' : 'disabled'}</dd></div>
+                  <div className="metric-row"><dt>Backend doctor</dt><dd>{artifactCapabilitySnapshot ? `spreadsheet ${artifactCapabilitySnapshot.licenses.spreadsheet ? 'verified' : 'fallback'} · canvas ${artifactCapabilitySnapshot.licenses.canvas ? 'verified' : 'fallback'}` : artifactCapabilityStatus === 'failed' ? 'capability unavailable; workspace disabled' : 'unavailable'}</dd></div>
+                  <div className="metric-row"><dt>Runtime config</dt><dd><span className="inline-token">IMPERAOS_ARTIFACT_WORKSPACE_PROFILE</span> · <span className="inline-token">IMPERAOS_ARTIFACT_*_EDITOR_ENABLED</span></dd></div>
+                  {(artifactCapabilitySnapshot
+                    ? Object.entries(artifactCapabilitySnapshot.kindCapabilities)
+                    : Object.entries({
+                        document: { enabled: artifactFeatureFlags.document, editable: artifactFeatureFlags.document, exportable: artifactFeatureFlags.export, adapter: 'renderer gate' },
+                        form: { enabled: artifactFeatureFlags.form, editable: artifactFeatureFlags.form, exportable: artifactFeatureFlags.export, adapter: 'renderer gate' },
+                        code: { enabled: artifactFeatureFlags.code, editable: artifactFeatureFlags.code, exportable: artifactFeatureFlags.export, adapter: 'renderer gate' },
+                        flow: { enabled: artifactFeatureFlags.flow, editable: artifactFeatureFlags.flow, exportable: artifactFeatureFlags.export, adapter: 'renderer gate' },
+                        spreadsheet: { enabled: artifactFeatureFlags.spreadsheet, editable: artifactFeatureFlags.spreadsheet, exportable: artifactFeatureFlags.export, adapter: 'bundled fallback' },
+                        canvas: { enabled: artifactFeatureFlags.canvas, editable: artifactFeatureFlags.canvas, exportable: artifactFeatureFlags.export, adapter: 'bundled fallback' },
+                        slides: { enabled: artifactFeatureFlags.slides, editable: artifactFeatureFlags.slides, exportable: artifactFeatureFlags.export, adapter: 'renderer gate' },
+                      })
+                  ).map(([kind, capability]) => (
+                    <div className="metric-row" key={kind}>
+                      <dt>{kind}</dt>
+                      <dd>{capability.enabled ? 'enabled' : 'disabled'} · {capability.editable ? 'editable' : 'read-only'} · {capability.exportable ? 'exportable' : 'no export'} · {capability.adapter} · {'requiresLicense' in capability && capability.requiresLicense ? 'license required' : 'no license required'} · {'reasonCode' in capability ? String(capability.reasonCode ?? 'ready') : capability.enabled ? 'ready' : 'renderer flag disabled'}</dd>
+                    </div>
+                  ))}
+                </dl>
               </article>
             </div>
           </OperatorPageShell>

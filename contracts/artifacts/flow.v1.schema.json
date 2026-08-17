@@ -1,0 +1,181 @@
+{
+  "$defs": {
+    "FlowEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "source": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "target"
+      ],
+      "title": "FlowEdge",
+      "type": "object"
+    },
+    "FlowNode": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Data",
+          "type": "object"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/FlowPosition"
+        },
+        "type": {
+          "enum": [
+            "input",
+            "output",
+            "process",
+            "decision",
+            "note",
+            "group",
+            "artifact"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "position"
+      ],
+      "title": "FlowNode",
+      "type": "object"
+    },
+    "FlowPosition": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "FlowPosition",
+      "type": "object"
+    },
+    "FlowViewport": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        },
+        "zoom": {
+          "maximum": 8.0,
+          "minimum": 0.05,
+          "title": "Zoom",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "zoom"
+      ],
+      "title": "FlowViewport",
+      "type": "object"
+    },
+    "JsonValue": {}
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/flow.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "edges": {
+      "items": {
+        "$ref": "#/$defs/FlowEdge"
+      },
+      "maxItems": 10000,
+      "title": "Edges",
+      "type": "array"
+    },
+    "kind": {
+      "const": "flow",
+      "default": "flow",
+      "title": "Kind",
+      "type": "string"
+    },
+    "nodes": {
+      "items": {
+        "$ref": "#/$defs/FlowNode"
+      },
+      "maxItems": 5000,
+      "title": "Nodes",
+      "type": "array"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "viewport": {
+      "$ref": "#/$defs/FlowViewport"
+    }
+  },
+  "required": [
+    "nodes",
+    "edges",
+    "viewport"
+  ],
+  "title": "FlowContentV1",
+  "type": "object",
+  "x-imperaos-contract": "flow.v1"
+}

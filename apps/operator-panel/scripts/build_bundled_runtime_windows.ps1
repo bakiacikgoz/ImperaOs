@@ -44,7 +44,7 @@ function Get-FileSha256 {
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = (Resolve-Path -LiteralPath (Join-Path $ScriptDir "..\..\..")).Path
 $AppDir = Join-Path $RepoRoot "apps\operator-panel"
-$RuntimeDir = Join-Path $AppDir "src-tauri\resources\binliquid-runtime"
+$RuntimeDir = Join-Path $AppDir "src-tauri\resources\imperaos-runtime"
 $RuntimeParent = Split-Path -Parent $RuntimeDir
 $RuntimePythonDir = Join-Path $RuntimeDir "python"
 $RuntimePython = Join-Path $RuntimePythonDir "Scripts\python.exe"
@@ -62,18 +62,18 @@ if (-not $RuntimeDir.StartsWith($RuntimeParentResolved, [System.StringComparison
 New-Item -ItemType Directory -Force -Path $DistDir | Out-Null
 
 if ([string]::IsNullOrWhiteSpace($WheelPath)) {
-  Write-Host "[runtime] building binliquid wheel"
+  Write-Host "[runtime] building ImperaOS wheel"
   Push-Location $RepoRoot
   try {
     Invoke-Checked -FilePath "uv" -Arguments @("build", "--wheel", "--out-dir", $DistDir)
   } finally {
     Pop-Location
   }
-  $latestWheel = Get-ChildItem -Path $DistDir -Filter "binliquid-*.whl" |
+  $latestWheel = Get-ChildItem -Path $DistDir -Filter "imperaos-*.whl" |
     Sort-Object LastWriteTimeUtc -Descending |
     Select-Object -First 1
   if ($null -eq $latestWheel) {
-    throw "[runtime] no binliquid wheel found in $DistDir"
+    throw "[runtime] no ImperaOS wheel found in $DistDir"
   }
   $WheelPath = $latestWheel.FullName
 }
@@ -99,9 +99,9 @@ if (-not (Test-Path -LiteralPath $RuntimePython -PathType Leaf)) {
 Invoke-Checked -FilePath $RuntimePython -Arguments @("-m", "pip", "install", "--upgrade", "pip", "wheel")
 Invoke-Checked -FilePath $RuntimePython -Arguments @("-m", "pip", "install", $WheelPath)
 
-$version = (& $RuntimePython -m binliquid --version)
+$version = (& $RuntimePython -m imperaos --version)
 if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($version)) {
-  throw "[runtime] runtime validation failed: $RuntimePython -m binliquid --version"
+  throw "[runtime] runtime validation failed: $RuntimePython -m imperaos --version"
 }
 
 $UvLockPath = Join-Path $RepoRoot "uv.lock"
@@ -120,7 +120,7 @@ $manifest = @(
   "platform=windows",
   "arch=x86_64",
   "python=python/Scripts/python.exe",
-  "binliquid_version=$($version.Trim())",
+  "imperaos_version=$($version.Trim())",
   "created_at_utc=$((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"))",
   "source_wheel=$WheelPath",
   "source_wheel_sha256=$(Get-FileSha256 -Path $WheelPath)",
@@ -128,14 +128,15 @@ $manifest = @(
   "uv_lock_sha256=$UvLockHash",
   "git_sha=$GitSha"
 )
-$manifest | Set-Content -LiteralPath (Join-Path $RuntimeDir "RUNTIME_MANIFEST.txt") -Encoding utf8
+$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllLines((Join-Path $RuntimeDir "RUNTIME_MANIFEST.txt"), $manifest, $Utf8NoBom)
 
 @"
-Generated Windows runtime bundle for AegisOS Operator Panel.
+Generated Windows runtime bundle for ImperaOS Operator Panel.
 
 Release gate:
 1) python/Scripts/python.exe exists
-2) python/Scripts/python.exe -m binliquid --version passes
+2) python/Scripts/python.exe -m imperaos --version passes
 3) RUNTIME_MANIFEST.txt records platform, arch, Python entrypoint, source wheel, hashes, and git evidence
 
 Do not ship placeholder-only runtime contents.

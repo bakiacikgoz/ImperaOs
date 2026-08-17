@@ -3,34 +3,34 @@ from __future__ import annotations
 from pathlib import Path
 from types import SimpleNamespace
 
-from binliquid.computer_use.models import RiskClass
-from binliquid.computer_use.vision_runtime.drivers.macos import (
+from imperaos.computer_use.models import RiskClass
+from imperaos.computer_use.vision_runtime.drivers.macos import (
     DisplayBounds,
     MacOSInputExecutor,
     MacOSScreenCaptureProvider,
     MacOSVisionReadiness,
     normalized_bbox_center_to_pixel,
 )
-from binliquid.computer_use.vision_runtime.errors import VisionRuntimeError
-from binliquid.computer_use.vision_runtime.models import (
+from imperaos.computer_use.vision_runtime.errors import VisionRuntimeError
+from imperaos.computer_use.vision_runtime.models import (
     InputActionType,
     NormalizedBBox,
     VisionAction,
 )
-from binliquid.runtime.config import ComputerUseRuntimeConfig
-from binliquid.runtime.platform import PlatformInfo
+from imperaos.runtime.config import ComputerUseRuntimeConfig
+from imperaos.runtime.platform import PlatformInfo
 
-ACK = "I understand BinLiquid will control my macOS desktop only for local supervised fixtures."
+ACK = "I understand ImperaOS will control my macOS desktop only for local supervised fixtures."
 
 
 def _live_env(**updates: str) -> dict[str, str]:
     values = {
-        "BINLIQUID_COMPUTER_USE_LIVE_MACOS": "1",
-        "BINLIQUID_COMPUTER_USE_ACK": ACK,
-        "BINLIQUID_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY": "1",
-        "BINLIQUID_COMPUTER_USE_REQUIRE_STEP_APPROVAL": "1",
-        "BINLIQUID_COMPUTER_USE_MACOS_SCREEN_RECORDING": "granted",
-        "BINLIQUID_COMPUTER_USE_MACOS_ACCESSIBILITY": "granted",
+        "IMPERAOS_COMPUTER_USE_LIVE_MACOS": "1",
+        "IMPERAOS_COMPUTER_USE_ACK": ACK,
+        "IMPERAOS_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY": "1",
+        "IMPERAOS_COMPUTER_USE_REQUIRE_STEP_APPROVAL": "1",
+        "IMPERAOS_COMPUTER_USE_MACOS_SCREEN_RECORDING": "granted",
+        "IMPERAOS_COMPUTER_USE_MACOS_ACCESSIBILITY": "granted",
     }
     values.update(updates)
     return values
@@ -145,7 +145,7 @@ def test_capture_backend_blocks_missing_screen_recording(tmp_path: Path) -> None
             macos_capture_backend="screencapture",
         ),
         job_dir=tmp_path / "job",
-        environment=_live_env(BINLIQUID_COMPUTER_USE_MACOS_SCREEN_RECORDING="missing"),
+        environment=_live_env(IMPERAOS_COMPUTER_USE_MACOS_SCREEN_RECORDING="missing"),
     )
 
     try:
@@ -252,7 +252,7 @@ def test_macos_input_executor_blocks_missing_accessibility() -> None:
             macos_live_enabled=True,
             macos_input_backend="quartz",
         ),
-        environment=_live_env(BINLIQUID_COMPUTER_USE_MACOS_ACCESSIBILITY="missing"),
+        environment=_live_env(IMPERAOS_COMPUTER_USE_MACOS_ACCESSIBILITY="missing"),
         quartz_backend=SimpleNamespace(move_mouse=lambda *_: None, click=lambda *_: None),
     )
 

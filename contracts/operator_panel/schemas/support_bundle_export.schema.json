@@ -10,7 +10,7 @@
       "type": "string"
     },
     "contract_version": {
-      "const": "2.0",
+      "const": "3.0",
       "title": "Contract Version",
       "type": "string"
     },

@@ -1,0 +1,60 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/code.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "executionPolicy": {
+      "const": "deny",
+      "default": "deny",
+      "title": "Executionpolicy",
+      "type": "string"
+    },
+    "filename": {
+      "maxLength": 255,
+      "minLength": 1,
+      "pattern": "^[^/\\\\:\\x00]+$",
+      "title": "Filename",
+      "type": "string"
+    },
+    "kind": {
+      "const": "code",
+      "default": "code",
+      "title": "Kind",
+      "type": "string"
+    },
+    "language": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9_+-]+$",
+      "title": "Language",
+      "type": "string"
+    },
+    "lineEnding": {
+      "default": "lf",
+      "enum": [
+        "lf",
+        "crlf"
+      ],
+      "title": "Lineending",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "text": {
+      "maxLength": 5242880,
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "filename",
+    "language",
+    "text"
+  ],
+  "title": "CodeContentV1",
+  "type": "object",
+  "x-imperaos-contract": "code.v1"
+}

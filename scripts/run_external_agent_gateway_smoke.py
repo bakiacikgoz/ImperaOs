@@ -13,13 +13,13 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.agent_enrollment import EnrolledAgent
-from binliquid.control_plane.enterprise_workspace import utc_now
-from binliquid.control_plane.enterprise_workspace_store import EnterpriseWorkspaceStore
-from binliquid.control_plane.external_contracts import ExternalActionRequest
-from binliquid.control_plane.external_gateway import ExternalAgentGateway
-from binliquid.control_plane.registry import AgentRegistry, load_agent_spec
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.control_plane.agent_enrollment import EnrolledAgent
+from imperaos.control_plane.enterprise_workspace import utc_now
+from imperaos.control_plane.enterprise_workspace_store import EnterpriseWorkspaceStore
+from imperaos.control_plane.external_contracts import ExternalActionRequest
+from imperaos.control_plane.external_gateway import ExternalAgentGateway
+from imperaos.control_plane.registry import AgentRegistry, load_agent_spec
+from imperaos.runtime.config import RuntimeConfig
 
 
 FIXTURES = [

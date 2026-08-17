@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from binliquid.computer_use.models import ComputerUseMode, RiskClass
-from binliquid.computer_use.vision_runtime.models import (
+from imperaos.computer_use.models import ComputerUseMode, RiskClass
+from imperaos.computer_use.vision_runtime.models import (
     InputActionType,
     NormalizedBBox,
     SurfaceKind,
     VisionAction,
     VisionObservation,
 )
-from binliquid.computer_use.vision_runtime.policy import UniversalComputerUsePolicy
-from binliquid.runtime.config import ComputerUseRuntimeConfig
+from imperaos.computer_use.vision_runtime.policy import UniversalComputerUsePolicy
+from imperaos.runtime.config import ComputerUseRuntimeConfig
 
 
 def _observation(

@@ -1,0 +1,152 @@
+{
+  "$defs": {
+    "JsonValue": {},
+    "SlideRemoveElementOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "elementId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Elementid",
+          "type": "string"
+        },
+        "op": {
+          "const": "remove_element",
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "op",
+        "elementId"
+      ],
+      "title": "SlideRemoveElementOperation",
+      "type": "object"
+    },
+    "SlideSetTitleOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "op": {
+          "const": "set_title",
+          "title": "Op",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "SlideSetTitleOperation",
+      "type": "object"
+    },
+    "SlideUpsertElementOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "element": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Element",
+          "type": "object"
+        },
+        "op": {
+          "const": "upsert_element",
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "op",
+        "element"
+      ],
+      "title": "SlideUpsertElementOperation",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-slide-patch-command.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifactId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "changeSummary": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Changesummary",
+      "type": "string"
+    },
+    "expectedRevisionNumber": {
+      "minimum": 1,
+      "title": "Expectedrevisionnumber",
+      "type": "integer"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Idempotencykey",
+      "type": "string"
+    },
+    "operations": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "remove_element": "#/$defs/SlideRemoveElementOperation",
+            "set_title": "#/$defs/SlideSetTitleOperation",
+            "upsert_element": "#/$defs/SlideUpsertElementOperation"
+          },
+          "propertyName": "op"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/SlideSetTitleOperation"
+          },
+          {
+            "$ref": "#/$defs/SlideUpsertElementOperation"
+          },
+          {
+            "$ref": "#/$defs/SlideRemoveElementOperation"
+          }
+        ]
+      },
+      "maxItems": 500,
+      "minItems": 1,
+      "title": "Operations",
+      "type": "array"
+    },
+    "slideId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Slideid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifactId",
+    "expectedRevisionNumber",
+    "slideId",
+    "operations",
+    "idempotencyKey"
+  ],
+  "title": "PatchArtifactSlideCommand",
+  "type": "object",
+  "x-imperaos-contract": "artifact-slide-patch-command.v1"
+}

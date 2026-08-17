@@ -1,4 +1,4 @@
-from binliquid.control_plane.snapshot import build_control_plane_snapshot
+from imperaos.control_plane.snapshot import build_control_plane_snapshot
 
 
 def test_control_plane_snapshot_contains_memory_semantic_index() -> None:

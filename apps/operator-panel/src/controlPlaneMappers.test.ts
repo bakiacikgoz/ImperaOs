@@ -29,11 +29,12 @@ describe('control-plane agent mapper', () => {
     expect(list.agents[0].last_evidence_status).toBe('missing');
   });
 
-  it('keeps legacy agent payloads readable with safe defaults', () => {
+  it('maps the canonical ImperaOS team runtime kind with safe defaults', () => {
     const list = asControlPlaneAgentList({
-      agents: [{ agent_id: 'governed-ops', runtime_kind: 'binliquid_team' }],
+      agents: [{ agent_id: 'governed-ops', runtime_kind: 'imperaos_team' }],
     });
 
+    expect(list.agents[0].runtime_kind).toBe('imperaos_team');
     expect(list.agents[0].agent_type).toBe('internal');
     expect(list.agents[0].policy_pack_id).toBe('active-runtime-policy');
     expect(list.agents[0].risk_profile).toBe('guarded');

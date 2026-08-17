@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from binliquid.release_decision.no_ship import build_no_ship_register
+from imperaos.release_decision.no_ship import build_no_ship_register
 
 
 def test_no_ship_blocks_public_desktop_overclaim() -> None:

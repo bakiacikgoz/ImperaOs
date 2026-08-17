@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from binliquid.model_providers.native.conformance import (
+from imperaos.model_providers.native.conformance import (
     run_anthropic_messages_native_conformance,
     run_openai_responses_native_conformance,
 )

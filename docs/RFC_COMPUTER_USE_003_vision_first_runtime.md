@@ -4,7 +4,7 @@ Status: foundation implemented, live OS automation gated
 
 ## Summary
 
-This RFC adds a feature-gated vision-first computer-use runtime foundation without replacing the existing Safari/Finder/TextEdit pilot. The new path is organized under `binliquid/computer_use/vision_runtime/` and follows:
+This RFC adds a feature-gated vision-first computer-use runtime foundation without replacing the existing Safari/Finder/TextEdit pilot. The new path is organized under `imperaos/computer_use/vision_runtime/` and follows:
 
 ```text
 observe -> interpret -> compare -> decide -> classify_risk -> approve_if_needed -> execute -> verify -> checkpoint -> continue_or_recover

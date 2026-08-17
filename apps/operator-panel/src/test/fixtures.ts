@@ -5,7 +5,7 @@ import { DEFAULT_SETTINGS, type PanelSettings } from '../settings';
 export const qaSettingsFixture: PanelSettings = {
   ...DEFAULT_SETTINGS,
   operatorId: 'qa-operator',
-  rootDir: '.binliquid/test-ui/jobs',
+  rootDir: '.imperaos/test-ui/jobs',
   debugRaw: false,
 };
 
@@ -13,7 +13,7 @@ export const bridgeErrorPayloadFixture: BridgeErrorPayload = {
   code: 'CLI_FAILED',
   message: 'Command failed',
   stderrPreview: 'redacted stderr preview',
-  command: 'binliquid ...',
+  command: 'imperaos ...',
   retryable: true,
 };
 
@@ -26,7 +26,7 @@ export const approvalTicketFixture = {
 };
 
 export const runSummaryFixture = {
-  contract_version: '2.0',
+  contract_version: '3.0',
   runs: [
     {
       job_id: 'run_qa_1',

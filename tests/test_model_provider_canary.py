@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from binliquid.model_providers.canary import run_provider_canary
-from binliquid.model_providers.models import DataClass, ProviderCanaryRequest
-from binliquid.model_providers.registry import resolve_model_provider_registry
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.model_providers.canary import run_provider_canary
+from imperaos.model_providers.models import DataClass, ProviderCanaryRequest
+from imperaos.model_providers.registry import resolve_model_provider_registry
+from imperaos.runtime.config import RuntimeConfig
 
 
 def _registry():
@@ -40,7 +40,7 @@ def test_public_cloud_confidential_denied_before_adapter(tmp_path) -> None:
             evidence_root=str(tmp_path),
         ),
         registry=_registry(),
-        env={"BINLIQUID_PROVIDER_LIVE_CANARY": "1"},
+        env={"IMPERAOS_PROVIDER_LIVE_CANARY": "1"},
         evidence_root=tmp_path,
     )
 

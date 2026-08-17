@@ -14,7 +14,7 @@ enabled = false
 mode = "local"
 default_workspace_id = "default"
 default_principal_id = "agent-local"
-db_path = ".binliquid/workspace_memory.sqlite3"
+db_path = ".imperaos/workspace_memory.sqlite3"
 raw_content_persistence = false
 network_listener_enabled = false
 migration_apply_enabled = false
@@ -27,18 +27,18 @@ and `memory.workspace_authority.enabled` are true.
 ## CLI
 
 ```bash
-uv run binliquid memory workspace init --workspace-id default --owner-principal-id agent-local
-uv run binliquid memory principal add --principal-id agent-a --principal-type agent
-uv run binliquid memory workspace grant --workspace-id default --principal-id agent-a --role agent
-uv run binliquid memory scope grant --workspace-id default --scope-type team --scope-id platform --principal-id agent-a --permission memory.write.team
-uv run binliquid memory authority propose-write --summary "Remember this." --workspace-id default --principal-id agent-local --scope-type personal --scope-id agent-local
-uv run binliquid memory authority query --workspace-id default --principal-id agent-local --scope-type personal --scope-id agent-local --query remember
-uv run binliquid memory workspace sync export --workspace-id default --output artifacts/memory/workspace_pack.json
-uv run binliquid memory workspace sync verify --input artifacts/memory/workspace_pack.json
-uv run binliquid memory workspace sync import --input artifacts/memory/workspace_pack.json
-uv run binliquid memory workspace sync apply --input artifacts/memory/workspace_pack.json --approval-id approved-local
-uv run binliquid memory workspace conflicts list --workspace-id default
-uv run binliquid memory workspace migrate legacy-dry-run --legacy-db-path .binliquid/memory.sqlite3 --workspace-id default
+uv run imperaos memory workspace init --workspace-id default --owner-principal-id agent-local
+uv run imperaos memory principal add --principal-id agent-a --principal-type agent
+uv run imperaos memory workspace grant --workspace-id default --principal-id agent-a --role agent
+uv run imperaos memory scope grant --workspace-id default --scope-type team --scope-id platform --principal-id agent-a --permission memory.write.team
+uv run imperaos memory authority propose-write --summary "Remember this." --workspace-id default --principal-id agent-local --scope-type personal --scope-id agent-local
+uv run imperaos memory authority query --workspace-id default --principal-id agent-local --scope-type personal --scope-id agent-local --query remember
+uv run imperaos memory workspace sync export --workspace-id default --output artifacts/memory/workspace_pack.json
+uv run imperaos memory workspace sync verify --input artifacts/memory/workspace_pack.json
+uv run imperaos memory workspace sync import --input artifacts/memory/workspace_pack.json
+uv run imperaos memory workspace sync apply --input artifacts/memory/workspace_pack.json --approval-id approved-local
+uv run imperaos memory workspace conflicts list --workspace-id default
+uv run imperaos memory workspace migrate legacy-dry-run --legacy-db-path .imperaos/memory.sqlite3 --workspace-id default
 ```
 
 ## Gates

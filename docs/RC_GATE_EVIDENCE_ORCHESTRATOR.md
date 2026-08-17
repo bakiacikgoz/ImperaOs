@@ -13,11 +13,11 @@ The RC Gate Evidence Orchestrator is the local, non-destructive evidence layer f
 ## Commands
 
 ```bash
-uv run binliquid release gates plan --target mainline-rc --profile enterprise --json
-uv run binliquid release gates run --target mainline-rc --profile enterprise --mode rc-focused --output-root artifacts/release-gates/mainline-rc --json
-uv run binliquid release gates verify --ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --json
-uv run binliquid release gates export --ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --output-root artifacts/release-gates/mainline-rc --json
-uv run binliquid control-plane release gates snapshot --profile enterprise --evidence-root artifacts/release-gates/mainline-rc --json
+uv run imperaos release gates plan --target mainline-rc --profile enterprise --json
+uv run imperaos release gates run --target mainline-rc --profile enterprise --mode rc-focused --output-root artifacts/release-gates/mainline-rc --json
+uv run imperaos release gates verify --ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --json
+uv run imperaos release gates export --ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --output-root artifacts/release-gates/mainline-rc --json
+uv run imperaos control-plane release gates snapshot --profile enterprise --evidence-root artifacts/release-gates/mainline-rc --json
 ```
 
 The official cross-platform gate is:

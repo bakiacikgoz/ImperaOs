@@ -4,15 +4,15 @@ import json
 import tempfile
 from pathlib import Path
 
-from binliquid.memory.workspace_authority import build_workspace_memory_authority
-from binliquid.memory.workspace_models import (
+from imperaos.memory.workspace_authority import build_workspace_memory_authority
+from imperaos.memory.workspace_models import (
     MemoryPrincipal,
     MemoryWorkspace,
     MemoryWorkspaceMembership,
     WorkspaceMemoryQueryRequest,
     WorkspaceMemoryWriteRequest,
 )
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.runtime.config import RuntimeConfig
 
 
 def main() -> None:

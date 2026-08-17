@@ -6,10 +6,10 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.models import AlertSummary, ReportSummary
-from binliquid.control_plane.reports import build_reports_alerts_logs_manifest
-from binliquid.control_plane.snapshot import build_control_plane_snapshot
+from imperaos.cli import app
+from imperaos.control_plane.models import AlertSummary, ReportSummary
+from imperaos.control_plane.reports import build_reports_alerts_logs_manifest
+from imperaos.control_plane.snapshot import build_control_plane_snapshot
 
 runner = CliRunner()
 

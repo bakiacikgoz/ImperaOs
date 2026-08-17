@@ -6,7 +6,7 @@ Implemented as a supervised, opt-in qualification path. It does not enable unres
 
 ## Product Boundary
 
-BinLiquid can evaluate whether a local macOS host is ready for a narrow vision-first computer-use qualification run. Live execution remains disabled unless all gates pass:
+ImperaOS can evaluate whether a local macOS host is ready for a narrow vision-first computer-use qualification run. Live execution remains disabled unless all gates pass:
 
 - `computer_use.vision_enabled=true`
 - local strict-JSON provider configured, currently Ollama-compatible
@@ -28,13 +28,13 @@ The macOS path preserves the vision-first loop:
 observe -> interpret -> decide -> classify_risk -> approve_if_needed -> execute -> verify -> checkpoint
 ```
 
-OS-specific behavior stays behind `binliquid.computer_use.vision_runtime.drivers`.
+OS-specific behavior stays behind `imperaos.computer_use.vision_runtime.drivers`.
 
 ## Doctor Commands
 
 ```bash
-uv run binliquid computer-use doctor --platform macos --json
-uv run binliquid computer-use vision doctor --platform macos --json
+uv run imperaos computer-use doctor --platform macos --json
+uv run imperaos computer-use vision doctor --platform macos --json
 ```
 
 The doctor is CI-safe and does not request, grant, or bypass macOS TCC permissions.
@@ -42,9 +42,9 @@ The doctor is CI-safe and does not request, grant, or bypass macOS TCC permissio
 ## Qualification Command
 
 ```bash
-BINLIQUID_COMPUTER_USE_LIVE_OPT_IN=I_UNDERSTAND_THIS_CONTROLS_MY_MAC \
-BINLIQUID_COMPUTER_USE_LIVE_MACOS=1 \
-uv run binliquid computer-use qualification run \
+IMPERAOS_COMPUTER_USE_LIVE_OPT_IN=I_UNDERSTAND_THIS_CONTROLS_MY_MAC \
+IMPERAOS_COMPUTER_USE_LIVE_MACOS=1 \
+uv run imperaos computer-use qualification run \
   --platform macos \
   --suite live-fixture-smoke \
   --mode supervised \
@@ -52,7 +52,7 @@ uv run binliquid computer-use qualification run \
   --json
 ```
 
-Without the exact opt-in and `BINLIQUID_COMPUTER_USE_LIVE_MACOS=1`, the command
+Without the exact opt-in and `IMPERAOS_COMPUTER_USE_LIVE_MACOS=1`, the command
 writes a blocked report and does not mark macOS qualified. A passing local
 fixture report can show `fixture_qualified` while the live flag remains off;
 `qualified_limited` is the only live-enabled macOS stage.

@@ -1,5 +1,5 @@
-from binliquid.memory.context_pack import context_pack_from_retrieval
-from binliquid.memory.models import (
+from imperaos.memory.context_pack import context_pack_from_retrieval
+from imperaos.memory.models import (
     MemoryHit,
     MemoryPolicyDecision,
     MemoryRetrievalResult,

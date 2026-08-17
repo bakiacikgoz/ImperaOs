@@ -6,12 +6,12 @@ from pathlib import Path
 
 import pytest
 
-from binliquid.computer_use.vision_runtime.runtime_gate import (
+from imperaos.computer_use.vision_runtime.runtime_gate import (
     ComputerUseOperationIntent,
     RuntimePreflightContext,
     evaluate_runtime_preflight,
 )
-from binliquid.runtime.config import ComputerUseRuntimeConfig
+from imperaos.runtime.config import ComputerUseRuntimeConfig
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_ROOT = REPO_ROOT / "contracts" / "computer_use" / "fixtures"

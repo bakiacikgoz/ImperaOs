@@ -13,7 +13,7 @@ Use this compatibility checklist when an older handoff references this file:
 CLI smoke commands:
 
 ```bash
-uv run binliquid control-plane snapshot --json
-uv run binliquid control-plane claims verify --profile enterprise --json
+uv run imperaos control-plane snapshot --json
+uv run imperaos control-plane claims verify --profile enterprise --json
 uv run python scripts/run_control_plane_demo.py --profile enterprise --json
 ```

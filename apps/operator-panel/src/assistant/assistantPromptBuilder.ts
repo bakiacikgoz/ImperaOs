@@ -44,6 +44,16 @@ type PromptSection = {
 
 function maskSecrets(text: string): string {
   return text
+    .replace(/synthetic-provider-secret-canary/gi, '[redacted-secret-canary]')
+    .replace(
+      /(['"])(?:\\\\\?\\[A-Za-z]:\\|\\\\[^\\'"\r\n]+\\[^\\'"\r\n]+\\|[A-Za-z]:[\\/]|\/)[^'"\r\n]*\1/g,
+      '[redacted-path]',
+    )
+    .replace(
+      /(?:\\\\\?\\[A-Za-z]:\\|\\\\[^\\\s"'<>|]+\\[^\\\s"'<>|]+\\|\b[A-Za-z]:[\\/])[^\r\n,;'"<>|]*/g,
+      '[redacted-path]',
+    )
+    .replace(/(^|[\s([{:;,='"\u0060])\/[^\r\n,;'"<>|]+/g, '$1[redacted-path]')
     .replace(/sk-[A-Za-z0-9_-]{12,}/g, '[redacted-secret]')
     .replace(/ghp_[A-Za-z0-9_]{12,}/g, '[redacted-token]')
     .replace(/eyJ[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}/g, '[redacted-jwt]')
@@ -59,7 +69,21 @@ function truncate(value: string, limit: number): { text: string; truncated: bool
 }
 
 function safeJson(value: unknown): string {
-  return maskSecrets(JSON.stringify(redactJson(value), null, 2));
+  return maskSecrets(JSON.stringify(sanitizeStructuredStrings(redactJson(value)), null, 2));
+}
+
+function sanitizeStructuredStrings(value: unknown): unknown {
+  if (typeof value === 'string') return maskSecrets(value);
+  if (Array.isArray(value)) return value.map((item) => sanitizeStructuredStrings(item));
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, entry]) => [
+        key,
+        sanitizeStructuredStrings(entry),
+      ]),
+    );
+  }
+  return value;
 }
 
 function section(title: string, body: string, limit: number): PromptSection {
@@ -86,12 +110,28 @@ function summarizeToolIntents(intents: AssistantSafeToolIntent[]): string {
   return intents.map((intent) => `- ${intent}: ${TOOL_INTENT_LABELS[intent]}`).join('\n');
 }
 
+function boundedArtifactReference(name: string, value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return { name };
+  const record = value as Record<string, unknown>;
+  const allowed = [
+    'artifactId', 'revisionId', 'kind', 'title', 'status', 'dataClass',
+    'currentRevisionId', 'currentRevisionNumber',
+  ];
+  return Object.fromEntries([
+    ['name', name],
+    ...allowed
+      .filter((key) => ['string', 'number'].includes(typeof record[key]))
+      .map((key) => [key, record[key]]),
+  ]);
+}
+
 export function buildAssistantPrompt(input: {
   userMessage: string;
   session: AssistantSessionState;
   selectedRunStatus: unknown | null;
   selectedRunEvents: unknown[];
   selectedArtifacts: Record<string, unknown>;
+  artifactContextRequest?: Record<string, unknown> | null;
   pendingApproval: unknown | null;
   systemHealth: unknown | null;
   controls?: AssistantComposerControls;
@@ -128,7 +168,10 @@ export function buildAssistantPrompt(input: {
   if (hasAttachment(input.controls, 'artifact_summary')) {
     const artifactEntries = Object.entries(input.selectedArtifacts).slice(0, 4);
     for (const [name, value] of artifactEntries) {
-      sections.push(section(`Artifact summary: ${name}`, safeJson(value), ARTIFACT_MAX));
+      sections.push(section(`Artifact reference: ${name}`, safeJson(boundedArtifactReference(name, value)), ARTIFACT_MAX));
+    }
+    if (input.artifactContextRequest) {
+      sections.push(section('Governed artifact context request', safeJson(input.artifactContextRequest), ARTIFACT_MAX));
     }
   }
 

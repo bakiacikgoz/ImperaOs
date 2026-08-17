@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from binliquid.memory.runtime_policy import AgentMemoryRuntimePolicyDecision
+from imperaos.memory.runtime_policy import AgentMemoryRuntimePolicyDecision
 
 
 def test_runtime_policy_decision_fixture_validates() -> None:

@@ -1,5 +1,32 @@
-.PHONY: bootstrap bootstrap-macos bootstrap-windows install lint test check doctor chat benchmark benchmark-team benchmark-ablation benchmark-energy pilot-gate enterprise-gate qualification-run vision-gate provider-native-gate provider-runtime-gate provider-workflow-proof-gate provider-governance-gate provider-v1-1-closure-gate provider-native-adapter-gate provider-governance-pr-readiness target-evidence-rehearsal-gate operator-attestation-gate design-partner-pilot-candidate-gate design-partner-rc-audit-gate design-partner-field-evidence-gate design-partner-handoff-gate mainline-rc-freeze-gate rc-evidence-orchestrator-gate rc-release-decision-gate enterprise-workspace-onboarding-gate enterprise-workspace-release-closure-gate product-complete-scope-gate assistant-real-runtime-gate first-run-readiness-gate governed-agent-workflow-product-gate product-complete-closure-gate product-desktop-smoke-gate memory-governance-gate memory-index-gate memory-authority-gate memory-operator-panel-gate memory-runtime-gate memory-runtime-policy-gate memory-context-pack-gate memory-sync-gate governed-memory-v1-gate workspace-memory-authority-gate memory-rbac-gate memory-workspace-sync-gate memory-migration-dry-run-gate memory-authority-operator-gate semantic-memory-index-gate memory-retrieval-quality-gate memory-privacy-leakage-gate memory-backend-benchmark-gate governed-pilot-workflow-gate control-plane-schemas control-plane-snapshot-gate control-plane-gate evidence-pack-gate enterprise-hat-a-evidence-gate evidence-corpus-gate install-rehearsal-gate external-agent-pilot-gate external-agent-v1-1-gate pilot-operations-gate governance-admin-gate security-review-pack-gate operator-panel-fallow-report operator-panel-boundary-gate operator-panel-fallow-gate ci-node24-inventory design-partner-beta-pack design-partner-beta-gate design-partner-pilot-gate agent-control-plane-v1-gate operator-panel-i18n-gate operator-panel-productization-gate operator-panel-tauri-smoke pilot-readiness-gate design-partner-rc-gate ui-gate ui-e2e-gate rust-gate mainline-gate ui-install ui-dev ui-build ui-tauri-build
-.PHONY: macos-local-trial-gate operator-panel-bridge-parity-gate macos-bundled-runtime-gate
+.PHONY: bootstrap bootstrap-macos bootstrap-windows install lint test check doctor chat benchmark benchmark-team benchmark-ablation benchmark-energy brand-consistency-gate pilot-gate enterprise-gate qualification-run vision-gate provider-native-gate provider-runtime-gate provider-workflow-proof-gate provider-governance-gate provider-v1-1-closure-gate provider-native-adapter-gate provider-governance-pr-readiness target-evidence-rehearsal-gate operator-attestation-gate design-partner-pilot-candidate-gate design-partner-rc-audit-gate design-partner-field-evidence-gate design-partner-handoff-gate mainline-rc-freeze-gate rc-evidence-orchestrator-gate rc-release-decision-gate enterprise-workspace-onboarding-gate enterprise-workspace-release-closure-gate product-complete-scope-gate assistant-real-runtime-gate first-run-readiness-gate governed-agent-workflow-product-gate product-complete-closure-gate product-desktop-smoke-gate memory-governance-gate memory-index-gate memory-authority-gate memory-operator-panel-gate memory-runtime-gate memory-runtime-policy-gate memory-context-pack-gate memory-sync-gate governed-memory-v1-gate workspace-memory-authority-gate memory-rbac-gate memory-workspace-sync-gate memory-migration-dry-run-gate memory-authority-operator-gate semantic-memory-index-gate memory-retrieval-quality-gate memory-privacy-leakage-gate memory-backend-benchmark-gate governed-pilot-workflow-gate control-plane-schemas control-plane-snapshot-gate control-plane-gate evidence-pack-gate enterprise-hat-a-evidence-gate evidence-corpus-gate install-rehearsal-gate external-agent-pilot-gate external-agent-v1-1-gate pilot-operations-gate governance-admin-gate security-review-pack-gate operator-panel-fallow-report operator-panel-boundary-gate operator-panel-fallow-gate ci-node24-inventory design-partner-beta-pack design-partner-beta-gate design-partner-pilot-gate agent-control-plane-v1-gate operator-panel-i18n-gate operator-panel-productization-gate operator-panel-tauri-smoke pilot-readiness-gate design-partner-rc-gate ui-gate ui-e2e-gate rust-gate mainline-gate ui-install ui-dev ui-build ui-tauri-build
+.PHONY: macos-local-trial-gate operator-panel-bridge-parity-gate macos-bundled-runtime-gate artifact-contract-gate artifact-storage-gate artifact-rpc-gate artifact-security-gate artifact-ui-gate artifact-e2e-gate artifact-export-gate artifact-license-gate artifact-workspace-release-gate
+
+artifact-contract-gate:
+	uv run python scripts/run_artifact_workspace_release_gate.py --gate contract --profile enterprise --json
+
+artifact-storage-gate:
+	uv run python scripts/run_artifact_workspace_release_gate.py --gate storage --profile enterprise --json
+
+artifact-rpc-gate:
+	uv run python scripts/run_artifact_workspace_release_gate.py --gate rpc --profile enterprise --json
+
+artifact-security-gate:
+	uv run python scripts/run_artifact_workspace_release_gate.py --gate security --profile enterprise --json
+
+artifact-ui-gate:
+	uv run python scripts/run_artifact_workspace_release_gate.py --gate ui --profile enterprise --json
+
+artifact-e2e-gate:
+	uv run python scripts/run_artifact_workspace_release_gate.py --gate e2e --profile enterprise --json
+
+artifact-export-gate:
+	uv run python scripts/run_artifact_workspace_release_gate.py --gate export --profile enterprise --json
+
+artifact-license-gate:
+	uv run python scripts/run_artifact_workspace_release_gate.py --gate license --profile enterprise --json
+
+artifact-workspace-release-gate:
+	uv run python scripts/run_artifact_workspace_release_gate.py --gate workspace-release --profile enterprise --json
 
 bootstrap: bootstrap-macos
 
@@ -20,23 +47,29 @@ test:
 
 check: lint test
 
+brand-consistency-gate:
+	uv run python scripts/run_brand_consistency_gate.py \
+		--mode enforce \
+		--output-root artifacts/rebrand/ci \
+		--json
+
 doctor:
-	uv run binliquid doctor --profile balanced
+	uv run imperaos doctor --profile balanced
 
 chat:
-	uv run binliquid chat --profile lite
+	uv run imperaos chat --profile lite
 
 benchmark:
-	uv run binliquid benchmark smoke --mode all --profile balanced
+	uv run imperaos benchmark smoke --mode all --profile balanced
 
 benchmark-team:
-	uv run binliquid benchmark team --profile balanced --suite smoke --spec team.yaml
+	uv run imperaos benchmark team --profile balanced --suite smoke --spec team.yaml
 
 benchmark-ablation:
-	uv run binliquid benchmark ablation --mode all --profile balanced
+	uv run imperaos benchmark ablation --mode all --profile balanced
 
 benchmark-energy:
-	uv run binliquid benchmark energy --profile balanced --energy-mode measured
+	uv run imperaos benchmark energy --profile balanced --energy-mode measured
 
 pilot-gate:
 	uv run pytest -q \
@@ -46,8 +79,8 @@ pilot-gate:
 		tests/test_team_audit_envelope.py \
 		tests/test_team_cli.py \
 		tests/test_team_pilot_gate.py
-	uv run binliquid team validate --spec examples/team/restricted_pilot.yaml --json
-	uv run binliquid team pilot-check \
+	uv run imperaos team validate --spec examples/team/restricted_pilot.yaml --json
+	uv run imperaos team pilot-check \
 		--spec examples/team/restricted_pilot.yaml \
 		--profile restricted \
 		--mode deterministic \
@@ -56,17 +89,17 @@ pilot-gate:
 
 enterprise-gate:
 	uv run pytest -q tests/test_enterprise_cli.py tests/test_enterprise_qualification.py
-	rm -rf .binliquid/keys .binliquid/identity
+	rm -rf .imperaos/enterprise/keys .imperaos/enterprise/identity
 	rm -f artifacts/qualification_report.json artifacts/QUALIFICATION_REPORT.md
 	uv run python scripts/prepare_enterprise_fixture.py --root .
-	uv run binliquid security baseline --profile enterprise --json
-	uv run binliquid auth whoami --profile enterprise --json
-	uv run binliquid auth check --profile enterprise --permission runtime.run --json
-	uv run binliquid keys verify --profile enterprise --path artifacts/security_posture.json --json
-	uv run binliquid metrics snapshot --profile enterprise --json
-	uv run binliquid ga readiness --profile enterprise --report artifacts/ga_readiness_report.json --json
-	uv run binliquid keys verify --profile enterprise --path artifacts/ga_readiness_report.json --json
-	uv run binliquid support bundle export --profile enterprise --json
+	uv run imperaos security baseline --profile enterprise --json
+	uv run imperaos auth whoami --profile enterprise --json
+	uv run imperaos auth check --profile enterprise --permission runtime.run --json
+	uv run imperaos keys verify --profile enterprise --path artifacts/security_posture.json --json
+	uv run imperaos metrics snapshot --profile enterprise --json
+	uv run imperaos ga readiness --profile enterprise --report artifacts/ga_readiness_report.json --json
+	uv run imperaos keys verify --profile enterprise --path artifacts/ga_readiness_report.json --json
+	uv run imperaos support bundle export --profile enterprise --json
 
 vision-gate:
 	uv run --extra dev pytest -q \
@@ -80,7 +113,7 @@ vision-gate:
 		tests/test_computer_use_vision_qualification.py \
 		tests/test_computer_use_vision_replay.py \
 		tests/test_computer_use_macos_supervised_v2_gate.py
-	uv run python -m binliquid computer-use doctor --json
+	uv run python -m imperaos computer-use doctor --json
 	uv run python scripts/evaluate_computer_use_platform_matrix.py \
 		--profile balanced \
 		--output artifacts/computer_use/platform_matrix.json \
@@ -96,7 +129,7 @@ provider-native-gate:
 
 provider-runtime-gate:
 	uv run pytest -q tests/test_provider_runtime_evidence.py tests/test_provider_invocation_coordinator.py
-	uv run binliquid provider invoke \
+	uv run imperaos provider invoke \
 		--provider openai_responses \
 		--model gpt-placeholder \
 		--profile enterprise \
@@ -138,7 +171,7 @@ provider-governance-gate:
 	uv run --extra dev python scripts/run_provider_governance_gate.py --profile enterprise --json
 	uv run --extra dev python scripts/run_provider_canary_fixture.py --profile enterprise --json
 	uv run --extra dev python scripts/generate_provider_canary_evidence.py --profile enterprise --json
-	uv run --extra dev python -m binliquid provider canary verify \
+	uv run --extra dev python -m imperaos provider canary verify \
 		--evidence-root artifacts/model-provider-governance/canary \
 		--json
 	uv run --extra dev python scripts/generate_model_provider_governance_evidence.py --profile enterprise --json
@@ -170,12 +203,12 @@ provider-native-adapter-gate:
 		--profile enterprise \
 		--output-root artifacts/model-provider-governance/native-v2 \
 		--json
-	uv run --extra dev python -m binliquid provider native conformance run \
+	uv run --extra dev python -m imperaos provider native conformance run \
 		--profile enterprise \
 		--provider-kind anthropic_messages \
 		--offline \
 		--json
-	uv run --extra dev python -m binliquid provider native conformance verify \
+	uv run --extra dev python -m imperaos provider native conformance verify \
 		--input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json \
 		--json
 
@@ -214,7 +247,7 @@ memory-runtime-policy-gate:
 		tests/test_control_plane_snapshot_memory_policy.py \
 		tests/test_memory_runtime_policy_cli.py \
 		tests/test_memory_runtime_policy_privacy.py
-	uv run binliquid memory runtime policy evaluate \
+	uv run imperaos memory runtime policy evaluate \
 		--suite benchmarks/tasks/memory/runtime_policy_cases.jsonl \
 		--output artifacts/memory-runtime-policy/evaluation.json \
 		--profile enterprise
@@ -342,10 +375,10 @@ mainline-rc-freeze-gate:
 		tests/test_control_plane_snapshot_mainline_rc_freeze.py
 	uv run python scripts/generate_control_plane_contract_schemas.py
 	git diff --exit-code contracts/control_plane contracts/operator_panel/schemas
-	uv run binliquid release mainline stack-verify \
+	uv run imperaos release mainline stack-verify \
 		--stack examples/release/design_partner_rc_stack.yaml \
 		--json
-	uv run binliquid release mainline rehearse \
+	uv run imperaos release mainline rehearse \
 		--base main \
 		--head codex/design-partner-rc-handoff-ops-readiness-v1 \
 		--mode dry-run \
@@ -357,7 +390,7 @@ mainline-rc-freeze-gate:
 		--evidence-root artifacts \
 		--output-root artifacts/mainline-rc-freeze \
 		--json
-	uv run binliquid release rc-freeze verify \
+	uv run imperaos release rc-freeze verify \
 		--manifest artifacts/mainline-rc-freeze/manifest.json \
 		--json
 	uv run python scripts/run_mainline_rc_freeze_gate.py --profile enterprise --json
@@ -489,7 +522,7 @@ control-plane-schemas:
 	uv run python scripts/generate_control_plane_contract_schemas.py
 
 control-plane-snapshot-gate:
-	uv run binliquid control-plane snapshot --json
+	uv run imperaos control-plane snapshot --json
 	uv run pytest -q tests/test_control_plane_snapshot.py
 	corepack pnpm --dir apps/operator-panel test -- controlPlaneSnapshot
 
@@ -504,8 +537,8 @@ control-plane-gate:
 		tests/test_control_plane_snapshot.py
 	uv run python scripts/generate_control_plane_contract_schemas.py
 	git diff --exit-code contracts/control_plane
-	uv run binliquid control-plane doctor --profile enterprise --json
-	uv run binliquid control-plane snapshot --profile enterprise --json
+	uv run imperaos control-plane doctor --profile enterprise --json
+	uv run imperaos control-plane snapshot --profile enterprise --json
 	uv run python scripts/evaluate_control_plane_claims.py --profile enterprise --json
 
 evidence-pack-gate:
@@ -517,22 +550,22 @@ enterprise-hat-a-evidence-gate:
 	uv run pytest -q tests/test_control_plane_qualification_closure.py tests/test_control_plane_claim_guard.py
 	uv run python scripts/prepare_enterprise_fixture.py --root .
 	uv run python scripts/generate_enterprise_hat_a_fixture.py --json
-	uv run binliquid control-plane qualification close \
+	uv run imperaos control-plane qualification close \
 		--profile enterprise \
 		--qualification-root artifacts/enterprise-hat-a/qualification \
 		--output-root artifacts/enterprise-hat-a \
 		--json
-	uv run binliquid control-plane qualification verify \
+	uv run imperaos control-plane qualification verify \
 		--profile enterprise \
 		--input artifacts/enterprise-hat-a/enterprise_hat_a_closure.json \
 		--json
-	uv run binliquid control-plane claims verify --profile enterprise --evidence-root artifacts --json
+	uv run imperaos control-plane claims verify --profile enterprise --evidence-root artifacts --json
 
 evidence-corpus-gate:
 	uv run pytest -q tests/test_control_plane_evidence_corpus.py tests/test_evidence_index.py
 	uv run python scripts/prepare_enterprise_fixture.py --root .
 	uv run python scripts/evaluate_evidence_corpus.py --json
-	uv run binliquid control-plane evidence index \
+	uv run imperaos control-plane evidence index \
 		--profile enterprise \
 		--evidence-root artifacts/evidence-corpus/valid \
 		--root-dir artifacts/evidence-corpus/index-state \
@@ -541,9 +574,9 @@ evidence-corpus-gate:
 install-rehearsal-gate:
 	uv run pytest -q tests/test_control_plane_install_rehearsal.py
 	uv run python scripts/prepare_enterprise_fixture.py --root .
-	uv run binliquid control-plane install rehearsal \
+	uv run imperaos control-plane install rehearsal \
 		--profile enterprise \
-		--target-root .binliquid/rehearsal/design-partner \
+		--target-root .imperaos/rehearsal/design-partner \
 		--mode source-cli \
 		--output artifacts/install-rehearsal/report.json \
 		--json
@@ -562,8 +595,8 @@ external-agent-v1-1-gate:
 
 pilot-operations-gate:
 	uv run pytest -q tests/test_pilot_operations.py tests/test_control_plane_snapshot.py
-	uv run binliquid pilot first-run --json
-	uv run binliquid control-plane snapshot --profile enterprise --json
+	uv run imperaos pilot first-run --json
+	uv run imperaos control-plane snapshot --profile enterprise --json
 	corepack pnpm --dir apps/operator-panel test -- controlPlaneSnapshot
 
 governance-admin-gate:
@@ -574,7 +607,7 @@ governance-admin-gate:
 security-review-pack-gate:
 	uv run pytest -q tests/test_control_plane_security_review.py
 	uv run python scripts/prepare_enterprise_fixture.py --root .
-	uv run binliquid control-plane security review \
+	uv run imperaos control-plane security review \
 		--profile enterprise \
 		--output-root artifacts/security-review \
 		--evidence-root artifacts/evidence-corpus/valid \
@@ -658,8 +691,8 @@ macos-bundled-runtime-gate:
 pilot-readiness-gate:
 	uv run ruff check .
 	uv run pytest -q
-	uv run python -m compileall binliquid
-	uv run python -m binliquid control-plane snapshot --json
+	uv run python -m compileall imperaos
+	uv run python -m imperaos control-plane snapshot --json
 	corepack pnpm --dir apps/operator-panel test
 	corepack pnpm --dir apps/operator-panel lint
 	corepack pnpm --dir apps/operator-panel build
@@ -693,8 +726,8 @@ design-partner-rc-gate:
 	uv run python scripts/run_external_agent_gateway_smoke.py
 	uv run python scripts/evaluate_policy_pack_promotion.py
 	uv run python scripts/evaluate_evidence_index.py --profile enterprise --evidence-root artifacts/control-plane/evidence --select-latest-valid --staged-evidence-root artifacts/design-partner-rc/evidence-sample --root-dir artifacts/design-partner-rc/evidence-index/state --output artifacts/design-partner-rc/evidence_index.json
-	uv run python scripts/evaluate_reports_alerts.py --profile enterprise --root-dir .binliquid/control-plane --evidence-root artifacts --output-dir artifacts/design-partner-rc/reports-alerts-logs
-	uv run python scripts/generate_design_partner_rc_pack.py --profile enterprise --state-root .binliquid/control-plane --evidence-root artifacts --output artifacts/design-partner-rc --fail-on-conditional --json
+	uv run python scripts/evaluate_reports_alerts.py --profile enterprise --root-dir .imperaos/control-plane --evidence-root artifacts --output-dir artifacts/design-partner-rc/reports-alerts-logs
+	uv run python scripts/generate_design_partner_rc_pack.py --profile enterprise --state-root .imperaos/control-plane --evidence-root artifacts --output artifacts/design-partner-rc --fail-on-conditional --json
 	git diff --check
 
 ui-e2e-gate:
@@ -727,7 +760,7 @@ agent-control-plane-v1-gate:
 	uv run python scripts/build_control_plane_release_pack.py --profile enterprise --output artifacts/release-pack/control-plane-v1 --json
 
 qualification-run:
-	uv run binliquid qualification run \
+	uv run imperaos qualification run \
 		--profile enterprise \
 		--mode mixed \
 		--soak-hours 6 \

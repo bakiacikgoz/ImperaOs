@@ -1,0 +1,306 @@
+{
+  "generatedFrom": "imperaos.artifacts",
+  "schemaVersion": "artifact-workspace.contract-manifest/v1",
+  "schemas": [
+    {
+      "category": "content",
+      "file": "document.v1.schema.json",
+      "name": "document.v1",
+      "sha256": "7f6b89650c775ade47e4bf19cffe8b7811c0595c60d313f6b429b93b866efab9"
+    },
+    {
+      "category": "content",
+      "file": "form.v1.schema.json",
+      "name": "form.v1",
+      "sha256": "8fc121b102c9c1cd360bc894146bc98963d3d5e0a5747a3f1234af722058e9c9"
+    },
+    {
+      "category": "content",
+      "file": "code.v1.schema.json",
+      "name": "code.v1",
+      "sha256": "5e1ae05ab3a74efc48f608265a28c64ea180aac1f2df89ee9cdce326c35cdbe3"
+    },
+    {
+      "category": "content",
+      "file": "code.v2.schema.json",
+      "name": "code.v2",
+      "sha256": "d0afbeba2b5caa4c9a5bcb59284cbc8077fffeb296a7e7ee43120bf3f526a81d"
+    },
+    {
+      "category": "content",
+      "file": "flow.v1.schema.json",
+      "name": "flow.v1",
+      "sha256": "afeb88068aef06cd4f3d87c8c8583e4e88c68e8d975afa551f7a09373216c67f"
+    },
+    {
+      "category": "content",
+      "file": "flow.v2.schema.json",
+      "name": "flow.v2",
+      "sha256": "3d4641d888a4a8ac7869d8ef697689afab8a7232bd01ff08df6e7dff0740fe54"
+    },
+    {
+      "category": "content",
+      "file": "spreadsheet.v1.schema.json",
+      "name": "spreadsheet.v1",
+      "sha256": "8c906188e7ac749817455c9288fbb22788830bad540a784f4f77642fed2af365"
+    },
+    {
+      "category": "content",
+      "file": "spreadsheet.v2.schema.json",
+      "name": "spreadsheet.v2",
+      "sha256": "f4720427f863ef09968924c1a7e42f0ce5873eef52b6619ed02e221dae493f52"
+    },
+    {
+      "category": "content",
+      "file": "canvas.v1.schema.json",
+      "name": "canvas.v1",
+      "sha256": "034f15b6c634a86cfb4c7fecaee1badf63bb8215f6d043719adf1a4511d3fe3e"
+    },
+    {
+      "category": "content",
+      "file": "canvas.v2.schema.json",
+      "name": "canvas.v2",
+      "sha256": "0f6b2343df8b672bcf0489fa104647e5b1cfefeb7a7bf8fdb14d60f539908f23"
+    },
+    {
+      "category": "content",
+      "file": "slides.v1.schema.json",
+      "name": "slides.v1",
+      "sha256": "cf116b803dd4cc937b90664b2cb8b92a249e003931276832326861d71aaa2fc8"
+    },
+    {
+      "category": "content",
+      "file": "slides.v2.schema.json",
+      "name": "slides.v2",
+      "sha256": "e843ac5bc8c9eab7de3bafda030ed0fa62a9c7970b589cf6ecfeecca421ba8a5"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-descriptor.v1.schema.json",
+      "name": "artifact-descriptor.v1",
+      "sha256": "ae18cb3c644cb5e119d4b95ae440ca1ce10bb10769de83ebf47ffc1cb2821af5"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-asset.v1.schema.json",
+      "name": "artifact-asset.v1",
+      "sha256": "edce2572e506f98aa2d7db52dddfa24d81f14a4340fa6196476af4372c307703"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-revision.v1.schema.json",
+      "name": "artifact-revision.v1",
+      "sha256": "cbadc5a67c3e86bae9e4eb4a05f4361871df01e205c42b2fcd061a7b393e8d67"
+    },
+    {
+      "category": "contract",
+      "file": "operation-context.v1.schema.json",
+      "name": "operation-context.v1",
+      "sha256": "bf9cebdd4fe5a74c685497f20f83726fb1af442214167a59251d135c63e1ea7f"
+    },
+    {
+      "category": "contract",
+      "file": "safe-json-patch.v1.schema.json",
+      "name": "safe-json-patch.v1",
+      "sha256": "5b43640479a73e7005f2e5b4e33542c0e2738803167265849c3d8d4916252c5a"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-create-command.v1.schema.json",
+      "name": "artifact-create-command.v1",
+      "sha256": "6fa6fe11d7d4bd2869c4868a16c6c232b086cd63649164be9221f6339d35f8df"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-get-query.v1.schema.json",
+      "name": "artifact-get-query.v1",
+      "sha256": "d42c64bd6619e1d1590685e252ade4db0ae8fa78b764e894c6e92e738ce014bd"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-list-query.v1.schema.json",
+      "name": "artifact-list-query.v1",
+      "sha256": "151bbff313e302b5043255f49e739b6a0db923f8a8f966c89c8798ddd15c3222"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-mutation-command.v1.schema.json",
+      "name": "artifact-mutation-command.v1",
+      "sha256": "e5e0483d2d087a4a096fe55e4f1f67505ca39316832988d60bb031fad65b0066"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-spreadsheet-cell-patch-command.v1.schema.json",
+      "name": "artifact-spreadsheet-cell-patch-command.v1",
+      "sha256": "b0efedd551fe1ea9ca6f311c381a29684674d7621703d9e29a0cbd057d03e131"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-slide-patch-command.v1.schema.json",
+      "name": "artifact-slide-patch-command.v1",
+      "sha256": "76e468e498c4d6a66c390546137eb0da4a2c83aca6971470791afc4665836b98"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-mutation-proposal-command.v1.schema.json",
+      "name": "artifact-mutation-proposal-command.v1",
+      "sha256": "4b589b5a037802c9a00ff4ea10cd1d3958f71ab18132d2989f71aedc816940c5"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-apply-proposal-command.v1.schema.json",
+      "name": "artifact-apply-proposal-command.v1",
+      "sha256": "af0b020bbfa80888d60a215fbe1db548160e8dcd26e5be4815a36a537c48eadf"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-history-query.v1.schema.json",
+      "name": "artifact-history-query.v1",
+      "sha256": "ca3234d3161e8bf449e18d0c72f2b77fba2d439d52a3d47877a3acb0af601427"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-restore-command.v1.schema.json",
+      "name": "artifact-restore-command.v1",
+      "sha256": "60346d6623be97a5c49528cda3b1d3bd0a9c4a4420c0dcc3750a57f4835ef95c"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-archive-command.v1.schema.json",
+      "name": "artifact-archive-command.v1",
+      "sha256": "223b24b35617d9c159e1d985fddfdb20df0068b04d42eabb7c4af86ee4914e54"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-duplicate-command.v1.schema.json",
+      "name": "artifact-duplicate-command.v1",
+      "sha256": "7f9795ea53ce4b36a9809c885c773ea3bb8720de8c151d95566c22de53a2ed3b"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-asset-import-command.v1.schema.json",
+      "name": "artifact-asset-import-command.v1",
+      "sha256": "60f14021854c809743fc6ec6a6385d40fc98ec1e4d747ffa5d6ee5342d791b0b"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-asset-get-query.v1.schema.json",
+      "name": "artifact-asset-get-query.v1",
+      "sha256": "670ed3f019a26c1ade31f8abff0277ae339029c27f46092083afe23b5e484461"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-asset-import-result.v1.schema.json",
+      "name": "artifact-asset-import-result.v1",
+      "sha256": "800ed474ba640f147b9456dda5b157f2933d32800274e5df6484e68653db0a22"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-asset-read-result.v1.schema.json",
+      "name": "artifact-asset-read-result.v1",
+      "sha256": "6143cbd46e42c1b83717b706e5016d782d11c889fc494ce2ea874596d6bf93ff"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-import-evidence-command.v1.schema.json",
+      "name": "artifact-import-evidence-command.v1",
+      "sha256": "d1ea75cf5f17ce0d88baba9fa103ed8541832f6998ba8e4a6135cc095f8ce014"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-form-submit-command.v1.schema.json",
+      "name": "artifact-form-submit-command.v1",
+      "sha256": "dcba3a4b34fd4b2a5cafe12d58b036eff1211b3b83db160abb064b6ce80a3f1e"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-form-submit-result.v1.schema.json",
+      "name": "artifact-form-submit-result.v1",
+      "sha256": "d1be03246a490e8a673f6017fbc1f412eb84a40d94cd8f23169ce336cb30d954"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-export-begin-command.v1.schema.json",
+      "name": "artifact-export-begin-command.v1",
+      "sha256": "8700d6c2370dd6d350e1192d1ebf3b27495c14054e6934629fd12909adad5b62"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-export-commit-command.v1.schema.json",
+      "name": "artifact-export-commit-command.v1",
+      "sha256": "f99825e4048ceb9243d288912a060a6eea98a44cac79e0d2e58a2556835ddf4b"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-export-preflight-command.v1.schema.json",
+      "name": "artifact-export-preflight-command.v1",
+      "sha256": "e86aa91199c7eea2618aeddad766c90b5076d9986272a12df7c1c3c075ec4806"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-export-cancel-command.v1.schema.json",
+      "name": "artifact-export-cancel-command.v1",
+      "sha256": "ea838e1f88a4a2f79063cbc7823020ff82f6d6b8281db0797e00653ad59ab189"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-export-begin-result.v1.schema.json",
+      "name": "artifact-export-begin-result.v1",
+      "sha256": "b06e425bd0e42318f5fca732e60b7a7459c715f9f68be61ec65a2884ad12eedd"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-export-result.v1.schema.json",
+      "name": "artifact-export-result.v1",
+      "sha256": "4e521726afc4ce7036fb9112f07a85e89ed4b4fa633e9b371a2e578ee234a696"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-license-capability.v1.schema.json",
+      "name": "artifact-license-capability.v1",
+      "sha256": "06fc6c29327355b7495e758190400d4d2114ea3f5ac313689919721c70e3ce81"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-license-doctor-result.v1.schema.json",
+      "name": "artifact-license-doctor-result.v1",
+      "sha256": "e4d56a9d5e0d600b39d8e2e6bb6c3efc32d1efc4592a5091a8f00ecf8da3d445"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-evidence-event.v1.schema.json",
+      "name": "artifact-evidence-event.v1",
+      "sha256": "4d670ea8309794310549e934b044d694724ad219ffedc9ef6731ca1ba941640c"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-rpc-principal.v1.schema.json",
+      "name": "artifact-rpc-principal.v1",
+      "sha256": "bda3e2894da38d37ba508f86c633f90b9d4e732457699344a7968356a6e29cd0"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-rpc-request.v1.schema.json",
+      "name": "artifact-rpc-request.v1",
+      "sha256": "86de78daa11b95adbcd840805103223f9f7536e51ff5f16000067e61e81596ff"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-rpc-response.v1.schema.json",
+      "name": "artifact-rpc-response.v1",
+      "sha256": "bc402837c94344bf340facd0c84649172b74e9f275fab9aa16a890fac127aadc"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-rpc-error.v1.schema.json",
+      "name": "artifact-rpc-error.v1",
+      "sha256": "153f52f44c193313cba75c7b31716b6d2cf090f9b0f274c4389a78e025e4e03b"
+    },
+    {
+      "category": "contract",
+      "file": "artifact-rpc-handshake.v1.schema.json",
+      "name": "artifact-rpc-handshake.v1",
+      "sha256": "8fa151c65b18f5b9786af0938fedf275e07b6915e5d8d56c9e5a9a0edf7310fe"
+    }
+  ]
+}

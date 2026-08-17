@@ -33,7 +33,7 @@ export function bridgeErrorFixture(
       code,
       message: 'Command failed',
       stderrPreview: 'redacted stderr preview',
-      command: 'binliquid ...',
+      command: 'imperaos ...',
       retryable: true,
       ...overrides,
     },

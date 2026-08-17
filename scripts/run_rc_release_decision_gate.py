@@ -81,7 +81,7 @@ def main() -> None:
         [
             "uv",
             "run",
-            "binliquid",
+            "imperaos",
             "release",
             "decision",
             "build",
@@ -96,7 +96,7 @@ def main() -> None:
         [
             "uv",
             "run",
-            "binliquid",
+            "imperaos",
             "release",
             "decision",
             "verify",
@@ -108,7 +108,7 @@ def main() -> None:
         [
             "uv",
             "run",
-            "binliquid",
+            "imperaos",
             "release",
             "decision",
             "signoff-template",

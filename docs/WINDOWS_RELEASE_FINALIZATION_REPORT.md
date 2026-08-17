@@ -21,7 +21,7 @@ No public or enterprise Windows artifact was published. Real signed RC, clean sm
 - implementation commit: `1e51e8f22789614e52e480d067586c874d0625ff`
 - report metadata commit: `9b29831588566cbb9b1d933b46d7f4309b43a8df`
 - CI fix commit: `743bb6ff1bbd0117195fe253f7906ad0cce5c8ad`
-- PR: https://github.com/bakiacikgoz/BinLiquidAI/pull/2
+- PR: https://github.com/bakiacikgoz/ImperaOS/pull/2
 - tag/ref: no RC tag created
 
 ## Source Control Snapshot
@@ -195,8 +195,8 @@ result: pass
 powershell -NoProfile -ExecutionPolicy Bypass -File apps/operator-panel/scripts/build_bundled_runtime_windows.ps1 -Arch x64 -PythonBin .venv\Scripts\python.exe
 result: pass
 
-powershell -NoProfile -ExecutionPolicy Bypass -File apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 -RuntimeDir apps/operator-panel/src-tauri/resources/binliquid-runtime
-result: pass, manifest=pass, binliquid_version=0.4.1
+powershell -NoProfile -ExecutionPolicy Bypass -File apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 -RuntimeDir apps/operator-panel/src-tauri/resources/imperaos-runtime
+result: pass, manifest=pass, imperaos_version=0.4.1
 
 corepack pnpm --dir apps/operator-panel exec tauri build --debug --no-bundle
 result: pass

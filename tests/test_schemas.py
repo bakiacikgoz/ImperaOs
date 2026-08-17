@@ -1,6 +1,6 @@
 from pydantic import ValidationError
 
-from binliquid.schemas.models import PlannerOutput, ResponseMode, TaskType
+from imperaos.schemas.models import PlannerOutput, ResponseMode, TaskType
 
 
 def test_planner_output_validates() -> None:

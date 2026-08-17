@@ -1,6 +1,6 @@
 version: "1"
 team:
-  team_id: "aegis-pilot-bounded-live"
+  team_id: "imperaos-pilot-bounded-live"
   supervisor_policy: "sequential_then_parallel"
   agents:
     - agent_id: "agent-intake"

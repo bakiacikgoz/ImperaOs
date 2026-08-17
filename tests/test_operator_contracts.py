@@ -8,8 +8,8 @@ import pytest
 from pydantic import ValidationError
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.contracts import (
+from imperaos.cli import app
+from imperaos.contracts import (
     ApprovalDetailPayloadContract,
     ApprovalPendingPayloadContract,
     AssistantStartTurnPayloadContract,
@@ -20,10 +20,10 @@ from binliquid.contracts import (
     RunSummaryPayloadContract,
     TeamStatusArtifactContract,
 )
-from binliquid.governance.runtime import GovernanceRuntime
-from binliquid.runtime.config import RuntimeConfig
-from binliquid.runtime.platform import current_platform
-from binliquid.schemas.models import OrchestratorResult
+from imperaos.governance.runtime import GovernanceRuntime
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.runtime.platform import current_platform
+from imperaos.schemas.models import OrchestratorResult
 
 runner = CliRunner()
 
@@ -172,7 +172,7 @@ def test_preview_fixture_bundle_validates_against_contracts() -> None:
     fixture = PreviewFixtureBundleContract.model_validate_json(
         fixture_path.read_text(encoding="utf-8")
     )
-    assert fixture.contract_version == "2.0"
+    assert fixture.contract_version == "3.0"
     assert fixture.assistant is not None
     assert fixture.assistant.start_turn.status == "started"
     assert fixture.assistant.events[0].event == "status"
@@ -185,7 +185,7 @@ def test_preview_fixture_bundle_validates_against_contracts() -> None:
 def test_assistant_bridge_payload_contracts_match_schema() -> None:
     start = AssistantStartTurnPayloadContract.model_validate(
         {
-            "contractVersion": "2.0",
+            "contractVersion": "3.0",
             "assistantTurnId": "turn-test",
             "sessionId": "session-test",
             "processId": None,
@@ -194,7 +194,7 @@ def test_assistant_bridge_payload_contracts_match_schema() -> None:
     )
     event = AssistantStreamEventPayloadContract.model_validate(
         {
-            "contractVersion": "2.0",
+            "contractVersion": "3.0",
             "assistantTurnId": start.assistant_turn_id,
             "sessionId": start.session_id,
             "event": "token",
@@ -204,8 +204,141 @@ def test_assistant_bridge_payload_contracts_match_schema() -> None:
         }
     )
 
-    assert start.contract_version == "2.0"
+    assert start.contract_version == "3.0"
     assert event.event == "token"
+
+
+def test_assistant_stream_contract_accepts_cancelled_terminal_event() -> None:
+    event = AssistantStreamEventPayloadContract.model_validate(
+        {
+            "contractVersion": "3.0",
+            "assistantTurnId": "turn-cancelled",
+            "sessionId": "session-cancelled",
+            "event": "cancelled",
+            "sequence": 9_000_000_000,
+            "timestampUtc": "2026-07-16T07:00:00Z",
+            "data": {"message": "Assistant turn cancelled by operator."},
+        }
+    )
+
+    assert event.event == "cancelled"
+
+
+def test_assistant_stream_v3_validates_artifact_and_form_events() -> None:
+    artifact = AssistantStreamEventPayloadContract.model_validate(
+        {
+            "contractVersion": "3.0",
+            "eventId": "event-artifact-1",
+            "assistantTurnId": "turn-artifact",
+            "sessionId": "session-artifact",
+            "event": "artifact_committed",
+            "sequence": 3,
+            "timestampUtc": "2026-07-16T08:00:00Z",
+            "traceId": "trace-artifact",
+            "dataClass": "internal",
+            "data": {
+                "artifactId": "artifact-1",
+                "revisionId": "revision-1",
+                "kind": "document",
+            },
+        }
+    )
+    form = AssistantStreamEventPayloadContract.model_validate(
+        {
+            "contractVersion": "3.0",
+            "eventId": "event-form-1",
+            "assistantTurnId": "turn-form",
+            "sessionId": "session-form",
+            "event": "form_requested",
+            "sequence": 4,
+            "timestampUtc": "2026-07-16T08:00:01Z",
+            "traceId": "trace-form",
+            "dataClass": "confidential",
+            "data": {
+                "artifactId": "form-1",
+                "revisionId": "revision-form-1",
+                "schema": {"type": "object", "properties": {}},
+            },
+        }
+    )
+
+    assert artifact.event_id == "event-artifact-1"
+    assert form.data_class == "confidential"
+
+
+def test_assistant_stream_v3_requires_bound_patch_proposal_approval() -> None:
+    payload = {
+        "contractVersion": "3.0",
+        "eventId": "event-proposal-1",
+        "assistantTurnId": "turn-proposal",
+        "sessionId": "session-proposal",
+        "event": "artifact_patch_proposed",
+        "sequence": 5,
+        "timestampUtc": "2026-07-16T08:00:02Z",
+        "traceId": "trace-proposal",
+        "dataClass": "internal",
+        "data": {
+            "artifactId": "artifact-1",
+            "proposalId": "proposal-1",
+            "approvalId": "approval-1",
+            "actionHash": "a" * 64,
+            "baseRevisionNumber": 3,
+            "kind": "document",
+        },
+    }
+
+    event = AssistantStreamEventPayloadContract.model_validate(payload)
+    assert event.event == "artifact_patch_proposed"
+
+    del payload["data"]["approvalId"]
+    with pytest.raises(ValueError, match="approvalId and actionHash"):
+        AssistantStreamEventPayloadContract.model_validate(payload)
+
+
+def test_assistant_stream_v3_rejects_missing_identity_and_invalid_sequence() -> None:
+    payload = {
+        "contractVersion": "3.0",
+        "eventId": "event-invalid",
+        "assistantTurnId": "turn-invalid",
+        "sessionId": "session-invalid",
+        "event": "artifact_committed",
+        "sequence": 0,
+        "timestampUtc": "2026-07-16T08:00:00Z",
+        "traceId": "trace-invalid",
+        "dataClass": "internal",
+        "data": {"kind": "document"},
+    }
+
+    with pytest.raises(ValueError):
+        AssistantStreamEventPayloadContract.model_validate(payload)
+
+
+def test_assistant_runtime_v3_golden_covers_required_parity_scenarios() -> None:
+    fixture_path = (
+        Path(__file__).resolve().parents[1]
+        / "contracts"
+        / "operator_panel"
+        / "fixtures"
+        / "assistant_runtime_v3_golden.json"
+    )
+    payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+
+    assert payload["version"] == "1"
+    assert payload["contractVersion"] == "3.0"
+    assert {scenario["id"] for scenario in payload["scenarios"]} == {
+        "text_stream_final",
+        "router_policy_timeline",
+        "approval_pending",
+        "audit_artifact_reference",
+        "cancelled_deduplicated",
+        "error_and_missing_final",
+        "preview_projection",
+    }
+    for scenario in payload["scenarios"]:
+        assert scenario["events"]
+        assert scenario["expectedSession"]["status"]
+        for event in scenario["events"]:
+            AssistantStreamEventPayloadContract.model_validate(event)
 
 
 def test_operator_capabilities_payload_matches_contract() -> None:
@@ -222,7 +355,7 @@ def test_operator_capabilities_payload_matches_contract() -> None:
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     jsonschema.Draft202012Validator(schema).validate(json.loads(result.stdout))
 
-    assert payload.contract_version == "2.0"
+    assert payload.contract_version == "3.0"
     assert payload.commands.computer_use_summary_json is True
     vision_runtime = json.loads(result.stdout)["features"]["computerUseVisionRuntime"]
     assert set(vision_runtime["platforms"]) == {"macos", "windows", "linux"}
@@ -305,7 +438,7 @@ def test_team_runtime_payloads_match_frozen_contracts(monkeypatch, tmp_path: Pat
     _write_spec(spec_path)
 
     monkeypatch.setattr(
-        "binliquid.cli._build_orchestrator",
+        "imperaos.cli._build_orchestrator",
         lambda *a, **k: _FakeTeamOrchestrator(),
     )
 
@@ -328,27 +461,27 @@ def test_team_runtime_payloads_match_frozen_contracts(monkeypatch, tmp_path: Pat
     listed = runner.invoke(app, ["team", "list", "--json"])
     assert listed.exit_code == 0
     listed_payload = RunSummaryPayloadContract.model_validate_json(listed.stdout)
-    assert listed_payload.contract_version == "2.0"
+    assert listed_payload.contract_version == "3.0"
     assert listed_payload.count == 1
 
     status = runner.invoke(app, ["team", "status", "--job-id", job_id, "--json"])
     assert status.exit_code == 0
     status_payload = TeamStatusArtifactContract.model_validate_json(status.stdout)
-    assert status_payload.contract_version == "2.0"
+    assert status_payload.contract_version == "3.0"
     assert status_payload.job.job_id == job_id
 
     replay = runner.invoke(app, ["team", "replay", "--job-id", job_id, "--json"])
     assert replay.exit_code == 0
     replay_payload = RunReplayPayloadContract.model_validate_json(replay.stdout)
-    assert replay_payload.contract_version == "2.0"
+    assert replay_payload.contract_version == "3.0"
     assert replay_payload.job_id == job_id
 
     status_artifact = TeamStatusArtifactContract.model_validate_json(
-        (tmp_path / ".binliquid" / "team" / "jobs" / job_id / "status.json").read_text(
+        (tmp_path / ".imperaos" / "team" / "jobs" / job_id / "status.json").read_text(
             encoding="utf-8"
         )
     )
-    assert status_artifact.contract_version == "2.0"
+    assert status_artifact.contract_version == "3.0"
 
 
 def test_approval_payloads_match_frozen_contracts(monkeypatch, tmp_path: Path) -> None:
@@ -377,10 +510,10 @@ def test_approval_payloads_match_frozen_contracts(monkeypatch, tmp_path: Path) -
     )
     runtime = GovernanceRuntime(config=cfg)
 
-    monkeypatch.setattr("binliquid.cli.resolve_runtime_config", lambda *a, **k: (cfg, {}))
-    monkeypatch.setattr("binliquid.cli.RuntimeConfig.from_profile", lambda *_: cfg)
+    monkeypatch.setattr("imperaos.cli.resolve_runtime_config", lambda *a, **k: (cfg, {}))
+    monkeypatch.setattr("imperaos.cli.RuntimeConfig.from_profile", lambda *_: cfg)
     monkeypatch.setattr(
-        "binliquid.cli._build_orchestrator",
+        "imperaos.cli._build_orchestrator",
         lambda *a, **k: _ApprovalAwareFakeTeamOrchestrator(runtime),
     )
 
@@ -398,15 +531,29 @@ def test_approval_payloads_match_frozen_contracts(monkeypatch, tmp_path: Path) -
     )
     assert first_run.exit_code == 0
 
-    pending = runner.invoke(app, ["approval", "pending", "--json"])
+    pending = runner.invoke(
+        app,
+        ["approval", "pending", "--workspace-id", "default", "--json"],
+    )
     assert pending.exit_code == 0
     pending_payload = ApprovalPendingPayloadContract.model_validate_json(pending.stdout)
-    assert pending_payload.contract_version == "2.0"
+    assert pending_payload.contract_version == "3.0"
     assert len(pending_payload.pending) == 1
 
     approval_id = pending_payload.pending[0].approval_id
-    detail = runner.invoke(app, ["approval", "show", "--id", approval_id, "--json"])
+    detail = runner.invoke(
+        app,
+        [
+            "approval",
+            "show",
+            "--id",
+            approval_id,
+            "--workspace-id",
+            "default",
+            "--json",
+        ],
+    )
     assert detail.exit_code == 0
     detail_payload = ApprovalDetailPayloadContract.model_validate_json(detail.stdout)
-    assert detail_payload.contract_version == "2.0"
+    assert detail_payload.contract_version == "3.0"
     assert detail_payload.ticket.approval_id == approval_id

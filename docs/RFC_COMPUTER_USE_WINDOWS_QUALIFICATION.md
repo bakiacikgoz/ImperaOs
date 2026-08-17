@@ -67,6 +67,6 @@ until the signed qualification report exists and a separate release gate explici
 
 ```bash
 uv run python scripts/evaluate_computer_use_platform_matrix.py --profile balanced --output artifacts/computer_use_platform_matrix.json --markdown artifacts/COMPUTER_USE_PLATFORM_MATRIX.md
-uv run python -m binliquid computer-use doctor --profile balanced --platform windows --json
-uv run python -m binliquid computer-use qualification verify --profile balanced --platform windows --report artifacts/windows/qualification.json --json
+uv run python -m imperaos computer-use doctor --profile balanced --platform windows --json
+uv run python -m imperaos computer-use qualification verify --profile balanced --platform windows --report artifacts/windows/qualification.json --json
 ```

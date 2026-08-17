@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from binliquid.memory.manager import MemoryManager
-from binliquid.memory.persistent_store import PersistentMemoryStore
-from binliquid.memory.salience_gate import SalienceGate
+from imperaos.memory.manager import MemoryManager
+from imperaos.memory.persistent_store import PersistentMemoryStore
+from imperaos.memory.salience_gate import SalienceGate
 
 
 def test_memory_store_write_and_search(tmp_path: Path) -> None:

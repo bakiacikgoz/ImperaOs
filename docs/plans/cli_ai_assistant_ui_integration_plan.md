@@ -4,13 +4,13 @@
 
 ### 1.1 Hedef
 
-Mevcut CLI tabanlı AI asistan, AegisOS Operator Panel içine kurumsal kalite seviyesinde entegre edilecek. Entegrasyon sonunda panelde ayrı bir **AI Assistant** ekranı bulunacak; kullanıcı sistem, run, log, policy, approval ve artifact bağlamını doğal dille sorabilecek; asistan gerektiğinde güvenli aksiyon önerileri, dry-run önizlemeleri ve approval-gated yürütme akışları gösterecek.
+Mevcut CLI tabanlı AI asistan, ImperaOS Operator Panel içine kurumsal kalite seviyesinde entegre edilecek. Entegrasyon sonunda panelde ayrı bir **AI Assistant** ekranı bulunacak; kullanıcı sistem, run, log, policy, approval ve artifact bağlamını doğal dille sorabilecek; asistan gerektiğinde güvenli aksiyon önerileri, dry-run önizlemeleri ve approval-gated yürütme akışları gösterecek.
 
 ### 1.2 Gözlemlenen repo gerçekleri
 
 - Ürün; Core Runtime, Team Runtime, Operator Panel ve qualification-gated Computer-Use Runtime yüzeylerinden oluşuyor. Tasarım ilkeleri local-first, fail-closed governance, typed contracts, replay/audit ve qualification-before-claims üzerine kurulmuş.
 - CLI tarafında `chat` komutu `--json`, `--json-stream` ve `--stdio-json` structured output modlarını destekliyor; stream event sözlüğü `token`, `status`, `router_decision`, `expert_start`, `expert_end`, `final` gibi event tiplerini içeriyor.
-- Operator Panel, `apps/operator-panel` altında Tauri 2 + React olarak konumlanıyor; bridge çözümleme sırası `configured cliPath -> bundled runtime python -> binliquid on PATH` şeklinde tanımlanmış.
+- Operator Panel, `apps/operator-panel` altında Tauri 2 + React olarak konumlanıyor; bridge çözümleme sırası `configured cliPath -> bundled runtime python -> imperaos on PATH` şeklinde tanımlanmış.
 - Panelde mevcut bridge mimarisi `bridge.ts` üzerinden Tauri `invoke` çağrılarını kullanıyor; preview fallback, typed `BridgeErrorPayload`, settings kaynaklı `BridgeConfig`, approval, team run, computer-use, artifact ve event-tail fonksiyonları mevcut.
 - Rust Tauri tarafında `bridge_handshake`, approval, team, computer-use, config, auth, security, keys, support, backup, migration, metrics, qualification, artifact ve `tail_events` komutları invoke handler içine kayıtlı.
 - Event tail kontratı byte cursor, partial line buffering, file shrink reset, bounded read, parse error tolerant stream mantığına sahip. UI tarafında redaction-first görünüm, raw payload için `debugRaw` + explicit confirm ve adaptive polling prensibi tanımlanmış.
@@ -22,7 +22,7 @@ CLI asistan şu yüzeylerden faydalanıyor:
 
 | Alan | Mevcut kabiliyet | UI entegrasyon etkisi |
 |---|---|---|
-| Chat | `binliquid chat --once "<prompt>"` | Tek kullanıcı mesajı için cevap üretilebilir. |
+| Chat | `imperaos chat --once "<prompt>"` | Tek kullanıcı mesajı için cevap üretilebilir. |
 | Streaming | `--json-stream` / `--stdio-json` | UI’da token-by-token cevap, “reasoned for…” / running state ve event timeline gösterilebilir. |
 | Fast-path | Kısa chat girdilerinde realtime token streaming | Assistant ekranında hızlı cevap hissi verir. |
 | Router / expert eventleri | `router_decision`, `expert_start`, `expert_end` | Sağ panelde reasoning / route / tool activity olarak gösterilebilir. |
@@ -64,7 +64,7 @@ Bu yaklaşımda UI bir kullanıcı mesajı gönderdiğinde Rust bridge bir CLI p
 React AssistantView
   -> bridge.startAssistantTurn(...)
   -> Tauri command bridge_assistant_start_turn
-  -> python -m binliquid chat --profile <profile> --once <compiledPrompt> --stdio-json --stream
+  -> python -m imperaos chat --profile <profile> --once <compiledPrompt> --stdio-json --stream
   -> stdout JSONL parser
   -> app.emit("assistant://event", AssistantStreamEvent)
   -> React useAssistantSession hook transcript/state günceller
@@ -307,7 +307,7 @@ assistant://event
 
 ### 3.1 Tasarım ilkesi
 
-Mockup’lar konsept referansı olarak kullanılacak; gerçek entegrasyonda mevcut AegisOS panelinin asıl tema sistemi korunacak. Sidebar, logo, topbar, spacing, primitive button/card/badge yapısı ve renk token’ları mevcut panelden gelecek. Yeni ekran “başka ürün” gibi değil, Operator Panel’in doğal bir bölümü gibi hissettirmeli.
+Mockup’lar konsept referansı olarak kullanılacak; gerçek entegrasyonda mevcut ImperaOS panelinin asıl tema sistemi korunacak. Sidebar, logo, topbar, spacing, primitive button/card/badge yapısı ve renk token’ları mevcut panelden gelecek. Yeni ekran “başka ürün” gibi değil, Operator Panel’in doğal bir bölümü gibi hissettirmeli.
 
 ### 3.2 Üç ekran durumunun uyarlaması
 
@@ -323,7 +323,7 @@ AppShell
   Main: AssistantView
     AssistantWelcome
       Assistant identity mark
-      "Welcome to AegisOS Assistant"
+      "Welcome to ImperaOS Assistant"
       Safety chips
       Suggested prompt cards
       Composer
@@ -362,7 +362,7 @@ Yerleşim:
 
 ```text
 AssistantView
-  Header: AegisOS Assistant + New Chat + status
+  Header: ImperaOS Assistant + New Chat + status
   Transcript
     UserMessage
     AssistantMessage
@@ -551,7 +551,7 @@ sequenceDiagram
   participant Hook as useAssistantSession
   participant TS as bridge.ts
   participant Rust as Tauri bridge.rs
-  participant CLI as binliquid chat
+  participant CLI as imperaos chat
   participant Gov as Approval/Policy Runtime
 
   U->>UI: Mesaj gönderir
@@ -810,7 +810,7 @@ async fn stream_assistant_stdout(
 ```bash
 uv run ruff check .
 uv run python -m pytest -q
-uv run python -m compileall binliquid
+uv run python -m compileall imperaos
 uv run python scripts/generate_operator_contract_schemas.py
 corepack pnpm --dir apps/operator-panel test
 corepack pnpm --dir apps/operator-panel lint
@@ -850,7 +850,7 @@ git diff --check
 
 ### 6.2 UI/UX onay kriterleri
 
-- Yeni ekran mevcut AegisOS tasarım sisteminden kopuk görünmez.
+- Yeni ekran mevcut ImperaOS tasarım sisteminden kopuk görünmez.
 - Sidebar, logo, topbar ve shell layout mockup’tan değil mevcut projeden gelir.
 - Renkler token bazlıdır; neon/gradient/hacker terminal estetiği yoktur.
 - Dark mode birincil kalite seviyesinde çalışır.
@@ -980,7 +980,7 @@ Kabul kriteri:
 - Mock CLI JSONL testleri geçer.
 - Gerçek CLI ile manuel smoke:
   ```bash
-  uv run python -m binliquid chat --profile balanced --once "selam" --stdio-json --stream
+  uv run python -m imperaos chat --profile balanced --once "selam" --stdio-json --stream
   ```
   valid JSONL üretir.
 - Tauri eventleri UI’da görünür.
@@ -1051,7 +1051,7 @@ Bu entegrasyon “tamamlandı” sayılmadan önce aşağıdaki komutların tama
 ```bash
 uv run ruff check .
 uv run python -m pytest -q
-uv run python -m compileall binliquid
+uv run python -m compileall imperaos
 uv run python scripts/generate_operator_contract_schemas.py
 corepack pnpm --dir apps/operator-panel test
 corepack pnpm --dir apps/operator-panel lint

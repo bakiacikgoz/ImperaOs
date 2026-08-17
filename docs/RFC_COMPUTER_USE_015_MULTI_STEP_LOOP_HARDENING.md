@@ -38,7 +38,7 @@ max_consecutive_wait_actions = 3
 and through the environment as:
 
 ```text
-BINLIQUID_COMPUTER_USE_MAX_CONSECUTIVE_WAIT_ACTIONS=3
+IMPERAOS_COMPUTER_USE_MAX_CONSECUTIVE_WAIT_ACTIONS=3
 ```
 
 ## Non-Goals
@@ -53,7 +53,7 @@ BINLIQUID_COMPUTER_USE_MAX_CONSECUTIVE_WAIT_ACTIONS=3
 Targeted gate:
 
 ```bash
-uv run --extra dev ruff check binliquid/computer_use/vision_runtime/runtime.py binliquid/runtime/config.py tests/test_computer_use_vision_runtime.py
+uv run --extra dev ruff check imperaos/computer_use/vision_runtime/runtime.py imperaos/runtime/config.py tests/test_computer_use_vision_runtime.py
 uv run --extra dev pytest -q tests/test_computer_use_vision_runtime.py tests/test_computer_use_vision_replay.py tests/test_fault_injection.py tests/test_policy_fail_closed.py
 git diff --check
 ```

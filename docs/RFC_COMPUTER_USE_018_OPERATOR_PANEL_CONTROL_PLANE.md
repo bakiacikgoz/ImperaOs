@@ -46,8 +46,8 @@ legacy.
 The CLI exposes recent outcome summary through:
 
 ```bash
-uv run python -m binliquid computer-use summary \
-  --root-dir .binliquid/team/jobs \
+uv run python -m imperaos computer-use summary \
+  --root-dir .imperaos/team/jobs \
   --limit 20 \
   --json
 ```
@@ -72,9 +72,9 @@ same payload through `bridge_computer_use_summary`.
 ## Local Verification
 
 ```bash
-uv run python -m binliquid computer-use doctor --json
-uv run python -m binliquid computer-use summary --root-dir .binliquid/team/jobs --limit 20 --json
-uv run python -m binliquid operator capabilities --json
+uv run python -m imperaos computer-use doctor --json
+uv run python -m imperaos computer-use summary --root-dir .imperaos/team/jobs --limit 20 --json
+uv run python -m imperaos operator capabilities --json
 corepack pnpm --dir apps/operator-panel test
 cargo test -q --manifest-path apps/operator-panel/src-tauri/Cargo.toml
 ```

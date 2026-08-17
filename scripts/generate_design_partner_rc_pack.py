@@ -13,21 +13,22 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.claim_guard import ClaimGuard
-from binliquid.control_plane.design_partner_rc import (
+from imperaos.control_plane.claim_guard import ClaimGuard
+from imperaos.control_plane.design_partner_rc import (
     build_design_partner_rc_status,
     is_expected_blocked_claim_boundary_alert,
 )
-from binliquid.control_plane.pilot_operations import build_design_partner_beta_status
-from binliquid.control_plane.provider_conformance import run_provider_native_gate
-from binliquid.control_plane.provider_runtime_workflows import (
+from imperaos.control_plane.pilot_operations import build_design_partner_beta_status
+from imperaos.control_plane.provider_conformance import run_provider_native_gate
+from imperaos.control_plane.provider_runtime_workflows import (
     ProviderWorkflowProofRequest,
     run_provider_workflow_proof,
     workflow_proof_hash,
 )
-from binliquid.control_plane.snapshot import build_control_plane_snapshot
-from binliquid.control_plane.target_evidence import verify_target_evidence_bundle
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.control_plane.snapshot import build_control_plane_snapshot
+from imperaos.control_plane.target_evidence import verify_target_evidence_bundle
+from imperaos.runtime.config import RuntimeConfig
+from imperaos.runtime.paths import CONTROL_PLANE_STATE_ROOT
 
 
 REQUIRED_OPTIONAL_ARTIFACTS = [
@@ -46,7 +47,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Build Design Partner RC release pack.")
     parser.add_argument("--profile", default="enterprise")
     parser.add_argument("--output", default="artifacts/design-partner-rc")
-    parser.add_argument("--state-root", default=".binliquid/control-plane")
+    parser.add_argument("--state-root", default=CONTROL_PLANE_STATE_ROOT)
     parser.add_argument("--evidence-root", default="artifacts")
     parser.add_argument("--beta-evidence-root")
     parser.add_argument("--target-evidence-root")

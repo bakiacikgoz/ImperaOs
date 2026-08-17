@@ -11,7 +11,7 @@ The support bundle provides a redacted, signed export that gives operators and s
 ## Command
 
 ```bash
-uv run binliquid support bundle export --profile enterprise --json
+uv run imperaos support bundle export --profile enterprise --json
 ```
 
 ## Included Content
@@ -42,5 +42,5 @@ The export command returns:
 Verify the manifest with:
 
 ```bash
-uv run binliquid keys verify --profile enterprise --path <manifest_path> --json
+uv run imperaos keys verify --profile enterprise --path <manifest_path> --json
 ```

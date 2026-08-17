@@ -1,0 +1,167 @@
+{
+  "$defs": {
+    "ArtifactRpcMethod": {
+      "enum": [
+        "rpc.handshake",
+        "rpc.health",
+        "rpc.shutdown",
+        "project.list",
+        "project.create",
+        "project.register",
+        "project.update",
+        "project.archive",
+        "task.get",
+        "task.list",
+        "task.create",
+        "task.update",
+        "task.archive",
+        "task.message.add",
+        "task.message.list",
+        "task.link.add",
+        "task.link.list",
+        "preferences.get",
+        "preferences.set",
+        "artifact.list",
+        "artifact.get",
+        "artifact.create",
+        "artifact.mutate",
+        "artifact.spreadsheet.patch",
+        "artifact.slides.patch",
+        "artifact.propose_mutation",
+        "artifact.apply_proposal",
+        "artifact.history",
+        "artifact.restore",
+        "artifact.archive",
+        "artifact.duplicate",
+        "artifact.asset.import",
+        "artifact.asset.get",
+        "artifact.form.submit",
+        "artifact.export.begin",
+        "artifact.export.preflight",
+        "artifact.export.commit",
+        "artifact.export.cancel",
+        "artifact.import_evidence"
+      ],
+      "title": "ArtifactRpcMethod",
+      "type": "string"
+    },
+    "JsonValue": {},
+    "PrincipalType": {
+      "enum": [
+        "user",
+        "assistant",
+        "system",
+        "import"
+      ],
+      "title": "PrincipalType",
+      "type": "string"
+    },
+    "RpcPrincipal": {
+      "additionalProperties": false,
+      "properties": {
+        "principalId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Principalid",
+          "type": "string"
+        },
+        "principalType": {
+          "$ref": "#/$defs/PrincipalType"
+        },
+        "roles": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Roles",
+          "type": "array"
+        }
+      },
+      "required": [
+        "principalId",
+        "principalType"
+      ],
+      "title": "RpcPrincipal",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-rpc-request.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": {
+      "const": "1.0",
+      "title": "Contractversion",
+      "type": "string"
+    },
+    "deadlineMs": {
+      "anyOf": [
+        {
+          "maximum": 120000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deadlinems"
+    },
+    "idempotencyKey": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Idempotencykey"
+    },
+    "method": {
+      "$ref": "#/$defs/ArtifactRpcMethod"
+    },
+    "params": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Params",
+      "type": "object"
+    },
+    "principal": {
+      "$ref": "#/$defs/RpcPrincipal"
+    },
+    "requestId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Requestid",
+      "type": "string"
+    },
+    "workspaceId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Workspaceid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contractVersion",
+    "requestId",
+    "method",
+    "workspaceId",
+    "principal"
+  ],
+  "title": "RpcRequest",
+  "type": "object",
+  "x-imperaos-contract": "artifact-rpc-request.v1"
+}

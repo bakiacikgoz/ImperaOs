@@ -8,13 +8,13 @@ Enterprise workspace onboarding creates the local organization, workspace, first
 2. Run the bootstrap command:
 
 ```powershell
-uv run binliquid enterprise workspace bootstrap --profile enterprise --workspace-id pilot-workspace --organization-id local-org --display-name "Pilot Workspace" --json
+uv run imperaos enterprise workspace bootstrap --profile enterprise --workspace-id pilot-workspace --organization-id local-org --display-name "Pilot Workspace" --json
 ```
 
 3. Inspect the snapshot:
 
 ```powershell
-uv run binliquid enterprise workspace snapshot --profile enterprise --json
+uv run imperaos enterprise workspace snapshot --profile enterprise --json
 ```
 
 4. Confirm the snapshot reports `rawSecretsExposed=false` and `networkListenerEnabled=false`.

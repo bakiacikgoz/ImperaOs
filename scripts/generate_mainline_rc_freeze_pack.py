@@ -10,12 +10,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.mainline_rc_freeze import (  # noqa: E402
+from imperaos.control_plane.mainline_rc_freeze import (  # noqa: E402
     build_gate_evidence_summary,
     build_rc_freeze_manifest,
     write_rc_freeze_manifest,
 )
-from binliquid.control_plane.mainline_stack import (  # noqa: E402
+from imperaos.control_plane.mainline_stack import (  # noqa: E402
     MergeRehearsalSpec,
     load_stack_graph_spec,
     run_merge_rehearsal,
@@ -23,7 +23,7 @@ from binliquid.control_plane.mainline_stack import (  # noqa: E402
     write_merge_rehearsal_report,
     write_stack_graph_report,
 )
-from binliquid.control_plane.release_train import ClaimBoundarySummary  # noqa: E402
+from imperaos.control_plane.release_train import ClaimBoundarySummary  # noqa: E402
 
 
 def main() -> None:

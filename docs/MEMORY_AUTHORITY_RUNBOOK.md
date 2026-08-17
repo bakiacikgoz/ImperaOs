@@ -1,6 +1,6 @@
 # Memory Authority Runbook
 
-Use `uv run binliquid memory doctor --profile balanced` to inspect the current authority snapshot.
+Use `uv run imperaos memory doctor --profile balanced` to inspect the current authority snapshot.
 
 Common checks:
 

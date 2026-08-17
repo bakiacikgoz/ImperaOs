@@ -4,8 +4,8 @@ import json
 import tempfile
 from pathlib import Path
 
-from binliquid.memory.semantic.evaluator import run_retrieval_quality_suite
-from binliquid.memory.semantic.fixtures import build_semantic_fixture
+from imperaos.memory.semantic.evaluator import run_retrieval_quality_suite
+from imperaos.memory.semantic.fixtures import build_semantic_fixture
 
 
 def main() -> None:

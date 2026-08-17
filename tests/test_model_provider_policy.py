@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.model_providers.models import ChatMessage, DataClass, ProviderCallRequest
-from binliquid.model_providers.policy import GovernanceContext, evaluate_provider_policy
-from binliquid.model_providers.registry import resolve_model_provider_registry
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.model_providers.models import ChatMessage, DataClass, ProviderCallRequest
+from imperaos.model_providers.policy import GovernanceContext, evaluate_provider_policy
+from imperaos.model_providers.registry import resolve_model_provider_registry
+from imperaos.runtime.config import RuntimeConfig
 
 
 def _registry(remote_enabled: bool = False):

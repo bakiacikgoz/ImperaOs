@@ -1,6 +1,6 @@
-from binliquid.core.llm_ollama import StubLLM
-from binliquid.core.planner import Planner
-from binliquid.schemas.models import TaskType
+from imperaos.core.llm_ollama import StubLLM
+from imperaos.core.planner import Planner
+from imperaos.schemas.models import TaskType
 
 
 def test_planner_falls_back_when_json_invalid() -> None:

@@ -27,8 +27,8 @@ The RC evidence backfill is a deterministic bridge for the mainline RC freeze st
 Use:
 
 ```bash
-uv run binliquid release gates verify --ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --json
-uv run binliquid release rc-freeze verify --manifest artifacts/mainline-rc-freeze/manifest.json --gate-ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --json
+uv run imperaos release gates verify --ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --json
+uv run imperaos release rc-freeze verify --manifest artifacts/mainline-rc-freeze/manifest.json --gate-ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --json
 ```
 
 The first command verifies the evidence ledger. The second command applies that verified evidence to RC freeze decision logic.

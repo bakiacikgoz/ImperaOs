@@ -2,7 +2,7 @@
 
 ## Boundary
 
-BinLiquid / AegisOS is self-hosted and local-first. The v1 control plane does
+ImperaOS / ImperaOS is self-hosted and local-first. The v1 control plane does
 not start a network listener by default and does not claim multi-tenant cloud
 readiness.
 

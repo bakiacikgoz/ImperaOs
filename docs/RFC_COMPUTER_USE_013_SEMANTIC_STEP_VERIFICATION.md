@@ -56,7 +56,7 @@ semantic verifier `reason_code` as the stop reason when available.
 Targeted gate:
 
 ```bash
-uv run --extra dev ruff check binliquid/computer_use/vision_runtime/models.py binliquid/computer_use/vision_runtime/verifier.py binliquid/computer_use/vision_runtime/runtime.py tests/test_computer_use_vision_verifier.py tests/test_computer_use_vision_runtime.py
+uv run --extra dev ruff check imperaos/computer_use/vision_runtime/models.py imperaos/computer_use/vision_runtime/verifier.py imperaos/computer_use/vision_runtime/runtime.py tests/test_computer_use_vision_verifier.py tests/test_computer_use_vision_runtime.py
 uv run --extra dev pytest -q tests/test_computer_use_vision_verifier.py tests/test_computer_use_vision_runtime.py tests/test_computer_use_vision_replay.py tests/test_privacy_regression.py
 git diff --check
 ```

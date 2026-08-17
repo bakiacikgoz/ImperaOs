@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from binliquid.control_plane.provider_registry import build_provider_governance_snapshot
+from imperaos.control_plane.provider_registry import build_provider_governance_snapshot
 
 
 def test_provider_registry_snapshot_defaults_external_providers_fail_closed(monkeypatch) -> None:

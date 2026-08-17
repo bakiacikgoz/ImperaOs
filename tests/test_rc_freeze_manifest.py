@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.control_plane.mainline_rc_freeze import (
+from imperaos.control_plane.mainline_rc_freeze import (
     GateEvidenceItem,
     GateEvidenceSummary,
     build_mainline_rc_freeze_snapshot,
@@ -12,14 +12,14 @@ from binliquid.control_plane.mainline_rc_freeze import (
     verify_rc_freeze_manifest_with_gate_ledger,
     write_rc_freeze_manifest,
 )
-from binliquid.control_plane.mainline_stack import (
+from imperaos.control_plane.mainline_stack import (
     MergeRehearsalReport,
     StackGraphVerificationReport,
 )
-from binliquid.control_plane.release_artifact_scan import ArtifactScanReport
-from binliquid.control_plane.release_train import ClaimBoundarySummary
-from binliquid.release.gate_ledger import write_gate_evidence_ledger
-from binliquid.release.gate_models import GateEvidenceLedger, GateRunResult, ReleaseGateTarget
+from imperaos.control_plane.release_artifact_scan import ArtifactScanReport
+from imperaos.control_plane.release_train import ClaimBoundarySummary
+from imperaos.release.gate_ledger import write_gate_evidence_ledger
+from imperaos.release.gate_models import GateEvidenceLedger, GateRunResult, ReleaseGateTarget
 
 
 def test_rc_freeze_manifest_ready_requires_clean_evidence(tmp_path: Path) -> None:

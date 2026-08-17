@@ -21,8 +21,8 @@ Live canary is an operator-mediated diagnostic, not a CI default.
 ## Commands
 
 ```powershell
-uv run --extra dev python -m binliquid provider canary run --profile enterprise --provider openai-public --json
-uv run --extra dev python -m binliquid provider canary verify --evidence-root artifacts/model-provider-governance/canary --json
+uv run --extra dev python -m imperaos provider canary run --profile enterprise --provider openai-public --json
+uv run --extra dev python -m imperaos provider canary verify --evidence-root artifacts/model-provider-governance/canary --json
 ```
 
 ## Evidence Rules

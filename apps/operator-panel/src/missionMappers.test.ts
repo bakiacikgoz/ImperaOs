@@ -92,7 +92,7 @@ describe('mission mappers', () => {
   it('reports missing resource metrics honestly', () => {
     const systemHealth = buildSystemHealthSummary({
       coreMode: 'auto',
-      handshakeRecord: { contractVersion: '2.0' },
+      handshakeRecord: { contractVersion: '3.0' },
       doctor: { status: 'ok' },
       metricsPayload: { approval_queue: { pending: 1 } },
     });
@@ -135,7 +135,7 @@ describe('mission mappers', () => {
   it('surfaces vision action, approval, verifier, and stop state without raw screenshots', () => {
     const systemHealth = buildSystemHealthSummary({
       coreMode: 'auto',
-      handshakeRecord: { contractVersion: '2.0' },
+      handshakeRecord: { contractVersion: '3.0' },
       doctor: { status: 'ok' },
       metricsPayload: {},
     });

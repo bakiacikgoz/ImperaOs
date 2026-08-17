@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from binliquid.control_plane.provider_runtime_workflows import (
+from imperaos.control_plane.provider_runtime_workflows import (
     ProviderWorkflowProofRequest,
     run_provider_workflow_proof,
 )

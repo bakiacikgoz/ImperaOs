@@ -1,7 +1,7 @@
-from binliquid.memory.models import sha256_text, utc_now
-from binliquid.memory.semantic.embedding_provider import DeterministicFixtureEmbeddingProvider
-from binliquid.memory.semantic.hybrid_retriever import score_record
-from binliquid.memory.semantic.models import EmbeddingRequest, MemoryIndexRecord
+from imperaos.memory.models import sha256_text, utc_now
+from imperaos.memory.semantic.embedding_provider import DeterministicFixtureEmbeddingProvider
+from imperaos.memory.semantic.hybrid_retriever import score_record
+from imperaos.memory.semantic.models import EmbeddingRequest, MemoryIndexRecord
 
 
 def test_hybrid_retriever_scores_matching_record_higher() -> None:

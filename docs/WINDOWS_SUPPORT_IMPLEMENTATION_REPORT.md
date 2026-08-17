@@ -16,7 +16,7 @@ Bu çalışmanın ana hedefleri:
 
 ## Platform ve Runtime Katmanı
 
-Yeni `binliquid/runtime/platform.py` modülü eklendi. Bu modül işletim sistemini merkezi olarak algılar ve platforma göre güvenli varsayılanlar üretir:
+Yeni `imperaos/runtime/platform.py` modülü eklendi. Bu modül işletim sistemini merkezi olarak algılar ve platforma göre güvenli varsayılanlar üretir:
 
 - `current_platform()`
 - `platform_label()`
@@ -29,7 +29,7 @@ Bu sayede daha önce Unix/macOS varsayımlarına dayanan `os.uname()` ve `/tmp` 
 
 ## Computer-Use Güvenlik Sınırı
 
-`binliquid/computer_use/runtime.py` Windows uyumluluğu için yeniden düzenlendi.
+`imperaos/computer_use/runtime.py` Windows uyumluluğu için yeniden düzenlendi.
 
 Önemli davranışlar:
 
@@ -43,7 +43,7 @@ Bu karar bilinçlidir: Windows paketleme ve operator panel desteği ilerletildi,
 
 ## CLI ve Contract Güncellemeleri
 
-`binliquid/cli.py` içinde `operator capabilities` çıktısı platform-aware hale getirildi.
+`imperaos/cli.py` içinde `operator capabilities` çıktısı platform-aware hale getirildi.
 
 Windows çıktısı artık computer-use için şu bilgileri açıkça döndürüyor:
 
@@ -56,20 +56,20 @@ Windows çıktısı artık computer-use için şu bilgileri açıkça döndürü
 
 `doctor` komutu `--json` / `--no-json` seçeneklerini kabul edecek şekilde düzenlendi ve varsayılan JSON davranışı korundu.
 
-`binliquid/contracts/operator_panel.py` içinde operator panel capability contract alanları genişletildi:
+`imperaos/contracts/operator_panel.py` içinde operator panel capability contract alanları genişletildi:
 
 - `reasonCode`
 - `summary`
 
 ## Local Search Dayanıklılığı
 
-`binliquid/tools/local_search.py` içinde `rg` çağrısı Windows ortamında `PermissionError` / `OSError` ürettiğinde Python tabanlı fallback aramaya düşecek şekilde iyileştirildi.
+`imperaos/tools/local_search.py` içinde `rg` çağrısı Windows ortamında `PermissionError` / `OSError` ürettiğinde Python tabanlı fallback aramaya düşecek şekilde iyileştirildi.
 
 Bu değişiklik yerel geliştirme ortamında görülen `rg.exe` erişim engeli problemini tolere eder.
 
 ## Team Artifacts Stabilitesi
 
-`binliquid/team/artifacts.py` içindeki `write_status()` işlemi Windows dosya kilidi davranışına karşı güçlendirildi.
+`imperaos/team/artifacts.py` içindeki `write_status()` işlemi Windows dosya kilidi davranışına karşı güçlendirildi.
 
 Uygulanan değişiklikler:
 
@@ -86,9 +86,9 @@ Bu, testlerde görülebilecek boş veya kısmi `status.json` okuma riskini azalt
 Eklenen başlıca davranışlar:
 
 - Windows bundled Python yolu:
-  - `binliquid-runtime/python/Scripts/python.exe`
+  - `imperaos-runtime/python/Scripts/python.exe`
 - POSIX bundled Python yolu:
-  - `binliquid-runtime/python/bin/python`
+  - `imperaos-runtime/python/bin/python`
 - Platform-aware resource directory çözümleme.
 - Platform-aware PATH separator.
 - `env_clear()` sonrası Windows için gerekli environment değişkenlerinin korunması:
@@ -116,11 +116,11 @@ Yeni script eklendi:
 Scriptin görevi:
 
 - Wheel yoksa Python wheel build etmek.
-- `src-tauri/resources/binliquid-runtime` klasörünü temizlemek.
+- `src-tauri/resources/imperaos-runtime` klasörünü temizlemek.
 - `python` altında venv oluşturmak.
 - Windows entrypoint olarak `python/Scripts/python.exe` doğrulamak.
-- BinLiquid wheel kurmak.
-- `python.exe -m binliquid --version` smoke testi çalıştırmak.
+- ImperaOS wheel kurmak.
+- `python.exe -m imperaos --version` smoke testi çalıştırmak.
 - Runtime manifest ve README üretmek.
 
 Script PowerShell parser ile doğrulandı. Yerelde tam çalıştırılmadı; çünkü repo içine büyük bir embedded venv üretir. CI içinde gerçek paketleme ve doğrulama adımı olarak çalışacak şekilde workflow'a eklendi.
@@ -172,7 +172,7 @@ Aşağıdaki dokümanlar Windows destek sınırları ve release gate bilgileriyl
 - `apps/operator-panel/README.md`
 - `docs/RELEASE_CHECKLIST.md`
 - `docs/RELEASE_GATE_v0.5.md`
-- `apps/operator-panel/src-tauri/resources/binliquid-runtime/README.txt`
+- `apps/operator-panel/src-tauri/resources/imperaos-runtime/README.txt`
 
 Dokümanlarda özellikle şu sınır açık bırakıldı:
 
@@ -234,9 +234,9 @@ corepack pnpm --dir apps/operator-panel lint
 corepack pnpm --dir apps/operator-panel build
 cargo test -q --manifest-path apps/operator-panel/src-tauri/Cargo.toml
 cargo fmt --manifest-path apps/operator-panel/src-tauri/Cargo.toml --check
-uv run python -m binliquid --version
-uv run python -m binliquid operator capabilities --json
-uv run python -m binliquid doctor --profile balanced --json
+uv run python -m imperaos --version
+uv run python -m imperaos operator capabilities --json
+uv run python -m imperaos doctor --profile balanced --json
 ```
 
 PowerShell script parse kontrolü de başarıyla tamamlandı.

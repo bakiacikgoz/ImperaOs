@@ -267,4 +267,87 @@ describe('AssistantModelPicker provider governance states', () => {
 
     expect(screen.getByText('PROVIDER_REMOTE_DISABLED')).toBeInTheDocument();
   });
+
+  it.each([
+    ['ollama', 'local-ollama', 'qwen3.5:4b', 'Assistant model'],
+    ['transformers', 'local-transformers', 'Qwen/Qwen2.5', 'Assistant HF model id'],
+  ] as const)(
+    'resolves legacy provider %s to canonical selectable models',
+    (legacyProvider, canonicalProvider, modelId, modelLabel) => {
+      const state = discovery({
+        providers: [{
+          provider: canonicalProvider,
+          legacyProvider,
+          kind: canonicalProvider === 'local-ollama' ? 'local_ollama' : 'local_transformers',
+          displayName: canonicalProvider === 'local-ollama' ? 'Local Ollama' : 'Local Transformers',
+          available: true,
+          selectedByConfig: true,
+          disabledReason: null,
+          models: [],
+        }],
+        models: [{
+          provider: canonicalProvider,
+          id: modelId,
+          displayName: modelId,
+          installed: true,
+          configured: true,
+          source: canonicalProvider === 'local-ollama' ? 'ollama' : 'transformers_cache',
+          warnings: [],
+        }],
+      });
+
+      renderPicker(state, legacyProvider);
+
+      expect(screen.getByLabelText('Assistant provider')).toHaveValue(canonicalProvider);
+      expect(within(screen.getByLabelText(modelLabel)).getByRole('option', { name: modelId })).toBeEnabled();
+    },
+  );
+
+  it.each(['ollama', 'transformers', 'local-ollama', 'local-transformers'] as const)(
+    'preserves configured provider %s when discovery has no matching record',
+    (provider) => {
+      renderPicker(discovery({ status: 'empty', providers: [], models: [] }), provider);
+
+      expect(screen.getByLabelText('Assistant provider')).toHaveValue(provider);
+    },
+  );
+
+  it('disables an unavailable discovered provider instead of exposing its legacy alias', () => {
+    renderPicker(
+      discovery({
+        providers: [{
+          provider: 'local-ollama', legacyProvider: 'ollama', kind: 'local_ollama',
+          displayName: 'Local Ollama', available: false, selectedByConfig: false,
+          disabledReason: 'OLLAMA_NOT_AVAILABLE', models: [],
+        }],
+        models: [],
+      }),
+    );
+
+    const providerSelect = screen.getByLabelText('Assistant provider');
+    expect(
+      within(providerSelect).getByRole('option', { name: 'Local Ollama (OLLAMA_NOT_AVAILABLE)' }),
+    ).toBeDisabled();
+    expect(within(providerSelect).queryByRole('option', { name: 'ollama' })).not.toBeInTheDocument();
+    expect(
+      within(screen.getByLabelText('Assistant fallback provider')).getByRole('option', { name: 'ollama' }),
+    ).toBeDisabled();
+  });
+
+  it('disables discovered models that are not installed', () => {
+    renderPicker(
+      discovery({
+        models: [{
+          provider: 'local-ollama', id: 'configured-but-missing:latest',
+          displayName: 'configured-but-missing:latest', installed: false, configured: true,
+          source: 'config', warnings: ['Configured Ollama model is not present in ollama list.'],
+        }],
+      }),
+      'local-ollama',
+    );
+
+    expect(
+      screen.getByRole('option', { name: 'configured-but-missing:latest (configured)' }),
+    ).toBeDisabled();
+  });
 });

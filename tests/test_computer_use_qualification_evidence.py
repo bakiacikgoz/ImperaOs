@@ -6,7 +6,7 @@ from pathlib import Path
 
 from jsonschema import validate
 
-from binliquid.computer_use.vision_runtime.evidence import (
+from imperaos.computer_use.vision_runtime.evidence import (
     validate_qualification_evidence,
 )
 

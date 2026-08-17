@@ -89,6 +89,6 @@ For `vision_provider="mock"`, deterministic test wiring remains unchanged.
 Targeted gate:
 
 ```bash
-uv run --extra dev ruff check binliquid/computer_use/vision_runtime/providers/ollama_vision.py binliquid/computer_use/vision_runtime/provider_doctor.py binliquid/computer_use/vision_runtime/planner.py binliquid/computer_use/vision_runtime/runtime.py binliquid/computer_use/vision_runtime/verifier.py binliquid/computer_use/runtime.py tests/test_computer_use_vision_provider.py tests/test_computer_use_vision_planner.py tests/test_computer_use_vision_runtime.py tests/test_computer_use_vision_policy.py tests/test_computer_use_vision_approval.py tests/test_computer_use_vision_verifier.py
+uv run --extra dev ruff check imperaos/computer_use/vision_runtime/providers/ollama_vision.py imperaos/computer_use/vision_runtime/provider_doctor.py imperaos/computer_use/vision_runtime/planner.py imperaos/computer_use/vision_runtime/runtime.py imperaos/computer_use/vision_runtime/verifier.py imperaos/computer_use/runtime.py tests/test_computer_use_vision_provider.py tests/test_computer_use_vision_planner.py tests/test_computer_use_vision_runtime.py tests/test_computer_use_vision_policy.py tests/test_computer_use_vision_approval.py tests/test_computer_use_vision_verifier.py
 uv run --extra dev pytest -q tests/test_computer_use_vision_provider.py tests/test_computer_use_vision_planner.py tests/test_computer_use_vision_runtime.py tests/test_computer_use_vision_policy.py tests/test_computer_use_vision_approval.py tests/test_computer_use_vision_verifier.py
 ```

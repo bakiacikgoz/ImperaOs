@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.memory.context_pack import MemoryContextPack
-from binliquid.memory.models import (
+from imperaos.memory.context_pack import MemoryContextPack
+from imperaos.memory.models import (
     MemoryAuthoritySnapshot,
     MemoryEvidenceEvent,
     MemoryIndexStatus,
@@ -13,10 +13,10 @@ from binliquid.memory.models import (
     MemoryRetrievalResult,
     MemoryWriteProposal,
 )
-from binliquid.memory.runtime_snapshot import MemoryRuntimeSnapshot
-from binliquid.memory.sync_conflicts import MemorySyncConflict
-from binliquid.memory.sync_importer import MemorySyncImportReport
-from binliquid.memory.sync_pack import MemorySyncPackManifest
+from imperaos.memory.runtime_snapshot import MemoryRuntimeSnapshot
+from imperaos.memory.sync_conflicts import MemorySyncConflict
+from imperaos.memory.sync_importer import MemorySyncImportReport
+from imperaos.memory.sync_pack import MemorySyncPackManifest
 
 SCHEMAS = {
     "memory_record_v3.schema.json": MemoryRecordV3,

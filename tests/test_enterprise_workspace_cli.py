@@ -7,7 +7,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
+from imperaos.cli import app
 
 runner = CliRunner()
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -57,7 +57,7 @@ def test_workspace_bootstrap_blocks_without_identity(tmp_path: Path, monkeypatch
     payload = json.loads(result.stdout)
     assert payload["status"] == "blocked"
     assert payload["blockingReasons"] == ["IDENTITY_REQUIRED"]
-    assert not (tmp_path / ".binliquid" / "control-plane" / "enterprise-workspace").exists()
+    assert not (tmp_path / ".imperaos" / "control-plane" / "enterprise-workspace").exists()
 
 
 def test_enterprise_workspace_bootstrap_and_snapshot_cli(tmp_path: Path, monkeypatch) -> None:

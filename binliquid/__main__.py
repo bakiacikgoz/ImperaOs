@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from binliquid.cli import app
+import sys
+
+from imperaos.cli import app
 
 
 def main() -> None:
-    app()
+    print("binliquid is deprecated; use imperaos", file=sys.stderr)
+    app(prog_name="binliquid")
 
 
 if __name__ == "__main__":

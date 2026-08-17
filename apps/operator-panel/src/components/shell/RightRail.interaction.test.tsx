@@ -6,7 +6,7 @@ import { RightRail, type SystemHealthSummary } from './RightRail';
 
 const systemHealth: SystemHealthSummary = {
   coreMode: 'auto',
-  contractVersion: '2.0',
+  contractVersion: '3.0',
   health: 'Healthy',
   memoryUsagePct: null,
   cpuUsagePct: null,

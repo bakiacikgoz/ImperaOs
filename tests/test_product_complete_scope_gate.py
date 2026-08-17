@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.release.product_complete import (
+from imperaos.release.product_complete import (
     ProductCompleteInput,
     build_product_complete_no_ship_register,
 )

@@ -53,10 +53,10 @@ reported as `blocked_external_credentials` without exposing secret values.
 ## CLI
 
 ```bash
-uv run binliquid provider registry --profile enterprise --json
-uv run binliquid provider inspect --provider openai_responses --profile enterprise --json
-uv run binliquid provider native conformance --provider openai_responses --profile enterprise --offline --json
-uv run binliquid provider native conformance --provider anthropic_messages --profile enterprise --offline --json
+uv run imperaos provider registry --profile enterprise --json
+uv run imperaos provider inspect --provider openai_responses --profile enterprise --json
+uv run imperaos provider native conformance --provider openai_responses --profile enterprise --offline --json
+uv run imperaos provider native conformance --provider anthropic_messages --profile enterprise --offline --json
 uv run python scripts/run_provider_native_adapter_gate.py --profile enterprise --json
 ```
 

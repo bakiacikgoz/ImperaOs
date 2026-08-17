@@ -55,3 +55,23 @@ def test_computer_use_integration_gate_markdown_contains_stop_go_fields() -> Non
     assert "Merge ready" in markdown
     assert "Public live claims" in markdown
     assert "live_macos_qualification_missing" in markdown
+
+
+def test_copy_repo_excludes_legacy_and_current_state_roots(tmp_path: Path) -> None:
+    gate = _load_gate()
+    legacy_state_root = "." + "bin" + "liquid"
+    current_state_root = ".imperaos"
+    source = tmp_path / "source"
+    destination = tmp_path / "destination"
+    source.mkdir()
+    (source / "keep.txt").write_text("keep", encoding="utf-8")
+    for state_root in (legacy_state_root, current_state_root):
+        state_dir = source / state_root
+        state_dir.mkdir()
+        (state_dir / "sentinel.txt").write_text("state", encoding="utf-8")
+
+    gate._copy_repo(source, destination)
+
+    assert (destination / "keep.txt").read_text(encoding="utf-8") == "keep"
+    assert not (destination / legacy_state_root).exists()
+    assert not (destination / current_state_root).exists()

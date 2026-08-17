@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.control_plane.operator_attestation import (
+from imperaos.control_plane.operator_attestation import (
     build_operator_attestation,
     verify_operator_attestation,
 )
-from binliquid.control_plane.target_evidence import (
+from imperaos.control_plane.target_evidence import (
     REQUIRED_BLOCKED_CLAIMS,
     prepare_target_evidence_session,
 )

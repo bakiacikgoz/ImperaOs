@@ -1,9 +1,24 @@
+pub mod artifact_asset;
+pub mod artifact_export;
+pub mod artifact_rpc;
 mod bridge;
+pub mod browser;
+pub mod terminal;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .manage(bridge::AssistantProcessRegistry::default())
+        .manage(artifact_rpc::WorkspaceRpcRegistry::default())
+        .manage(bridge::ProductFolderTicketState::default())
+        .manage(browser::BrowserPolicyState::from_trusted_deployment_environment())
+        .manage(browser::BrowserSessionRegistry::default())
+        .manage(terminal::TerminalManager::default())
+        .manage(artifact_asset::ArtifactAssetState::default())
+        .manage(artifact_export::ArtifactExportState::new(
+            bridge::artifact_export_journal_root(),
+        ))
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_log::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             bridge::bridge_handshake,
@@ -53,8 +68,62 @@ pub fn run() {
             bridge::bridge_qualification_run,
             bridge::bridge_assistant_start_turn,
             bridge::bridge_assistant_cancel_turn,
+            bridge::bridge_artifact_list,
+            bridge::bridge_artifact_handshake,
+            bridge::bridge_artifact_get,
+            bridge::bridge_artifact_create,
+            bridge::bridge_artifact_mutate,
+            bridge::bridge_artifact_spreadsheet_patch,
+            bridge::bridge_artifact_slides_patch,
+            bridge::bridge_artifact_propose_mutation,
+            bridge::bridge_artifact_apply_proposal,
+            bridge::bridge_artifact_history,
+            bridge::bridge_artifact_restore,
+            bridge::bridge_artifact_archive,
+            bridge::bridge_artifact_duplicate,
+            bridge::bridge_artifact_asset_select,
+            bridge::bridge_artifact_asset_import,
+            bridge::bridge_artifact_asset_get,
+            bridge::bridge_artifact_form_submit,
+            bridge::bridge_artifact_export_begin,
+            bridge::bridge_artifact_export_commit,
+            bridge::bridge_artifact_export_cancel,
+            bridge::bridge_artifact_import_evidence,
+            bridge::bridge_product_project_list,
+            bridge::bridge_product_project_create,
+            bridge::bridge_product_project_folder_select,
+            bridge::bridge_product_project_register,
+            bridge::bridge_product_project_update,
+            bridge::bridge_product_project_archive,
+            bridge::bridge_product_task_get,
+            bridge::bridge_product_task_list,
+            bridge::bridge_product_task_create,
+            bridge::bridge_product_task_update,
+            bridge::bridge_product_task_archive,
+            bridge::bridge_product_task_message_add,
+            bridge::bridge_product_task_message_list,
+            bridge::bridge_product_task_link_add,
+            bridge::bridge_product_task_link_list,
+            bridge::bridge_product_preferences_get,
+            bridge::bridge_product_preferences_set,
             bridge::bridge_read_artifact,
             bridge::bridge_tail_events,
+            terminal::terminal_start,
+            terminal::terminal_write,
+            terminal::terminal_resize,
+            terminal::terminal_interrupt,
+            terminal::terminal_kill,
+            browser::browser_open,
+            browser::browser_list_preview_origins,
+            browser::browser_navigate,
+            browser::browser_back,
+            browser::browser_forward,
+            browser::browser_history_state,
+            browser::browser_set_bounds,
+            browser::browser_reload,
+            browser::browser_show,
+            browser::browser_hide,
+            browser::browser_close,
         ])
         .run(tauri::generate_context!())
         .expect("error while running operator panel");

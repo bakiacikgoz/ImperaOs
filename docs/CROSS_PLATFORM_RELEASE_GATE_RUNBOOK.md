@@ -24,10 +24,10 @@ Use this only where `make` is available. The Python script remains the canonical
 uv run --extra dev python -m pytest -q tests/test_release_gate_models.py tests/test_release_gate_plan.py tests/test_release_gate_runner.py tests/test_release_gate_verifier.py tests/test_release_gate_contracts.py tests/test_rc_freeze_backfill.py tests/test_release_gate_cli.py tests/test_rc_freeze_manifest.py tests/test_control_plane_snapshot_rc_gate_evidence.py
 uv run python scripts/generate_release_gate_contract_schemas.py
 uv run python scripts/generate_control_plane_contract_schemas.py
-uv run binliquid release gates run --target mainline-rc --profile enterprise --mode rc-focused --output-root artifacts/release-gates/mainline-rc --json
-uv run binliquid release gates verify --ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --json
-uv run binliquid release gates export --ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --output-root artifacts/release-gates/mainline-rc --json
-uv run binliquid control-plane release gates snapshot --profile enterprise --evidence-root artifacts/release-gates/mainline-rc --json
+uv run imperaos release gates run --target mainline-rc --profile enterprise --mode rc-focused --output-root artifacts/release-gates/mainline-rc --json
+uv run imperaos release gates verify --ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --json
+uv run imperaos release gates export --ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --output-root artifacts/release-gates/mainline-rc --json
+uv run imperaos control-plane release gates snapshot --profile enterprise --evidence-root artifacts/release-gates/mainline-rc --json
 corepack pnpm --dir apps/operator-panel exec vitest run src/rc-gate-evidence/RcGateEvidenceView.test.tsx src/rc-gate-evidence/rcGateEvidenceMappers.test.ts src/routeRegistry.test.ts src/control-plane/controlPlaneSnapshot.test.ts
 corepack pnpm --dir apps/operator-panel exec playwright test e2e/rc-gate-evidence.spec.ts --pass-with-no-tests
 git diff --check

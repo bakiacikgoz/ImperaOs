@@ -7,20 +7,20 @@ Agent enrollment binds an external agent to an enterprise workspace before it ca
 1. Create a token with the minimum allowed capabilities:
 
 ```powershell
-uv run binliquid enterprise enrollment token create --profile enterprise --workspace-id pilot-workspace --organization-id local-org --created-by-principal-id principal-admin --allowed-capability read --json
+uv run imperaos enterprise enrollment token create --profile enterprise --workspace-id pilot-workspace --organization-id local-org --created-by-principal-id principal-admin --allowed-capability read --json
 ```
 
 2. Pass the raw token to the target host out-of-band. Do not store it in repo files, logs, or evidence.
 3. Create an enrollment request from the target host:
 
 ```powershell
-uv run binliquid enterprise enrollment request create --profile enterprise --token "<shown-once-token>" --agent-id external-agent-01 --device-id device-host-01 --principal-id principal-agent --json
+uv run imperaos enterprise enrollment request create --profile enterprise --token "<shown-once-token>" --agent-id external-agent-01 --device-id device-host-01 --principal-id principal-agent --json
 ```
 
 4. Review and approve the request:
 
 ```powershell
-uv run binliquid enterprise enrollment approve --profile enterprise --request-id enrreq-example --approved-by-principal-id principal-admin --json
+uv run imperaos enterprise enrollment approve --profile enterprise --request-id enrreq-example --approved-by-principal-id principal-admin --json
 ```
 
 5. Confirm the external gateway accepts read-only requests only after active enrollment.

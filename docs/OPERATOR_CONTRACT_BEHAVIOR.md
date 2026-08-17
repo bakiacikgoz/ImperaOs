@@ -2,10 +2,10 @@
 
 ## Versioning
 
-- Operator bridge payloads use `contractVersion="2.0"` in camelCase.
-- CLI JSON payloads and team artifact files use `contract_version="2.0"` in snake_case.
-- `computer-use summary --json` is an Operator Panel control-plane payload and uses `contractVersion="2.0"` in camelCase.
-- Assistant start-turn and stream-event payloads use `contractVersion="2.0"` in camelCase.
+- Operator bridge payloads use `contractVersion="3.0"` in camelCase.
+- CLI JSON payloads and team artifact files use `contract_version="3.0"` in snake_case.
+- `computer-use summary --json` is an Operator Panel control-plane payload and uses `contractVersion="3.0"` in camelCase.
+- Assistant start-turn and stream-event payloads use `contractVersion="3.0"` in camelCase.
 - Assistant model discovery uses `contractVersion="operator-panel.assistant-provider-models/v4"` for the provider native trust surface. V1, V2, and V3 payloads remain parseable for compatibility.
 - Stream events remain versioned by `schema_version="3"`.
 - Audit envelopes remain versioned by `contract_version="2.0"` plus `envelope_version="3"`, `event_schema_version="3"`, and `handoff_schema_version="3"`.

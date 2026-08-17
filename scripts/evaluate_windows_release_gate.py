@@ -13,6 +13,20 @@ SCHEMA_VERSION = "windows-public-release-gate/v1"
 DECISION_SOURCE = "scripts/evaluate_windows_release_gate.py"
 EXPECTED_COMPUTER_USE_REASON = "WINDOWS_COMPUTER_USE_NOT_QUALIFIED"
 EXPECTED_RUNTIME_PYTHON = "python/Scripts/python.exe"
+WINDOWS_RUNTIME_MANIFEST_KEYS = frozenset(
+    {
+        "arch",
+        "imperaos_version",
+        "created_at_utc",
+        "git_sha",
+        "platform",
+        "python",
+        "python_exe_sha256",
+        "source_wheel",
+        "source_wheel_sha256",
+        "uv_lock_sha256",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -90,6 +104,8 @@ def parse_runtime_manifest(text: str) -> dict[str, str]:
         key, separator, value = line.partition("=")
         if not separator or not key:
             raise ValueError(f"invalid manifest line: {raw_line}")
+        if key in values:
+            raise ValueError(f"duplicate manifest key: {key}")
         values[key] = value
     return values
 
@@ -159,19 +175,9 @@ def validate_runtime_manifest(
         _add_reason(blocking_reasons, "runtime_manifest_invalid")
         return None
 
-    required_keys = {
-        "arch",
-        "binliquid_version",
-        "created_at_utc",
-        "git_sha",
-        "platform",
-        "python",
-        "python_exe_sha256",
-        "source_wheel",
-        "source_wheel_sha256",
-        "uv_lock_sha256",
-    }
-    if not required_keys.issubset(manifest):
+    if set(manifest) != WINDOWS_RUNTIME_MANIFEST_KEYS or any(
+        not value.strip() for value in manifest.values()
+    ):
         _add_reason(blocking_reasons, "runtime_manifest_invalid")
     if manifest.get("platform") != "windows":
         _add_reason(blocking_reasons, "runtime_manifest_platform_mismatch")

@@ -13,6 +13,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
     continue-on-error: ${{ matrix.canary }}
     timeout-minutes: 55
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
     strategy:
       fail-fast: false
       matrix:
@@ -29,7 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -75,17 +77,17 @@ jobs:
         run: |
           uv run python scripts/generate_model_provider_contract_schemas.py
           uv run python scripts/run_provider_native_adapter_gate.py --profile enterprise --output-root artifacts/model-provider-governance/native-v2 --json
-          uv run python -m binliquid provider native conformance run --profile enterprise --provider-kind anthropic_messages --offline --json
-          uv run python -m binliquid provider native conformance verify --input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json --json
+          uv run python -m imperaos provider native conformance run --profile enterprise --provider-kind anthropic_messages --offline --json
+          uv run python -m imperaos provider native conformance verify --input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json --json
 
       - name: Core smoke evidence
         shell: pwsh
         run: |
-          uv run binliquid --version
-          uv run python -m binliquid --version
-          uv run binliquid operator capabilities --json |
+          uv run imperaos --version
+          uv run python -m imperaos --version
+          uv run imperaos operator capabilities --json |
             Tee-Object -FilePath artifacts/windows-ci-evidence/operator_capabilities.json
-          uv run binliquid doctor --profile balanced --json |
+          uv run imperaos doctor --profile balanced --json |
             Tee-Object -FilePath artifacts/windows-ci-evidence/doctor_balanced.json
 
       - name: Install UI deps
@@ -115,7 +117,7 @@ jobs:
       - name: Verify bundled runtime
         shell: pwsh
         run: |
-          $runtime = "apps/operator-panel/src-tauri/resources/binliquid-runtime"
+          $runtime = "apps/operator-panel/src-tauri/resources/imperaos-runtime"
           pwsh apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 -RuntimeDir $runtime |
             Tee-Object -FilePath artifacts/windows-ci-evidence/runtime_verify.txt
           Copy-Item "$runtime/RUNTIME_MANIFEST.txt" artifacts/windows-ci-evidence/runtime_manifest.txt
@@ -126,8 +128,8 @@ jobs:
           $items = @(
             "apps/operator-panel/src-tauri/tauri.conf.json",
             "apps/operator-panel/src-tauri/tauri.windows.conf.json",
-            "apps/operator-panel/src-tauri/resources/binliquid-runtime/RUNTIME_MANIFEST.txt",
-            "apps/operator-panel/src-tauri/resources/binliquid-runtime/python/Scripts/python.exe"
+            "apps/operator-panel/src-tauri/resources/imperaos-runtime/RUNTIME_MANIFEST.txt",
+            "apps/operator-panel/src-tauri/resources/imperaos-runtime/python/Scripts/python.exe"
           )
           $hashes = foreach ($item in $items) {
             if (Test-Path -LiteralPath $item -PathType Leaf) {

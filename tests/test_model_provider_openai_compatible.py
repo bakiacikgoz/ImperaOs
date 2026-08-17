@@ -6,13 +6,13 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pytest
 
-from binliquid.model_providers.adapters.openai_compatible import OpenAICompatibleProvider
-from binliquid.model_providers.errors import (
+from imperaos.model_providers.adapters.openai_compatible import OpenAICompatibleProvider
+from imperaos.model_providers.errors import (
     ProviderAuthError,
     ProviderRateLimitError,
     ProviderSchemaError,
 )
-from binliquid.model_providers.models import (
+from imperaos.model_providers.models import (
     AuthMode,
     ChatMessage,
     DataBoundary,

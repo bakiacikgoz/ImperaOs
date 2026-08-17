@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from binliquid.core.llm_ollama import StubLLM
-from binliquid.core.planner import Planner
-from binliquid.schemas.reason_codes import ReasonCode
+from imperaos.core.llm_ollama import StubLLM
+from imperaos.core.planner import Planner
+from imperaos.schemas.reason_codes import ReasonCode
 
 
 def test_planner_repairs_single_quoted_json_once() -> None:

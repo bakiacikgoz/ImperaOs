@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from binliquid.release.gate_plan import build_release_gate_plan
+from imperaos.release.gate_plan import build_release_gate_plan
 
 
 def test_mainline_rc_windows_plan_has_no_make_and_required_gate_artifacts(tmp_path: Path) -> None:

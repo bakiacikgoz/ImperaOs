@@ -4,8 +4,8 @@ import json
 
 import pytest
 
-from binliquid.control_plane.errors import AgentAlreadyExistsWithDifferentSpec, RegistryCorrupted
-from binliquid.control_plane.registry import AgentRegistry, load_agent_spec
+from imperaos.control_plane.errors import AgentAlreadyExistsWithDifferentSpec, RegistryCorrupted
+from imperaos.control_plane.registry import AgentRegistry, load_agent_spec
 
 
 def test_registry_register_list_get_disable(tmp_path) -> None:

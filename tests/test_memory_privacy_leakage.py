@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from binliquid.memory.semantic.fixtures import build_semantic_fixture
-from binliquid.memory.semantic.models import MemorySearchRequest
-from binliquid.memory.workspace_models import WorkspaceMemoryWriteRequest
+from imperaos.memory.semantic.fixtures import build_semantic_fixture
+from imperaos.memory.semantic.models import MemorySearchRequest
+from imperaos.memory.workspace_models import WorkspaceMemoryWriteRequest
 
 
 def test_semantic_search_does_not_return_cross_scope_or_raw(tmp_path: Path) -> None:

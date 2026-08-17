@@ -41,7 +41,7 @@ describe('bridge preview fallback', () => {
     const capabilities = record.capabilities as Record<string, unknown>;
 
     expect(record.coreVersion).toBe('0.6.0-preview');
-    expect(record.contractVersion).toBe('2.0');
+    expect(record.contractVersion).toBe('3.0');
     expect(capabilities.previewMode).toBe(true);
   });
 
@@ -57,7 +57,7 @@ describe('bridge preview fallback', () => {
       submitComputerUseRun(
         { ...DEFAULT_SETTINGS },
         {
-          request: 'open "https://preview.aegis.local/form"',
+          request: 'open "https://preview.imperaos.local/form"',
           mode: 'step_approval',
           runtime: 'vision-first',
         },
@@ -65,11 +65,11 @@ describe('bridge preview fallback', () => {
     ]);
 
     const teamRecord = teamPayload as Record<string, unknown>;
-    expect(teamRecord.contractVersion).toBe('2.0');
+    expect(teamRecord.contractVersion).toBe('3.0');
     expect(teamRecord.jobId).toBe('job-ui-preview-1');
 
     const computerUseRecord = computerUsePayload as Record<string, unknown>;
-    expect(computerUseRecord.contractVersion).toBe('2.0');
+    expect(computerUseRecord.contractVersion).toBe('3.0');
     expect(computerUseRecord.jobId).toBe('job-ui-preview-cu-1');
     expect(computerUseRecord.runtime).toBe('vision-first');
   });
@@ -85,7 +85,7 @@ describe('bridge preview fallback', () => {
       },
     );
 
-    expect(payload.contractVersion).toBe('2.0');
+    expect(payload.contractVersion).toBe('3.0');
     expect(payload.assistantTurnId).toBe('turn-preview');
     expect(payload.sessionId).toBe('session-preview');
     expect(payload.processId).toBeNull();
@@ -94,7 +94,7 @@ describe('bridge preview fallback', () => {
   it('returns preview assistant cancel payloads without a bridge process', async () => {
     const payload = await cancelAssistantTurn({ ...DEFAULT_SETTINGS }, 'turn-preview');
 
-    expect(payload.contractVersion).toBe('2.0');
+    expect(payload.contractVersion).toBe('3.0');
     expect(payload.assistantTurnId).toBe('turn-preview');
     expect(payload.processId).toBeNull();
     expect(payload.status).toBe('cancelled');
@@ -153,7 +153,7 @@ describe('bridge preview fallback', () => {
     const window = record.window as Record<string, unknown>;
     const counts = record.counts as Record<string, unknown>;
 
-    expect(record.contractVersion).toBe('2.0');
+    expect(record.contractVersion).toBe('3.0');
     expect(window.limit).toBe(2);
     expect(counts.blocked).toBe(1);
   });
@@ -183,7 +183,7 @@ describe('bridge preview fallback', () => {
   it('returns preview config resolve payload for system workspace', async () => {
     const payload = await resolveConfig({ ...DEFAULT_SETTINGS });
     const record = payload as Record<string, unknown>;
-    expect(record.contract_version).toBe('2.0');
+    expect(record.contract_version).toBe('3.0');
     expect(record.status).toBe('ok');
     expect((record.resolved as Record<string, unknown>).profile_name).toBe(DEFAULT_SETTINGS.profile);
   });
@@ -201,29 +201,31 @@ describe('bridge preview fallback', () => {
       ]);
 
     const approvalRecord = approval as Record<string, unknown>;
-    expect(approvalRecord.contract_version).toBe('2.0');
+    expect(approvalRecord.contract_version).toBe('3.0');
     expect((approvalRecord.ticket as Record<string, unknown>).approval_id).toBe('apr_preview');
 
     const runRecord = runs as Record<string, unknown>;
-    expect(runRecord.contract_version).toBe('2.0');
+    expect(runRecord.contract_version).toBe('3.0');
     expect(runRecord.count).toBeGreaterThan(0);
 
     const artifactRecord = artifact as Record<string, unknown>;
-    expect(artifactRecord.contractVersion).toBe('2.0');
+    expect(artifactRecord.contractVersion).toBe('3.0');
     expect(artifactRecord.artifactName).toBe('status.json');
     expect(
       ((artifactRecord.payload as Record<string, unknown>).computer_use as Record<string, unknown>).stage,
     ).toBe('require_approval');
 
-    expect(events.contractVersion).toBe('2.0');
+    expect(events.contractVersion).toBe('3.0');
     expect(events.events.length).toBeGreaterThan(0);
 
     expect((approvalDecision as Record<string, unknown>).approval_id).toBe('apr_preview');
     expect(((approvalDecision as Record<string, unknown>).ticket as Record<string, unknown>).status).toBe(
       'approved',
     );
+    expect((approvalExecution as Record<string, unknown>).runtime_mode).toBe('preview_fixture');
+    expect((approvalExecution as Record<string, unknown>).isMock).toBe(true);
     expect(((approvalExecution as Record<string, unknown>).ticket as Record<string, unknown>).status).toBe(
-      'executed',
+      'simulated',
     );
     expect((exportPayload as Record<string, unknown>).export_dir).toBe('./exports/job-preview');
   });

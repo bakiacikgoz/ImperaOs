@@ -10,14 +10,14 @@ uv run pytest -q \
   tests/test_team_audit_envelope.py \
   tests/test_team_cli.py \
   tests/test_team_pilot_gate.py
-uv run binliquid team validate --spec examples/team/restricted_pilot.yaml --json
-uv run binliquid team pilot-check \
+uv run imperaos team validate --spec examples/team/restricted_pilot.yaml --json
+uv run imperaos team pilot-check \
   --spec examples/team/restricted_pilot.yaml \
   --profile restricted \
   --mode deterministic \
   --report artifacts/team_pilot_report.json \
   --json
-uv run binliquid team pilot-check \
+uv run imperaos team pilot-check \
   --spec examples/team/restricted_pilot_live.yaml \
   --profile restricted \
   --mode live-provider \
@@ -50,10 +50,10 @@ No-Ship if any of the following are true:
 
 ```bash
 uv run pytest -q
-uv run binliquid operator capabilities --json
-uv run binliquid approval show --id <known_approval_id> --json
-uv run binliquid team list --root-dir .binliquid/team/jobs --json
-uv run binliquid team replay --job-id <id> --root-dir .binliquid/team/jobs --verify --json
+uv run imperaos operator capabilities --json
+uv run imperaos approval show --id <known_approval_id> --json
+uv run imperaos team list --root-dir .imperaos/team/jobs --json
+uv run imperaos team replay --job-id <id> --root-dir .imperaos/team/jobs --verify --json
 ```
 
 ## 3) Operator Panel Gates
@@ -184,6 +184,6 @@ The v0.5 release gate must not present vision-first computer-use as unrestricted
 - Windows live execution remains `WINDOWS_COMPUTER_USE_NOT_QUALIFIED`.
 
 Live macOS qualification is a separate opt-in gate and requires the exact
-`BINLIQUID_COMPUTER_USE_LIVE_OPT_IN` token, `BINLIQUID_COMPUTER_USE_LIVE_MACOS=1`,
+`IMPERAOS_COMPUTER_USE_LIVE_OPT_IN` token, `IMPERAOS_COMPUTER_USE_LIVE_MACOS=1`,
 local Screen Recording, Accessibility, provider readiness, replay verification,
 zero raw screenshots, and `macos_live_enabled=true`.

@@ -89,13 +89,13 @@ def doctor(**overrides):
 def runtime_manifest(**overrides) -> str:
     values = {
         "arch": "x86_64",
-        "binliquid_version": "0.4.1",
+        "imperaos_version": "0.4.1",
         "created_at_utc": "2026-05-04T00:00:00Z",
         "git_sha": "d" * 40,
         "platform": "windows",
         "python": "python/Scripts/python.exe",
         "python_exe_sha256": SHA_B,
-        "source_wheel": "binliquid-0.4.1-py3-none-any.whl",
+        "source_wheel": "imperaos-0.4.1-py3-none-any.whl",
         "source_wheel_sha256": SHA_A,
         "uv_lock_sha256": SHA_C,
     }
@@ -300,6 +300,23 @@ def test_runtime_manifest_python_path_mismatch_blocks_public_release():
     report = evaluate(manifest=runtime_manifest(python="python/bin/python"))
 
     assert_blocked(report, "runtime_manifest_python_path_mismatch")
+
+
+def test_runtime_manifest_rejects_extra_former_version_key():
+    former_version_key = "bin" + "liquid_version"
+    report = evaluate(
+        manifest=runtime_manifest(**{former_version_key: "0.4.1"}),
+    )
+
+    assert_blocked(report, "runtime_manifest_invalid")
+
+
+def test_runtime_manifest_rejects_duplicate_canonical_key():
+    manifest = runtime_manifest() + "imperaos_version=0.4.1\n"
+
+    report = evaluate(manifest=manifest)
+
+    assert_blocked(report, "runtime_manifest_invalid")
 
 
 def test_bundle_hashes_missing_blocks_public_release():

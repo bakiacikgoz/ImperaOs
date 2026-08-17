@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from binliquid.release.product_complete import build_product_complete_no_ship_register
+from imperaos.release.product_complete import build_product_complete_no_ship_register
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_ROOT = REPO_ROOT / "artifacts" / "product-complete"

@@ -3,7 +3,7 @@
 Build an evidence index:
 
 ```bash
-uv run binliquid control-plane evidence index \
+uv run imperaos control-plane evidence index \
   --profile lite \
   --evidence-root artifacts/design-partner-rc/evidence-sample \
   --json
@@ -12,7 +12,7 @@ uv run binliquid control-plane evidence index \
 Build reports, alerts, and logs:
 
 ```bash
-uv run binliquid control-plane reports manifest \
+uv run imperaos control-plane reports manifest \
   --profile lite \
   --output-dir artifacts/design-partner-rc/reports-alerts-logs \
   --json

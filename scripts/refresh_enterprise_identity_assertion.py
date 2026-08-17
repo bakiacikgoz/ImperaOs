@@ -10,7 +10,8 @@ from typing import Any
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-from binliquid.enterprise.signing import canonical_payload_hash
+from imperaos.enterprise.signing import canonical_payload_hash
+from imperaos.runtime.paths import enterprise_state_path
 
 
 def main() -> None:
@@ -20,11 +21,11 @@ def main() -> None:
             "the existing signing key."
         )
     )
-    parser.add_argument("--root", default=".", help="Workspace root for .binliquid assets")
+    parser.add_argument("--root", default=".", help="Workspace root for .imperaos assets")
     parser.add_argument(
         "--assertion-name",
         default="current_assertion.json",
-        help="Assertion filename under .binliquid/identity",
+        help="Assertion filename under .imperaos/enterprise/identity",
     )
     parser.add_argument(
         "--valid-hours",
@@ -48,8 +49,8 @@ def main() -> None:
         raise SystemExit("--valid-hours must be greater than zero")
 
     root = Path(args.root).resolve()
-    private_key_path = root / ".binliquid" / "keys" / "private" / "current_key.json"
-    assertion_path = root / ".binliquid" / "identity" / args.assertion_name
+    private_key_path = root / enterprise_state_path("keys", "private", "current_key.json")
+    assertion_path = root / enterprise_state_path("identity", args.assertion_name)
     if not private_key_path.exists():
         raise SystemExit(f"private key fixture not found: {private_key_path}")
     if not assertion_path.exists():

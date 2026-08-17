@@ -1,6 +1,6 @@
 # Model Provider Governance
 
-BinLiquid / AegisOS can represent local, internal, and remote model providers
+ImperaOS / ImperaOS can represent local, internal, and remote model providers
 behind one governance layer. Remote calls are opt-in and fail closed.
 
 ## No-Ship Conditions

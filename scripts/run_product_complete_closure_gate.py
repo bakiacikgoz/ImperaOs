@@ -10,10 +10,21 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from binliquid.release.product_complete import build_product_complete_no_ship_register
+from imperaos.release.product_complete import build_product_complete_no_ship_register
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_ROOT = REPO_ROOT / "artifacts" / "product-complete-closure"
+COMMAND_TIMEOUT_SECONDS = 1800
+
+READINESS_CHECKS = {
+    "assistant": "assistant_real_runtime_gate",
+    "operatorPanel": "operator_panel_static",
+    "enterpriseWorkspace": "enterprise_workspace_onboarding_gate",
+    "governedWorkflow": "governed_agent_workflow_product_gate",
+    "installerFirstRun": "first_run_readiness_gate",
+    "evidence": "evidence_release_closure_gate",
+}
+REQUIRED_READINESS = frozenset(READINESS_CHECKS)
 
 
 def _now() -> str:
@@ -46,6 +57,7 @@ def _run(command: list[str], *, name: str, required: bool = True) -> dict[str, A
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             shell=False,
+            timeout=COMMAND_TIMEOUT_SECONDS,
         )
     except FileNotFoundError as exc:
         return {
@@ -56,6 +68,20 @@ def _run(command: list[str], *, name: str, required: bool = True) -> dict[str, A
             "status": "fail",
             "reasonCode": "EXECUTABLE_MISSING",
             "tail": [str(exc)],
+        }
+    except subprocess.TimeoutExpired as exc:
+        captured = exc.output or ""
+        if isinstance(captured, bytes):
+            captured = captured.decode("utf-8", errors="replace")
+        return {
+            "name": name,
+            "command": command,
+            "required": required,
+            "returnCode": 124,
+            "status": "fail",
+            "reasonCode": "COMMAND_TIMEOUT",
+            "durationMs": int((time.monotonic() - started) * 1000),
+            "tail": str(captured).splitlines()[-30:],
         }
     status = "pass" if result.returncode == 0 else "fail"
     reason = "OK" if result.returncode == 0 else "COMMAND_FAILED"
@@ -223,14 +249,29 @@ def build_command_plan(
 
 def _empty_readiness() -> dict[str, str]:
     return {
-        "assistant": "pass",
-        "operatorPanel": "pass",
-        "enterpriseWorkspace": "pass",
-        "governedWorkflow": "pass",
-        "installerFirstRun": "pass",
-        "evidence": "pass",
+        "assistant": "not_run",
+        "operatorPanel": "not_run",
+        "enterpriseWorkspace": "not_run",
+        "governedWorkflow": "not_run",
+        "installerFirstRun": "not_run",
+        "evidence": "not_run",
         "macosLocalTrial": "not_run",
     }
+
+
+def _readiness_evidence(
+    readiness: dict[str, str], checks: list[dict[str, Any]]
+) -> dict[str, dict[str, Any]]:
+    by_name = {str(check["name"]): check for check in checks}
+    evidence: dict[str, dict[str, Any]] = {}
+    for readiness_key, check_name in READINESS_CHECKS.items():
+        check = by_name.get(check_name)
+        evidence[readiness_key] = {
+            "checkName": check_name,
+            "status": readiness[readiness_key],
+            "artifactRef": check.get("artifactRef") if check else None,
+        }
+    return evidence
 
 
 def run_product_complete_closure_gate(
@@ -264,6 +305,11 @@ def run_product_complete_closure_gate(
         for check in checks
         if check["required"] and check["status"] == "fail"
     ]
+    blockers.extend(
+        f"PRODUCT_COMPLETE_REQUIRED_CHECK_NOT_RUN:{key}"
+        for key in sorted(REQUIRED_READINESS)
+        if readiness[key] == "not_run"
+    )
     blockers.extend(item.reason_code for item in no_ship_register.items if item.status == "open")
     status = "pass" if not blockers else "fail"
     report = {
@@ -285,6 +331,7 @@ def run_product_complete_closure_gate(
         "ci": {},
         "rawLeakScan": {},
         "productReadiness": readiness,
+        "readinessEvidence": _readiness_evidence(readiness, checks),
     }
     _write_outputs(output_root, report, no_ship_register.model_dump(mode="json", by_alias=True))
     return report
@@ -354,7 +401,7 @@ def render_markdown(report: dict[str, Any]) -> str:
 def render_pr_body(report: dict[str, Any]) -> str:
     return (
         "## Summary\n"
-        "- Product-complete closure gate for BinLiquid / AegisOS.\n"
+        "- Product-complete closure gate for ImperaOS.\n"
         "- Scope: self-hosted single-organization enterprise Agent Control Plane.\n\n"
         "## Validation\n"
         f"- Closure gate: `{report['status']}`\n"

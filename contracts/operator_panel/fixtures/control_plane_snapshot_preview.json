@@ -57,7 +57,7 @@
       "policyPackId": "active-runtime-policy",
       "readiness": "policy_simulated",
       "riskProfile": "guarded",
-      "runtimeKind": "binliquid_team",
+      "runtimeKind": "imperaos_team",
       "status": "registered"
     }
   ],
@@ -1145,7 +1145,7 @@
       "policyFailMode": "fail_closed",
       "privacyMode": true
     },
-    "contractVersion": "2.0",
+    "contractVersion": "3.0",
     "coreVersion": "preview",
     "doctor": {
       "blocking_reasons": [],
@@ -1163,7 +1163,7 @@
       "status": "partial"
     },
     "profile": "enterprise",
-    "rootDir": ".binliquid/control-plane",
+    "rootDir": ".imperaos/control-plane",
     "sourceMap": {
       "agents": "preview fixture",
       "approvals": "preview fixture",

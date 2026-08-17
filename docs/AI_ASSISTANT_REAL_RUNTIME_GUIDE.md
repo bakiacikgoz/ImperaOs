@@ -3,9 +3,9 @@
 The product assistant command surface is:
 
 ```bash
-uv run binliquid assistant doctor --profile enterprise --json
-uv run binliquid assistant models --profile enterprise --json
-uv run binliquid assistant turn \
+uv run imperaos assistant doctor --profile enterprise --json
+uv run imperaos assistant models --profile enterprise --json
+uv run imperaos assistant turn \
   --profile enterprise \
   --session-id session-1 \
   --turn-id turn-1 \

@@ -5,8 +5,8 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.runtime.config import ComputerUseRuntimeConfig, RuntimeConfig
+from imperaos.cli import app
+from imperaos.runtime.config import ComputerUseRuntimeConfig, RuntimeConfig
 
 runner = CliRunner()
 
@@ -32,16 +32,16 @@ def _blocked_computer_use_config() -> RuntimeConfig:
 
 def _patch_blocked_computer_use_cli(monkeypatch) -> None:
     monkeypatch.setattr(
-        "binliquid.cli.resolve_runtime_config",
+        "imperaos.cli.resolve_runtime_config",
         lambda **_kwargs: (_blocked_computer_use_config(), {}),
     )
-    monkeypatch.setattr("binliquid.cli._require_permission_or_exit", lambda *_args: None)
+    monkeypatch.setattr("imperaos.cli._require_permission_or_exit", lambda *_args: None)
     monkeypatch.setattr(
-        "binliquid.computer_use.runtime.current_platform",
+        "imperaos.computer_use.runtime.current_platform",
         lambda: _WindowsPlatform(),
     )
     monkeypatch.setattr(
-        "binliquid.computer_use.runtime._current_git_sha",
+        "imperaos.computer_use.runtime._current_git_sha",
         lambda: "fixture-commit",
     )
 
@@ -56,7 +56,7 @@ def test_cli_doctor_creates_artifact_scaffold(monkeypatch, tmp_path: Path) -> No
             "secondary": {"runtime_available": True},
         }
 
-    monkeypatch.setattr("binliquid.cli.check_provider_chain", fake_status)
+    monkeypatch.setattr("imperaos.cli.check_provider_chain", fake_status)
     result = runner.invoke(app, ["doctor", "--profile", "lite"])
 
     assert result.exit_code == 0
@@ -75,7 +75,7 @@ def test_cli_benchmark_updates_benchmark_summary(monkeypatch, tmp_path: Path) ->
     def fake_bench(**_: object):
         return {"results": {"A": {"success_rate": 1.0}}, "output_path": "x.json"}
 
-    monkeypatch.setattr("binliquid.cli.run_smoke_benchmark", fake_bench)
+    monkeypatch.setattr("imperaos.cli.run_smoke_benchmark", fake_bench)
     result = runner.invoke(app, ["benchmark", "smoke", "--mode", "A"])
 
     assert result.exit_code == 0

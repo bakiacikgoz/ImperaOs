@@ -41,9 +41,20 @@ const copy = {
   },
 } satisfies Record<UiLocale, Record<string, string>>;
 
-export function AgentRegistryView({ agents, locale = 'en' }: { agents: unknown; locale?: UiLocale }) {
+export function AgentRegistryView({
+  agents,
+  locale = 'en',
+  selectedAgentId,
+  onSelectAgent,
+}: {
+  agents: unknown;
+  locale?: UiLocale;
+  selectedAgentId?: string | null;
+  onSelectAgent?: (agentId: string) => void;
+}) {
   const list = asControlPlaneAgentList(agents);
   const text = copy[locale];
+  const selectedAgent = list.agents.find((agent) => agent.agent_id === selectedAgentId) ?? list.agents[0] ?? null;
   return (
     <section className="workspace" data-testid="page-primary-region">
       <div className="workspace-header">
@@ -57,8 +68,8 @@ export function AgentRegistryView({ agents, locale = 'en' }: { agents: unknown; 
         <article className="page-card">
           <h3>{text.registry}</h3>
           <div className="run-list">
-            {list.agents.map((agent) => (
-              <article className="run-list-item" key={agent.agent_id}>
+            {list.agents.map((agent) => {
+              const content = <>
                 <div className="run-list-main">
                   <strong>{agent.display_name || agent.agent_id}</strong>
                   <div className="run-list-meta">
@@ -72,20 +83,28 @@ export function AgentRegistryView({ agents, locale = 'en' }: { agents: unknown; 
                 <StatusBadge tone={agent.status === 'active' ? 'success' : 'warning'}>
                   {`${agent.status} / ${agent.readiness}`}
                 </StatusBadge>
-              </article>
-            ))}
+              </>;
+              return onSelectAgent ? <button type="button" className="run-list-item" key={agent.agent_id} aria-pressed={selectedAgent?.agent_id === agent.agent_id} onClick={() => onSelectAgent(agent.agent_id)}>{content}</button> : <article className="run-list-item" key={agent.agent_id}>{content}</article>;
+            })}
             {list.agents.length === 0 ? (
               <article className="run-list-item">
                 <div className="run-list-main">
                   <strong>{text.noRegisteredAgents}</strong>
                   <span>{text.registerWithCli}</span>
                 </div>
-                <CodeToken>binliquid control-plane agent register</CodeToken>
+                <CodeToken>imperaos control-plane agent register</CodeToken>
               </article>
             ) : null}
           </div>
         </article>
         <article className="page-card">
+          <h3>{selectedAgent ? `${selectedAgent.display_name || selectedAgent.agent_id}` : text.governedActions}</h3>
+          {selectedAgent ? <div className="metric-list">
+            <div className="metric-row"><span>Agent ID</span><strong>{selectedAgent.agent_id}</strong></div>
+            <div className="metric-row"><span>Runtime</span><strong>{selectedAgent.runtime_kind}</strong></div>
+            <div className="metric-row"><span>{text.policy}</span><strong>{selectedAgent.policy_pack_id}</strong></div>
+            <div className="metric-row"><span>{text.evidence}</span><strong>{selectedAgent.last_evidence_status}</strong></div>
+          </div> : null}
           <h3>{text.governedActions}</h3>
           <div className="metric-list">
             <div className="metric-row">

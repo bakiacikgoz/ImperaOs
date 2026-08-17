@@ -1,0 +1,300 @@
+{
+  "$defs": {
+    "ArtifactKind": {
+      "enum": [
+        "document",
+        "form",
+        "code",
+        "flow",
+        "spreadsheet",
+        "canvas",
+        "slides"
+      ],
+      "title": "ArtifactKind",
+      "type": "string"
+    },
+    "ArtifactKindRuntimeCapability": {
+      "additionalProperties": false,
+      "description": "Effective per-kind capability state safe to expose to the renderer.",
+      "properties": {
+        "adapter": {
+          "enum": [
+            "built_in",
+            "bundled_fallback",
+            "commercial",
+            "unavailable"
+          ],
+          "title": "Adapter",
+          "type": "string"
+        },
+        "editable": {
+          "title": "Editable",
+          "type": "boolean"
+        },
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "exportable": {
+          "title": "Exportable",
+          "type": "boolean"
+        },
+        "reasonCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reasoncode"
+        },
+        "requiresLicense": {
+          "title": "Requireslicense",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enabled",
+        "editable",
+        "exportable",
+        "requiresLicense",
+        "adapter"
+      ],
+      "title": "ArtifactKindRuntimeCapability",
+      "type": "object"
+    },
+    "ArtifactLicenseCapability": {
+      "additionalProperties": false,
+      "properties": {
+        "contractVersion": {
+          "const": "artifact-license-capability/v1",
+          "default": "artifact-license-capability/v1",
+          "title": "Contractversion",
+          "type": "string"
+        },
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "kind": {
+          "enum": [
+            "spreadsheet",
+            "canvas"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reasonCode": {
+          "enum": [
+            "ARTIFACT_LICENSE_ENABLED",
+            "ARTIFACT_LICENSE_FEATURE_DISABLED",
+            "ARTIFACT_LICENSE_EVIDENCE_MISSING",
+            "ARTIFACT_LICENSE_EVIDENCE_INVALID",
+            "ARTIFACT_LICENSE_EXPIRED",
+            "ARTIFACT_LICENSE_MODE_FORBIDDEN",
+            "ARTIFACT_LICENSE_VERSION_MISMATCH",
+            "ARTIFACT_LICENSE_TARGET_MISMATCH",
+            "ARTIFACT_LICENSE_OFFLINE_UNVERIFIED",
+            "ARTIFACT_LICENSE_ACTIVATION_UNSUPPORTED",
+            "ARTIFACT_LICENSE_PACKAGE_MISSING"
+          ],
+          "title": "Reasoncode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "enabled",
+        "reasonCode"
+      ],
+      "title": "ArtifactLicenseCapability",
+      "type": "object"
+    },
+    "ArtifactRpcMethod": {
+      "enum": [
+        "rpc.handshake",
+        "rpc.health",
+        "rpc.shutdown",
+        "project.list",
+        "project.create",
+        "project.register",
+        "project.update",
+        "project.archive",
+        "task.get",
+        "task.list",
+        "task.create",
+        "task.update",
+        "task.archive",
+        "task.message.add",
+        "task.message.list",
+        "task.link.add",
+        "task.link.list",
+        "preferences.get",
+        "preferences.set",
+        "artifact.list",
+        "artifact.get",
+        "artifact.create",
+        "artifact.mutate",
+        "artifact.spreadsheet.patch",
+        "artifact.slides.patch",
+        "artifact.propose_mutation",
+        "artifact.apply_proposal",
+        "artifact.history",
+        "artifact.restore",
+        "artifact.archive",
+        "artifact.duplicate",
+        "artifact.asset.import",
+        "artifact.asset.get",
+        "artifact.form.submit",
+        "artifact.export.begin",
+        "artifact.export.preflight",
+        "artifact.export.commit",
+        "artifact.export.cancel",
+        "artifact.import_evidence"
+      ],
+      "title": "ArtifactRpcMethod",
+      "type": "string"
+    },
+    "ArtifactRuntimeCapabilitySnapshot": {
+      "additionalProperties": false,
+      "description": "Redacted, effective rollout state safe to expose through the RPC handshake.",
+      "properties": {
+        "contractVersion": {
+          "const": "artifact-runtime-capability-snapshot/v1",
+          "default": "artifact-runtime-capability-snapshot/v1",
+          "title": "Contractversion",
+          "type": "string"
+        },
+        "enabledArtifactKinds": {
+          "items": {
+            "$ref": "#/$defs/ArtifactKind"
+          },
+          "title": "Enabledartifactkinds",
+          "type": "array"
+        },
+        "features": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "title": "Features",
+          "type": "object"
+        },
+        "globalEnabled": {
+          "title": "Globalenabled",
+          "type": "boolean"
+        },
+        "kindCapabilities": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ArtifactKindRuntimeCapability"
+          },
+          "title": "Kindcapabilities",
+          "type": "object"
+        },
+        "licenses": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "propertyNames": {
+            "enum": [
+              "spreadsheet",
+              "canvas"
+            ]
+          },
+          "title": "Licenses",
+          "type": "object"
+        },
+        "rolloutStage": {
+          "enum": [
+            "disabled",
+            "workspace_only",
+            "document",
+            "form_code",
+            "flow_slides",
+            "all_noncommercial"
+          ],
+          "title": "Rolloutstage",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rolloutStage",
+        "globalEnabled",
+        "enabledArtifactKinds",
+        "features",
+        "licenses",
+        "kindCapabilities"
+      ],
+      "title": "ArtifactRuntimeCapabilitySnapshot",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-rpc-handshake.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "capabilitySnapshot": {
+      "$ref": "#/$defs/ArtifactRuntimeCapabilitySnapshot"
+    },
+    "contractVersion": {
+      "const": "1.0",
+      "title": "Contractversion",
+      "type": "string"
+    },
+    "gracefulShutdown": {
+      "const": true,
+      "title": "Gracefulshutdown",
+      "type": "boolean"
+    },
+    "licenseCapabilities": {
+      "items": {
+        "$ref": "#/$defs/ArtifactLicenseCapability"
+      },
+      "title": "Licensecapabilities",
+      "type": "array"
+    },
+    "maxFrameBytes": {
+      "maximum": 33554432,
+      "minimum": 1024,
+      "title": "Maxframebytes",
+      "type": "integer"
+    },
+    "methods": {
+      "items": {
+        "$ref": "#/$defs/ArtifactRpcMethod"
+      },
+      "title": "Methods",
+      "type": "array"
+    },
+    "networkListener": {
+      "const": false,
+      "title": "Networklistener",
+      "type": "boolean"
+    },
+    "stdoutProtocolOnly": {
+      "const": true,
+      "title": "Stdoutprotocolonly",
+      "type": "boolean"
+    },
+    "transport": {
+      "const": "stdio-length-prefixed-json",
+      "title": "Transport",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contractVersion",
+    "transport",
+    "maxFrameBytes",
+    "methods",
+    "networkListener",
+    "stdoutProtocolOnly",
+    "gracefulShutdown",
+    "licenseCapabilities",
+    "capabilitySnapshot"
+  ],
+  "title": "RpcHandshake",
+  "type": "object",
+  "x-imperaos-contract": "artifact-rpc-handshake.v1"
+}

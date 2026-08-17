@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.model_providers.native.types import (
+from imperaos.model_providers.native.types import (
     AnthropicMessagesRequest,
     AnthropicMessagesResult,
     OpenAIResponsesRequest,

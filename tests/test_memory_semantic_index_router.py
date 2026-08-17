@@ -1,4 +1,4 @@
-from binliquid.memory.semantic.index_router import (
+from imperaos.memory.semantic.index_router import (
     AllowedSemanticScope,
     build_semantic_query_plan,
     parse_requested_scope,

@@ -8,8 +8,8 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from binliquid.control_plane.agent_enrollment import AgentEnrollmentToken
-from binliquid.control_plane.enterprise_workspace import (
+from imperaos.control_plane.agent_enrollment import AgentEnrollmentToken
+from imperaos.control_plane.enterprise_workspace import (
     EnterpriseOrganization,
     EnterpriseWorkspaceSnapshot,
 )

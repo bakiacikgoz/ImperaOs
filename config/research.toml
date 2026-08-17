@@ -19,11 +19,11 @@ enable_persistent_memory = true
 memory_ttl_days = 45
 fast_path_regret_window = 3
 fast_path_regret_threshold = 0.15
-env_prefix = "BINLIQUID"
+env_prefix = "IMPERAOS"
 web_enabled = false
 workspace_root = "."
-trace_dir = ".binliquid/traces"
-router_dataset_path = ".binliquid/research/router_dataset.jsonl"
+trace_dir = ".imperaos/traces"
+router_dataset_path = ".imperaos/research/router_dataset.jsonl"
 
 [limits]
 expert_timeout_ms = 3800
@@ -47,7 +47,7 @@ conf_bonus = 0.2
 task_bias_overrides = {}
 
 [memory]
-db_path = ".binliquid/memory.sqlite3"
+db_path = ".imperaos/memory.sqlite3"
 v3_enabled = false
 v3_authority_mode = "local"
 raw_prompt_persistence = false
@@ -90,7 +90,7 @@ enabled = false
 mode = "local"
 default_workspace_id = "default"
 default_principal_id = "agent-local"
-db_path = ".binliquid/workspace_memory.sqlite3"
+db_path = ".imperaos/workspace_memory.sqlite3"
 raw_content_persistence = false
 network_listener_enabled = false
 migration_apply_enabled = false
@@ -140,8 +140,8 @@ retry_strategy = "failure_aware"
 enabled = true
 policy_path = "config/policies/research.toml"
 policy_fail_mode = "fail_closed"
-approval_store_path = ".binliquid/governance/approvals.sqlite3"
-audit_dir = ".binliquid/audit"
+approval_store_path = ".imperaos/governance/approvals.sqlite3"
+audit_dir = ".imperaos/audit"
 pii_redaction_enabled = true
 approval_ttl_seconds = 86400
 decision_engine_version = "v0.3"
@@ -151,8 +151,8 @@ enabled = true
 max_parallel_tasks = 4
 max_total_tasks = 64
 max_handoff_depth = 8
-checkpoint_db_path = ".binliquid/team/checkpoints.sqlite3"
-artifact_dir = ".binliquid/team/jobs"
+checkpoint_db_path = ".imperaos/team/checkpoints.sqlite3"
+artifact_dir = ".imperaos/team/jobs"
 
 [computer_use]
 enabled = true

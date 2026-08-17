@@ -1,0 +1,3 @@
+# Artifact contract hashes are defined over their canonical LF-encoded bytes.
+# Keep checkout content identical on every CI platform.
+/contracts/artifacts/*.json text eol=lf

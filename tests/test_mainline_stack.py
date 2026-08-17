@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.control_plane.mainline_stack import (
+from imperaos.control_plane.mainline_stack import (
     MergeRehearsalSpec,
     StackGraphSpec,
     StackPrRef,

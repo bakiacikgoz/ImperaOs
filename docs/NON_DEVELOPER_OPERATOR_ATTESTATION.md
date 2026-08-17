@@ -58,7 +58,7 @@ when:
 - all evidence checks pass;
 - the attestation file is valid JSON;
 - `schema_version` is
-  `binliquid-non-developer-operator-attestation/v1`;
+  `imperaos-non-developer-operator-attestation/v2`;
 - required operator fields are non-empty;
 - `signed_at_utc` is a valid UTC timestamp ending in `Z`;
 - the attestation booleans are explicitly `true`.
@@ -72,7 +72,7 @@ For design-partner field evidence closure, the attestation is bound to a
 specific target-environment session and evidence bundle:
 
 ```bash
-uv run binliquid pilot field attest-verify \
+uv run imperaos pilot field attest-verify \
   --session artifacts/design-partner-field-evidence/session.json \
   --bundle artifacts/design-partner-field-evidence/target_evidence_bundle.json \
   --operator-attestation artifacts/design-partner-field-evidence/operator_attestation.json \

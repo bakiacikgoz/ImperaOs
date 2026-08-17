@@ -1,4 +1,5 @@
 import { Icon } from '../primitives/Icon';
+import { PRODUCT_IDENTITY } from '../../productIdentity';
 
 export function AssistantWelcome({
   title,
@@ -11,13 +12,14 @@ export function AssistantWelcome({
   badgeLabel: string;
   readOnlyByDefault: string;
 }) {
-  const aegisIndex = title.indexOf('AegisOS');
+  const brandName = PRODUCT_IDENTITY.displayName;
+  const brandIndex = title.indexOf(brandName);
   const highlightedTitle =
-    aegisIndex >= 0 ? (
+    brandIndex >= 0 ? (
       <>
-        {title.slice(0, aegisIndex)}
-        <span>AegisOS</span>
-        {title.slice(aegisIndex + 'AegisOS'.length)}
+        {title.slice(0, brandIndex)}
+        <span>{brandName}</span>
+        {title.slice(brandIndex + brandName.length)}
       </>
     ) : (
       title

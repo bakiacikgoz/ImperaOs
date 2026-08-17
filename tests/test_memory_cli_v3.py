@@ -2,7 +2,7 @@ import json
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
+from imperaos.cli import app
 
 runner = CliRunner()
 
@@ -27,7 +27,7 @@ def test_memory_cli_doctor_and_propose_org_approval() -> None:
                 "--owner-type",
                 "org",
                 "--owner",
-                "binliquid",
+                "imperaos",
                 "--visibility",
                 "organization",
                 "--text",

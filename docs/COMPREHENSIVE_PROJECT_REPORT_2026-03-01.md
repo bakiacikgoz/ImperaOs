@@ -1,11 +1,11 @@
-# BinLiquid AI - Kapsamlı Durum ve Yetenek Raporu
+# ImperaOS AI - Kapsamlı Durum ve Yetenek Raporu
 
 Tarih: 1 Mart 2026  
 Rapor sürümü: v1.0 (post-implementation audit)
 
 ## 1. Yönetici Özeti
 
-BinLiquid AI proje çekirdeği şu anda çalışır, testli ve operasyonel durumdadır.
+ImperaOS AI proje çekirdeği şu anda çalışır, testli ve operasyonel durumdadır.
 
 Sistem şu anda şunları yapabiliyor:
 
@@ -40,14 +40,14 @@ Doğrulama özeti:
 
 CLI komutları:
 
-- `binliquid doctor`
-- `binliquid chat`
-- `binliquid benchmark smoke`
-- `binliquid benchmark ablation`
-- `binliquid benchmark energy`
-- `binliquid memory stats`
-- `binliquid research train-router`
-- `binliquid research eval-router`
+- `imperaos doctor`
+- `imperaos chat`
+- `imperaos benchmark smoke`
+- `imperaos benchmark ablation`
+- `imperaos benchmark energy`
+- `imperaos memory stats`
+- `imperaos research train-router`
+- `imperaos research eval-router`
 
 ## 3. Türkçe Yeteneği ve Model Davranışı
 
@@ -60,7 +60,7 @@ Sistem Türkçe konuşabilir.
 Önerilen kullanım:
 
 ```bash
-uv run binliquid chat --profile balanced --provider ollama --stream --fast-path
+uv run imperaos chat --profile balanced --provider ollama --stream --fast-path
 ```
 
 ## 4. Uçtan Uca Akış (Algoritmik)
@@ -298,7 +298,7 @@ Toplam en az 2 LLM roundtrip oluşuyordu.
 Örnek komut:
 
 ```bash
-uv run binliquid chat --profile balanced --provider ollama --stream --fast-path --once "selam"
+uv run imperaos chat --profile balanced --provider ollama --stream --fast-path --once "selam"
 ```
 
 ## 13. Çalışma Profilleri
@@ -332,19 +332,19 @@ uv run ruff check .
 uv run pytest -q
 
 # sağlık
-uv run binliquid doctor --profile balanced
+uv run imperaos doctor --profile balanced
 
 # hızlı sohbet
-uv run binliquid chat --profile balanced --provider ollama --stream --fast-path
+uv run imperaos chat --profile balanced --provider ollama --stream --fast-path
 
 # benchmark
-uv run binliquid benchmark smoke --mode all --profile balanced
-uv run binliquid benchmark ablation --mode all --profile balanced
-uv run binliquid benchmark energy --profile balanced --energy-mode measured
+uv run imperaos benchmark smoke --mode all --profile balanced
+uv run imperaos benchmark ablation --mode all --profile balanced
+uv run imperaos benchmark energy --profile balanced --energy-mode measured
 
 # research
-uv run binliquid research train-router --dataset .binliquid/research/router_dataset.jsonl
-uv run binliquid research eval-router --dataset .binliquid/research/router_dataset.jsonl --model research/sltc_experiments/artifacts/router_model.json
+uv run imperaos research train-router --dataset .imperaos/research/router_dataset.jsonl
+uv run imperaos research eval-router --dataset .imperaos/research/router_dataset.jsonl --model research/sltc_experiments/artifacts/router_model.json
 ```
 
 ## 16. Sonuç

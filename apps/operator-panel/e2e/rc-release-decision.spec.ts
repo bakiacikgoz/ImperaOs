@@ -1,7 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+import { gotoOperatorPanel } from './helpers';
+
 test('rc release decision page renders conditional dossier without raw payloads', async ({ page }) => {
-  await page.goto('/');
+  await gotoOperatorPanel(page);
   await page.getByRole('button', { name: /RC Release Decision/i }).click();
 
   await expect(page.getByTestId('rc-release-decision')).toBeVisible();

@@ -8,14 +8,14 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.agent_enrollment import (  # noqa: E402
+from imperaos.control_plane.agent_enrollment import (  # noqa: E402
     AgentEnrollmentDecision,
     AgentEnrollmentRequest,
     AgentEnrollmentToken,
     EnrolledAgent,
 )
-from binliquid.control_plane.enterprise_rbac import WorkspacePermissionDecision  # noqa: E402
-from binliquid.control_plane.enterprise_workspace import (  # noqa: E402
+from imperaos.control_plane.enterprise_rbac import WorkspacePermissionDecision  # noqa: E402
+from imperaos.control_plane.enterprise_workspace import (  # noqa: E402
     EnterpriseDevice,
     EnterpriseOrganization,
     EnterprisePrincipal,

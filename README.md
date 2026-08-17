@@ -1,5 +1,26 @@
 # ImperaOS
 
+## Core integrity invariants
+
+- Product readiness starts at `not_run`; only an executed check with evidence may become `pass`.
+- Provider credentials are configured in the trusted host environment. The Operator Panel never accepts or persists raw API keys.
+- Governed execution follows `pending -> approved -> executing -> executed -> consumed`. A process interruption after the atomic `executing` claim is reconciliation-required and is never retried automatically.
+- `imperaos` is the canonical CLI and Python package. `binliquid` and `aegis` are temporary compatibility aliases and emit a deprecation warning.
+- The default state root is `.imperaos`. Legacy `.binliquid` state is copied only by the explicit `imperaos migrate legacy-state` dry-run/copy/verify workflow; the source is never deleted.
+- Computer-use remains blocked when platform qualification, observation freshness, or policy proof is missing.
+
+Legacy state migration preview:
+
+```bash
+imperaos migrate legacy-state --source .binliquid --destination .imperaos --dry-run --json
+```
+
+Verified non-destructive copy:
+
+```bash
+imperaos migrate legacy-state --source .binliquid --destination .imperaos --copy --verify --json
+```
+
 **ImperaOS** is a self-hosted Agent Control Plane for governed AI
 agent production readiness. It helps operators register agents, simulate policy
 decisions, enforce approval lifecycle, bind runs to verified identity, preserve

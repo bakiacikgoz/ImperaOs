@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 
-from binliquid.memory.sync_pack import verify_memory_sync_pack
+from imperaos.memory.sync_pack import verify_memory_sync_pack
 
 
 def main() -> None:

@@ -1,0 +1,68 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-export-begin-command.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approvalId": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approvalid"
+    },
+    "artifactId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "format": {
+      "enum": [
+        "source",
+        "txt",
+        "json",
+        "submission-json",
+        "markdown",
+        "html",
+        "svg",
+        "png",
+        "csv",
+        "xlsx",
+        "pptx"
+      ],
+      "title": "Format",
+      "type": "string"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Idempotencykey",
+      "type": "string"
+    },
+    "revisionId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Revisionid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifactId",
+    "revisionId",
+    "format",
+    "idempotencyKey"
+  ],
+  "title": "BeginArtifactExportCommand",
+  "type": "object",
+  "x-imperaos-contract": "artifact-export-begin-command.v1"
+}

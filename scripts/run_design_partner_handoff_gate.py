@@ -9,12 +9,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.design_partner_handoff import (  # noqa: E402
+from imperaos.control_plane.design_partner_handoff import (  # noqa: E402
     build_design_partner_handoff_pack,
     verify_design_partner_handoff_pack,
 )
-from binliquid.control_plane.pilot_ops_drill import run_pilot_ops_drill  # noqa: E402
-from binliquid.control_plane.release_train import (  # noqa: E402
+from imperaos.control_plane.pilot_ops_drill import run_pilot_ops_drill  # noqa: E402
+from imperaos.control_plane.release_train import (  # noqa: E402
     build_release_train_manifest,
     verify_release_train,
     write_release_train_manifest,

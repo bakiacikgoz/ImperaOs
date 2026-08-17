@@ -22,7 +22,7 @@ Evidence:
 ## Closed frontend blockers
 
 - AI Assistant provider/model/fallback/HF model selection is wired.
-- Assistant composer no longer exposes the hard-coded disabled `AegisOS-Pro`
+- Assistant composer no longer exposes the hard-coded disabled `ImperaOS-Pro`
   model control.
 - `useAssistantSession` passes provider, fallback provider, model, and HF model
   ID into `startAssistantTurn` options.
@@ -61,8 +61,8 @@ CLI smoke, and the macOS local trial launched smoke report when run manually.
 - `corepack pnpm --dir apps/operator-panel qa:frontend`: PASS.
 - `cargo test -q --manifest-path apps/operator-panel/src-tauri/Cargo.toml`:
   PASS, 23 tests.
-- `uv run python -m binliquid operator capabilities --json`: PASS.
-- `uv run python -m binliquid config resolve --profile balanced --json`: PASS.
+- `uv run python -m imperaos operator capabilities --json`: PASS.
+- `uv run python -m imperaos config resolve --profile balanced --json`: PASS.
 
 ## Remaining no-ship boundaries
 

@@ -1,8 +1,9 @@
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import { boundaryBucket, findRepoRoot, readJson } from './fallow-policy.ts';
 
-const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const REPO_ROOT = findRepoRoot(APP_ROOT);
 const BOUNDARY_PATH = path.join(

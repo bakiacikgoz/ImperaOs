@@ -2,23 +2,23 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from binliquid.computer_use.models import RiskClass
-from binliquid.computer_use.vision_runtime.approval import (
+from imperaos.computer_use.models import RiskClass
+from imperaos.computer_use.vision_runtime.approval import (
     hash_json,
     validate_approval_snapshot,
     validate_vision_approval_resume,
 )
-from binliquid.computer_use.vision_runtime.models import (
+from imperaos.computer_use.vision_runtime.models import (
     InputActionType,
     NormalizedBBox,
     SurfaceKind,
     VisionAction,
     VisionObservation,
 )
-from binliquid.computer_use.vision_runtime.runtime import build_approval_snapshot
-from binliquid.governance.approval_store import ApprovalStore
-from binliquid.governance.models import ApprovalStatus
-from binliquid.runtime.config import ComputerUseRuntimeConfig
+from imperaos.computer_use.vision_runtime.runtime import build_approval_snapshot
+from imperaos.governance.approval_store import ApprovalStore
+from imperaos.governance.models import ApprovalStatus
+from imperaos.runtime.config import ComputerUseRuntimeConfig
 
 
 def _observation() -> VisionObservation:
@@ -113,6 +113,7 @@ def test_vision_approval_resume_requires_executed_unconsumed_ticket(tmp_path) ->
     )
     store = ApprovalStore(tmp_path / "approvals.sqlite3")
     ticket = store.create_ticket(
+        workspace_id="default",
         run_id="job-1",
         target_kind="device_action",
         target_ref="act-approval",
@@ -127,6 +128,7 @@ def test_vision_approval_resume_requires_executed_unconsumed_ticket(tmp_path) ->
 
     approved = store.decide(
         approval_id=ticket.approval_id,
+        workspace_id="default",
         approve=True,
         actor="operator",
         reason="approved",
@@ -144,7 +146,11 @@ def test_vision_approval_resume_requires_executed_unconsumed_ticket(tmp_path) ->
     assert approved_only.allowed is False
     assert approved_only.reason_code == "APPROVAL_NOT_EXECUTED"
 
-    executed = store.mark_executed(approval_id=ticket.approval_id)
+    executed = store.mark_executed(
+        approval_id=ticket.approval_id,
+        workspace_id=ticket.workspace_id,
+        executed_by="operator",
+    )
     assert executed.ticket is not None
     ready = validate_vision_approval_resume(
         ticket=executed.ticket,
@@ -157,6 +163,7 @@ def test_vision_approval_resume_requires_executed_unconsumed_ticket(tmp_path) ->
 
     consumed = store.mark_consumed(
         approval_id=ticket.approval_id,
+        workspace_id=ticket.workspace_id,
         consumed_by_job_id="job-resume",
     )
     assert consumed.ticket is not None

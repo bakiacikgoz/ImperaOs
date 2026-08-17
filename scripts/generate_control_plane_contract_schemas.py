@@ -8,20 +8,20 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.admin_store import AdminChangeProposal  # noqa: E402
-from binliquid.control_plane.agent_enrollment import (  # noqa: E402
+from imperaos.control_plane.admin_store import AdminChangeProposal  # noqa: E402
+from imperaos.control_plane.agent_enrollment import (  # noqa: E402
     AgentEnrollmentDecision,
     AgentEnrollmentRequest,
     AgentEnrollmentToken,
     EnrolledAgent,
 )
-from binliquid.control_plane.design_partner_handoff import (  # noqa: E402
+from imperaos.control_plane.design_partner_handoff import (  # noqa: E402
     DesignPartnerHandoffManifest,
     DesignPartnerHandoffSnapshot,
     DesignPartnerHandoffVerificationReport,
 )
-from binliquid.control_plane.enterprise_rbac import WorkspacePermissionDecision  # noqa: E402
-from binliquid.control_plane.enterprise_workspace import (  # noqa: E402
+from imperaos.control_plane.enterprise_rbac import WorkspacePermissionDecision  # noqa: E402
+from imperaos.control_plane.enterprise_workspace import (  # noqa: E402
     EnterpriseDevice,
     EnterpriseOrganization,
     EnterprisePrincipal,
@@ -29,14 +29,14 @@ from binliquid.control_plane.enterprise_workspace import (  # noqa: E402
     EnterpriseWorkspaceMembership,
     EnterpriseWorkspaceSnapshot,
 )
-from binliquid.control_plane.external_agent_client import ExternalAgentPilotManifest  # noqa: E402
-from binliquid.control_plane.external_contracts import (  # noqa: E402
+from imperaos.control_plane.external_agent_client import ExternalAgentPilotManifest  # noqa: E402
+from imperaos.control_plane.external_contracts import (  # noqa: E402
     ExternalActionRequest,
     ExternalActionResponse,
     ExternalAgentRequestV11,
     ExternalAgentV11Result,
 )
-from binliquid.control_plane.field_evidence import (  # noqa: E402
+from imperaos.control_plane.field_evidence import (  # noqa: E402
     DesignPartnerFieldEvidenceSnapshot,
     DesignPartnerFieldPackManifest,
     FieldEvidenceBundle,
@@ -45,19 +45,19 @@ from binliquid.control_plane.field_evidence import (  # noqa: E402
     OperatorAttestationBinding,
     OperatorAttestationValidationResult,
 )
-from binliquid.control_plane.install_rehearsal import InstallRehearsalReport  # noqa: E402
-from binliquid.control_plane.mainline_rc_freeze import (  # noqa: E402
+from imperaos.control_plane.install_rehearsal import InstallRehearsalReport  # noqa: E402
+from imperaos.control_plane.mainline_rc_freeze import (  # noqa: E402
     GateEvidenceSummary,
     MainlineRcFreezeSnapshot,
     RcFreezeManifest,
     RcFreezeVerificationReport,
 )
-from binliquid.control_plane.mainline_stack import (  # noqa: E402
+from imperaos.control_plane.mainline_stack import (  # noqa: E402
     MergeRehearsalReport,
     StackGraphSpec,
     StackGraphVerificationReport,
 )
-from binliquid.control_plane.models import (  # noqa: E402
+from imperaos.control_plane.models import (  # noqa: E402
     ActionProposal,
     AgentRecord,
     AgentRegistryV2Snapshot,
@@ -90,21 +90,21 @@ from binliquid.control_plane.models import (  # noqa: E402
     TargetEvidenceClosureSummary,
     TargetEvidenceSession,
 )
-from binliquid.control_plane.pilot_ops_drill import PilotOpsDrillReport  # noqa: E402
-from binliquid.control_plane.pilot_workflow_models import (  # noqa: E402
+from imperaos.control_plane.pilot_ops_drill import PilotOpsDrillReport  # noqa: E402
+from imperaos.control_plane.pilot_workflow_models import (  # noqa: E402
     GovernedPilotWorkflowReport,
     GovernedPilotWorkflowSnapshot,
     GovernedPilotWorkflowSpec,
     GovernedPilotWorkflowVerification,
 )
-from binliquid.control_plane.policy_pack_store import PolicyPackLifecycleRecord  # noqa: E402
-from binliquid.control_plane.release_train import (  # noqa: E402
+from imperaos.control_plane.policy_pack_store import PolicyPackLifecycleRecord  # noqa: E402
+from imperaos.control_plane.release_train import (  # noqa: E402
     ReleaseTrainManifest,
     ReleaseTrainVerificationReport,
 )
-from binliquid.control_plane.strict_rc_promotion import StrictRCPromotionReport  # noqa: E402
-from binliquid.release.gate_models import RcGateEvidenceSnapshot  # noqa: E402
-from binliquid.release_decision.models import RcReleaseDecisionSnapshot  # noqa: E402
+from imperaos.control_plane.strict_rc_promotion import StrictRCPromotionReport  # noqa: E402
+from imperaos.release.gate_models import RcGateEvidenceSnapshot  # noqa: E402
+from imperaos.release_decision.models import RcReleaseDecisionSnapshot  # noqa: E402
 
 SCHEMAS = {
     "agent_spec": AgentSpec,

@@ -1,5 +1,5 @@
-from binliquid.router.sltc_router import SLTCRouter
-from binliquid.schemas.models import ExpertName, PlannerOutput, ResponseMode, TaskType
+from imperaos.router.sltc_router import SLTCRouter
+from imperaos.schemas.models import ExpertName, PlannerOutput, ResponseMode, TaskType
 
 
 def test_sltc_router_prefers_code_expert_for_code_task() -> None:

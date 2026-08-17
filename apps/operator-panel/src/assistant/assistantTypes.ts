@@ -10,11 +10,20 @@ export type AssistantTurnStatus =
 export type AssistantStreamEventType =
   | 'status'
   | 'token'
+  | 'delta'
+  | 'text_delta'
   | 'router_decision'
   | 'policy_decision'
   | 'approval_pending'
   | 'expert_start'
   | 'expert_end'
+  | 'artifact_proposed'
+  | 'artifact_committed'
+  | 'artifact_patch_proposed'
+  | 'artifact_patch_applied'
+  | 'form_requested'
+  | 'form_submitted'
+  | 'tool_result'
   | 'audit_artifact'
   | 'final'
   | 'warning'
@@ -33,6 +42,9 @@ export interface AssistantStartTurnOptions {
   fallbackProviderId?: string;
   model?: string;
   hfModelId?: string;
+  reasoningEffort?: 'low' | 'medium' | 'high' | 'very_high';
+  speedProfile?: 'standard' | 'fast';
+  approvalProfile?: 'always_ask' | 'risk_based' | 'policy_automatic';
   dataClassHint?: 'public' | 'internal' | 'confidential' | 'regulated';
 }
 
@@ -73,11 +85,14 @@ export interface AssistantCancelTurnResponse {
 
 export interface AssistantStreamEvent {
   contractVersion: string;
+  eventId?: string;
   assistantTurnId: string;
   sessionId: string;
   event: AssistantStreamEventType;
   sequence: number;
   timestampUtc: string;
+  traceId?: string;
+  dataClass?: 'public' | 'internal' | 'confidential' | 'regulated';
   data: unknown;
 }
 
@@ -117,9 +132,47 @@ export interface AssistantRunRef {
 
 export interface AssistantArtifactRef {
   name: string;
+  artifactId?: string;
+  revisionId?: string;
+  kind?: string;
+  openable?: boolean;
   path?: string;
   summary?: string;
 }
+
+export interface AssistantArtifactPart {
+  type: 'artifact';
+  artifactId: string;
+  revisionId: string | null;
+  kind: string;
+  title: string;
+  summary: string;
+  openable: boolean;
+}
+
+export interface AssistantArtifactProposalPart {
+  type: 'artifact-proposal';
+  proposalId: string;
+  artifactId: string;
+  approvalId: string;
+  actionHash: string;
+  baseRevisionNumber: number;
+  title: string;
+  kind: string;
+  summary: string;
+  status: 'pending' | 'approved' | 'rejected' | 'applied' | 'failed';
+  error: string | null;
+}
+
+export interface AssistantFormPart {
+  type: 'form';
+  artifactId: string;
+  revisionId: string;
+  title: string;
+  status: 'requested' | 'accepted' | 'rejected' | 'pending_continuation';
+}
+
+export type AssistantInlinePart = AssistantArtifactPart | AssistantArtifactProposalPart | AssistantFormPart;
 
 export interface AssistantProposedAction {
   id: string;
@@ -154,6 +207,7 @@ export interface AssistantAssistantMessage {
   approval: AssistantApprovalSummary | null;
   referencedRuns: AssistantRunRef[];
   referencedArtifacts: AssistantArtifactRef[];
+  parts: AssistantInlinePart[];
   metrics: AssistantMetrics | null;
   warning: string | null;
   error: AssistantUiError | null;

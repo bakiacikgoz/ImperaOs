@@ -5,12 +5,12 @@ import json
 import sys
 from pathlib import Path
 
-from binliquid.model_providers.conformance import (
+from imperaos.model_providers.conformance import (
     build_provider_conformance_matrix,
     write_provider_conformance_matrix,
 )
-from binliquid.model_providers.registry import resolve_model_provider_registry
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.model_providers.registry import resolve_model_provider_registry
+from imperaos.runtime.config import RuntimeConfig
 
 
 def generate_provider_conformance_matrix(

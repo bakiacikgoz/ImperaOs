@@ -10,8 +10,8 @@ Run these from the repository root:
 ```bash
 make enterprise-hat-a-evidence-gate
 uv run python scripts/evaluate_evidence_index.py --profile enterprise --evidence-root artifacts/control-plane/evidence --select-latest-valid --staged-evidence-root artifacts/design-partner-rc/evidence-sample --root-dir artifacts/design-partner-rc/evidence-index/state --output artifacts/design-partner-rc/evidence_index.json
-uv run python scripts/evaluate_reports_alerts.py --profile enterprise --root-dir .binliquid/control-plane --evidence-root artifacts --output-dir artifacts/design-partner-rc/reports-alerts-logs
-uv run python scripts/generate_design_partner_rc_pack.py --profile enterprise --state-root .binliquid/control-plane --evidence-root artifacts --output artifacts/design-partner-rc --fail-on-conditional --json
+uv run python scripts/evaluate_reports_alerts.py --profile enterprise --root-dir .imperaos/control-plane --evidence-root artifacts --output-dir artifacts/design-partner-rc/reports-alerts-logs
+uv run python scripts/generate_design_partner_rc_pack.py --profile enterprise --state-root .imperaos/control-plane --evidence-root artifacts --output artifacts/design-partner-rc --fail-on-conditional --json
 ```
 
 `make design-partner-rc-gate` runs this sequence as part of the normal RC gate.

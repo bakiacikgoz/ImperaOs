@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imperaos.com/contracts/rebrand/brand_audit_report.schema.json",
+  "title": "ImperaOS Brand Audit Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "canonicalBrand",
+    "legacyContentMatchCount",
+    "legacyPathMatchCount",
+    "binaryMetadataMatchCount",
+    "builtArtifactMatchCount",
+    "findings",
+    "scannedFileCount",
+    "gitCommit",
+    "generatedAt"
+  ],
+  "properties": {
+    "status": {
+      "enum": ["pass", "fail"]
+    },
+    "canonicalBrand": {
+      "const": "ImperaOS"
+    },
+    "legacyContentMatchCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "legacyPathMatchCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "binaryMetadataMatchCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "builtArtifactMatchCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "scannedFileCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "gitCommit": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "kind",
+        "token",
+        "line",
+        "classification",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": ["content", "path", "binary_metadata", "built_artifact"]
+        },
+        "token": {
+          "type": "string",
+          "minLength": 1
+        },
+        "line": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "classification": {
+          "enum": ["blocking", "manual_review"]
+        },
+        "sha256": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

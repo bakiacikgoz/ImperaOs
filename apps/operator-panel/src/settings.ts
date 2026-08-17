@@ -1,3 +1,6 @@
+import { PRODUCT_IDENTITY } from './productIdentity';
+import { readSettingsForMigration, sanitizePersistedSettings } from './settings/migrateSettings';
+
 export type CoreMode = 'auto' | 'external' | 'bundled';
 export type LocaleMode = 'auto' | 'en' | 'tr';
 export type UpdaterMode = 'off' | 'manual' | 'auto';
@@ -8,6 +11,9 @@ export interface AssistantRuntimeSettings {
   assistantFallbackProvider: string;
   assistantModel: string;
   assistantHfModelId: string;
+  reasoningEffort?: 'low' | 'medium' | 'high' | 'very_high';
+  speedProfile?: 'standard' | 'fast';
+  approvalProfile?: 'always_ask' | 'risk_based' | 'policy_automatic';
 }
 
 export interface PanelSettings {
@@ -26,17 +32,21 @@ export interface PanelSettings {
   assistantFallbackProvider: string;
   assistantModel: string;
   assistantHfModelId: string;
-  assistantOpenAiApiKey: string;
-  assistantDeepSeekApiKey: string;
+  reasoningEffort: 'low' | 'medium' | 'high' | 'very_high';
+  speedProfile: 'standard' | 'fast';
+  approvalProfile: 'always_ask' | 'risk_based' | 'policy_automatic';
 }
 
-export const SETTINGS_KEY = 'aegisos.operator.settings.v1';
+export const SETTINGS_KEY = `${PRODUCT_IDENTITY.slug}.operator.settings.v2`;
 
 export const DEFAULT_ASSISTANT_RUNTIME_SETTINGS: AssistantRuntimeSettings = {
   assistantProvider: '',
   assistantFallbackProvider: '',
   assistantModel: '',
   assistantHfModelId: '',
+  reasoningEffort: 'medium',
+  speedProfile: 'standard',
+  approvalProfile: 'risk_based',
 };
 
 export const DEFAULT_OPERATOR_ID = 'local-operator';
@@ -46,7 +56,7 @@ export const DEFAULT_SETTINGS: PanelSettings = {
   cliPath: '',
   bundledPythonPath: '',
   profile: 'balanced',
-  rootDir: '.binliquid/team/jobs',
+  rootDir: '.imperaos/team/jobs',
   operatorId: DEFAULT_OPERATOR_ID,
   locale: 'auto',
   remoteTelemetry: false,
@@ -54,8 +64,9 @@ export const DEFAULT_SETTINGS: PanelSettings = {
   debugRaw: false,
   theme: 'system',
   ...DEFAULT_ASSISTANT_RUNTIME_SETTINGS,
-  assistantOpenAiApiKey: '',
-  assistantDeepSeekApiKey: '',
+  reasoningEffort: 'medium',
+  speedProfile: 'standard',
+  approvalProfile: 'risk_based',
 };
 
 const MODEL_TOKEN_PATTERN = /^[A-Za-z0-9._:/@+-]+$/;
@@ -68,7 +79,9 @@ function normalizeStoredOperatorId(value: unknown): string {
   if (typeof value !== 'string') {
     return DEFAULT_OPERATOR_ID;
   }
-  return value.trim() ? value : DEFAULT_OPERATOR_ID;
+  // An explicitly cleared identity must remain cleared so mutation controls
+  // fail closed. Only a missing/invalid stored field receives the local default.
+  return value.trim();
 }
 
 export function getAssistantRuntimeSettings(settings: PanelSettings): AssistantRuntimeSettings {
@@ -77,6 +90,9 @@ export function getAssistantRuntimeSettings(settings: PanelSettings): AssistantR
     assistantFallbackProvider: settings.assistantFallbackProvider,
     assistantModel: settings.assistantModel,
     assistantHfModelId: settings.assistantHfModelId,
+    reasoningEffort: settings.reasoningEffort,
+    speedProfile: settings.speedProfile,
+    approvalProfile: settings.approvalProfile,
   };
 }
 
@@ -87,6 +103,9 @@ export function assistantRuntimeOptionsFromSettings(settings: PanelSettings): {
   fallbackProviderId?: string;
   model?: string;
   hfModelId?: string;
+  reasoningEffort: 'low' | 'medium' | 'high' | 'very_high';
+  speedProfile: 'standard' | 'fast';
+  approvalProfile: 'always_ask' | 'risk_based' | 'policy_automatic';
 } {
   const provider = cleanRuntimeValue(settings.assistantProvider);
   const legacyProviders = new Set(['auto', 'ollama', 'transformers']);
@@ -98,6 +117,9 @@ export function assistantRuntimeOptionsFromSettings(settings: PanelSettings): {
     fallbackProviderId: fallbackProvider && !legacyProviders.has(fallbackProvider) ? fallbackProvider : undefined,
     model: cleanRuntimeValue(settings.assistantModel) || undefined,
     hfModelId: cleanRuntimeValue(settings.assistantHfModelId) || undefined,
+    reasoningEffort: settings.reasoningEffort ?? 'medium',
+    speedProfile: settings.speedProfile ?? 'standard',
+    approvalProfile: settings.approvalProfile ?? 'risk_based',
   };
 }
 
@@ -122,14 +144,17 @@ export function validateAssistantRuntimeSettings(settings: AssistantRuntimeSetti
 }
 
 export function loadSettings(): PanelSettings {
-  const raw = globalThis.localStorage?.getItem(SETTINGS_KEY);
-  if (!raw) {
+  const storage = globalThis.localStorage;
+  if (!storage) {
     return { ...DEFAULT_SETTINGS };
   }
-
+  const migration = readSettingsForMigration(storage, SETTINGS_KEY);
+  if (!migration.value || migration.corrupt) {
+    return { ...DEFAULT_SETTINGS };
+  }
   try {
-    const parsed = JSON.parse(raw) as Partial<PanelSettings>;
-    return {
+    const parsed = migration.value as Partial<PanelSettings>;
+    const loaded: PanelSettings = {
       ...DEFAULT_SETTINGS,
       ...parsed,
       operatorId: normalizeStoredOperatorId(parsed.operatorId),
@@ -138,17 +163,28 @@ export function loadSettings(): PanelSettings {
         typeof parsed.assistantFallbackProvider === 'string' ? parsed.assistantFallbackProvider : '',
       assistantModel: typeof parsed.assistantModel === 'string' ? parsed.assistantModel : '',
       assistantHfModelId: typeof parsed.assistantHfModelId === 'string' ? parsed.assistantHfModelId : '',
-      assistantOpenAiApiKey: typeof parsed.assistantOpenAiApiKey === 'string' ? parsed.assistantOpenAiApiKey : '',
-      assistantDeepSeekApiKey:
-        typeof parsed.assistantDeepSeekApiKey === 'string' ? parsed.assistantDeepSeekApiKey : '',
+      reasoningEffort: ['low', 'medium', 'high', 'very_high'].includes(String(parsed.reasoningEffort))
+        ? parsed.reasoningEffort as PanelSettings['reasoningEffort'] : 'medium',
+      speedProfile: ['standard', 'fast'].includes(String(parsed.speedProfile))
+        ? parsed.speedProfile as PanelSettings['speedProfile'] : 'standard',
+      approvalProfile: ['always_ask', 'risk_based', 'policy_automatic'].includes(String(parsed.approvalProfile))
+        ? parsed.approvalProfile as PanelSettings['approvalProfile'] : 'risk_based',
     };
+    storage.setItem(SETTINGS_KEY, JSON.stringify(loaded));
+    if (migration.migratedFrom) {
+      storage.removeItem(migration.migratedFrom);
+    }
+    return loaded;
   } catch {
     return { ...DEFAULT_SETTINGS };
   }
 }
 
 export function saveSettings(settings: PanelSettings): void {
-  globalThis.localStorage?.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  globalThis.localStorage?.setItem(
+    SETTINGS_KEY,
+    JSON.stringify(sanitizePersistedSettings(settings as unknown as Record<string, unknown>)),
+  );
 }
 
 export function resolveLocale(locale: LocaleMode): 'en' | 'tr' {

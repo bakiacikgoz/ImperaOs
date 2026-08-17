@@ -1,4 +1,4 @@
-# BinLiquid AI v0.2 — Kapsamlı Güncel Durum Raporu
+# ImperaOS AI v0.2 — Kapsamlı Güncel Durum Raporu
 
 **Tarih:** 1 Mart 2026  
 **Rapor türü:** Uygulama sonrası teknik durum raporu (CLI-first reliability beta)  
@@ -8,7 +8,7 @@
 
 ## 1. Yönetici Özeti
 
-Bu güncelleme ile BinLiquid AI, v0.1 çalışan çekirdekten v0.2 güvenilir beta seviyesine yükseltildi.
+Bu güncelleme ile ImperaOS AI, v0.1 çalışan çekirdekten v0.2 güvenilir beta seviyesine yükseltildi.
 
 Bu rapor döneminde tamamlanan ana hedefler:
 
@@ -78,15 +78,15 @@ Bu sürümde kilitlenen kararların uygulama karşılığı:
   - `fast_path_regret_threshold`
   - `env_prefix`
 - `resolve_runtime_config(...)` eklendi.
-- `BINLIQUID_*` env mapping eklendi.
+- `IMPERAOS_*` env mapping eklendi.
 - Kaynak izleme (`source_map`) eklendi.
 - Config redaksiyon yardımcıları eklendi (`redact_config_payload`).
-- CLI’ye `binliquid config resolve` komutu eklendi.
+- CLI’ye `imperaos config resolve` komutu eklendi.
 
 ### Etkilenen dosyalar
 
-- `binliquid/runtime/config.py`
-- `binliquid/cli.py`
+- `imperaos/runtime/config.py`
+- `imperaos/cli.py`
 - `config/default.toml`
 - `config/lite.toml`
 - `config/balanced.toml`
@@ -113,8 +113,8 @@ Aynı input ile aynı resolved config üretilir. Config davranışı gözlemlene
 
 ### Etkilenen dosyalar
 
-- `binliquid/core/planner.py`
-- `binliquid/schemas/reason_codes.py`
+- `imperaos/core/planner.py`
+- `imperaos/schemas/reason_codes.py`
 
 ### Sonuç
 
@@ -136,9 +136,9 @@ Malformed/markdown/trailing/extra-key/invalid enum vakalarında planner determin
 
 ### Etkilenen dosyalar
 
-- `binliquid/schemas/models.py`
-- `binliquid/core/orchestrator.py`
-- `binliquid/schemas/reason_codes.py`
+- `imperaos/schemas/models.py`
+- `imperaos/core/orchestrator.py`
+- `imperaos/schemas/reason_codes.py`
 
 ### Sonuç
 
@@ -165,8 +165,8 @@ Expert output bozuk olduğunda crash yerine degrade/fallback davranışı sağla
 
 ### Etkilenen dosyalar
 
-- `binliquid/core/orchestrator.py`
-- `binliquid/cli.py`
+- `imperaos/core/orchestrator.py`
+- `imperaos/cli.py`
 - `benchmarks/run_smoke.py`
 
 ### Sonuç
@@ -198,7 +198,7 @@ Canlı akışı bozmadan shadow karşılaştırma yapılabiliyor; fast-path kali
 - `benchmarks/run_ablation.py`
 - `benchmarks/eval/report.py`
 - `benchmarks/tasks/quality/quality_tasks.jsonl`
-- `binliquid/cli.py`
+- `imperaos/cli.py`
 
 ### Sonuç
 
@@ -252,8 +252,8 @@ Measured/estimated ayrımı açık, deterministic fail reason üretimi mevcut.
 
 ### Etkilenen dosyalar
 
-- `binliquid/telemetry/artifacts_writer.py`
-- `binliquid/cli.py`
+- `imperaos/telemetry/artifacts_writer.py`
+- `imperaos/cli.py`
 - `.gitignore`
 
 ### Sonuç
@@ -273,7 +273,7 @@ CI/otomasyon/dashboards için makine-okunur sabit çıktı yüzeyi oluşturuldu.
 
 ### Etkilenen dosyalar
 
-- `binliquid/memory/manager.py`
+- `imperaos/memory/manager.py`
 - test paketleri (privacy/fault/security kapsamı)
 
 ### Sonuç
@@ -295,8 +295,8 @@ Varsayılan güvenlik ve gizlilik davranışı regresyona karşı test koruması
 
 ### Etkilenen dosyalar
 
-- `binliquid/cli.py`
-- `binliquid/core/orchestrator.py`
+- `imperaos/cli.py`
+- `imperaos/core/orchestrator.py`
 
 ### Sonuç
 
@@ -355,12 +355,12 @@ Bu rapor sürecinde çalıştırılan ana doğrulamalar:
 
 1. `uv run ruff check .` -> geçti.
 2. `uv run pytest -q` -> geçti (59 test).
-3. `uv run binliquid doctor --profile balanced` -> geçti.
-4. `uv run binliquid config resolve --profile balanced --json` -> geçti.
-5. `uv run binliquid chat --profile lite --once "selam" --json-stream --stream` -> geçti.
-6. `uv run binliquid benchmark ablation --mode all --profile balanced --suite quality --provider transformers` -> geçti (120 görev).
-7. `uv run binliquid benchmark energy --profile balanced --energy-mode measured` -> deterministic permission-fail payload üretti (beklenen).
-8. `uv run binliquid research train-router ...` + `eval-router ...` -> geçti.
+3. `uv run imperaos doctor --profile balanced` -> geçti.
+4. `uv run imperaos config resolve --profile balanced --json` -> geçti.
+5. `uv run imperaos chat --profile lite --once "selam" --json-stream --stream` -> geçti.
+6. `uv run imperaos benchmark ablation --mode all --profile balanced --suite quality --provider transformers` -> geçti (120 görev).
+7. `uv run imperaos benchmark energy --profile balanced --energy-mode measured` -> deterministic permission-fail payload üretti (beklenen).
+8. `uv run imperaos research train-router ...` + `eval-router ...` -> geçti.
 
 ---
 
@@ -368,12 +368,12 @@ Bu rapor sürecinde çalıştırılan ana doğrulamalar:
 
 CLI’de aktif yeni/ek davranışlar:
 
-- `binliquid config resolve --profile <x> [--provider ...] [--fallback-provider ...] [--json]`
-- `binliquid chat --json`
-- `binliquid chat --json-stream`
-- `binliquid chat --stdio-json`
-- `binliquid benchmark smoke --suite smoke|quality`
-- `binliquid benchmark ablation --suite smoke|quality`
+- `imperaos config resolve --profile <x> [--provider ...] [--fallback-provider ...] [--json]`
+- `imperaos chat --json`
+- `imperaos chat --json-stream`
+- `imperaos chat --stdio-json`
+- `imperaos benchmark smoke --suite smoke|quality`
+- `imperaos benchmark ablation --suite smoke|quality`
 
 Schema/type güncellemeleri:
 

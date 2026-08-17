@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from binliquid.control_plane.provider_invocation import (
+from imperaos.control_plane.provider_invocation import (
     ProviderInvocationCoordinator,
     ProviderInvocationRequest,
 )
@@ -78,7 +78,7 @@ def test_provider_invoke_cli_dry_run_outputs_safe_json(tmp_path: Path) -> None:
         [
             sys.executable,
             "-m",
-            "binliquid",
+            "imperaos",
             "provider",
             "invoke",
             "--provider",

@@ -7,7 +7,7 @@ support a readiness or release claim.
 ## Goal
 
 Enterprise artifacts must be signed with asymmetric keys and verified against a trusted public key set.
-`BINLIQUID_AUDIT_SIGNING_KEY` remains a dev/pilot compatibility path only and is not acceptable for enterprise artifacts.
+`IMPERAOS_AUDIT_SIGNING_KEY` remains a dev/pilot compatibility path only and is not acceptable for enterprise artifacts.
 
 ## Provider Modes
 
@@ -72,9 +72,9 @@ Rules:
 ## Operational Commands
 
 ```bash
-uv run binliquid keys status --profile enterprise --json
-uv run binliquid keys verify --profile enterprise --path artifacts/ga_readiness_report.json --json
-uv run binliquid keys rotate-plan --profile enterprise --next-key-id enterprise-signing-next --json
+uv run imperaos keys status --profile enterprise --json
+uv run imperaos keys verify --profile enterprise --path artifacts/ga_readiness_report.json --json
+uv run imperaos keys rotate-plan --profile enterprise --next-key-id enterprise-signing-next --json
 ```
 
 ## Required Drills

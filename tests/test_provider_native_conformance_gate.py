@@ -4,8 +4,8 @@ import json
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.provider_conformance import run_provider_native_gate
+from imperaos.cli import app
+from imperaos.control_plane.provider_conformance import run_provider_native_gate
 
 runner = CliRunner()
 

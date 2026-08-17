@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from binliquid.memory.workspace_authority import build_workspace_memory_authority
-from binliquid.memory.workspace_models import (
+from imperaos.memory.workspace_authority import build_workspace_memory_authority
+from imperaos.memory.workspace_models import (
     MemoryPrincipal,
     MemoryScopeAclRule,
     MemoryWorkspace,
@@ -9,7 +9,7 @@ from binliquid.memory.workspace_models import (
     WorkspaceMemoryQueryRequest,
     WorkspaceMemoryWriteRequest,
 )
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.runtime.config import RuntimeConfig
 
 
 def _authority(tmp_path: Path):

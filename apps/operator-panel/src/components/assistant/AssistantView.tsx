@@ -1,10 +1,14 @@
 import { useMemo, useState, type ReactNode } from 'react';
+import { AssistantRuntimeProvider } from '@assistant-ui/react';
 
-import type { AssistantSessionState } from '../../assistant/assistantTypes';
+import type { AssistantArtifactProposalPart, AssistantArtifactRef, AssistantSessionState } from '../../assistant/assistantTypes';
 import type { AssistantComposerControls } from '../../assistant/assistantTypes';
+import { useImperaAssistantUiRuntime } from '../../assistant/assistantUiRuntime';
 import type { AssistantModelDiscoveryState } from '../../assistant/useAssistantModels';
 import type { AssistantRuntimeSettings } from '../../settings';
+import type { ArtifactKind } from '../../artifact-workspace/artifactContracts';
 import { assistantUiText, type UiLocale } from '../../i18n';
+import { ArtifactWorkbenchShell } from '../../artifact-workspace/ui/ArtifactWorkbenchShell';
 import { Card } from '../primitives/Card';
 import { Icon } from '../primitives/Icon';
 import { AssistantComposer } from './AssistantComposer';
@@ -57,7 +61,12 @@ export function AssistantView({
   onApprove,
   onReject,
   onExecute,
+  onApplyProposal,
   onRegenerate,
+  onOpenArtifact,
+  renderInlineArtifact,
+  assistantUiRuntimeEnabled = true,
+  activeArtifactKind,
   onCancel,
   onOpenTerminal,
 }: {
@@ -85,7 +94,12 @@ export function AssistantView({
   onApprove: (approvalId: string) => void;
   onReject: (approvalId: string) => void;
   onExecute: (approvalId: string) => void;
+  onApplyProposal?: (proposal: AssistantArtifactProposalPart) => void;
   onRegenerate: (turnId: string) => void;
+  onOpenArtifact?: (artifactId: string) => void;
+  renderInlineArtifact?: (artifact: AssistantArtifactRef) => ReactNode;
+  assistantUiRuntimeEnabled?: boolean;
+  activeArtifactKind?: ArtifactKind;
   onCancel: () => void;
   onOpenTerminal?: () => void;
 }) {
@@ -148,13 +162,20 @@ export function AssistantView({
         : null,
     ].filter((item): item is { id: string; title: string; body: string } => Boolean(item));
   }, [locale, state.pendingApprovalId, state.selectedRunIds, state.status, state.turns]);
+  const assistantRuntime = useImperaAssistantUiRuntime({
+    state,
+    onNew: (message) =>
+      onSend(message, runtimeSettings, { contextAttachmentKinds: [], toolIntents: [] }),
+    onCancel,
+    onRegenerate,
+  });
 
-  return (
+  const surface = (
     <section
-      className={`assistant-surface assistant-surface-${surfaceState}`}
-      aria-labelledby="assistant-title"
-      data-testid="page-primary-region"
-    >
+        className={`assistant-surface assistant-surface-${surfaceState}`}
+        aria-labelledby="assistant-title"
+        data-testid="page-primary-region"
+      >
       <header className="assistant-top-chrome">
         <div className="assistant-context-switcher" aria-label="Assistant workspace context">
           <div className="assistant-top-select assistant-top-select-wide">
@@ -264,7 +285,12 @@ export function AssistantView({
         </div>
       </header>
 
-      <div className={workbench ? 'assistant-surface-grid assistant-surface-grid-workbench' : 'assistant-surface-grid'}>
+      <div className="assistant-surface-grid">
+        <ArtifactWorkbenchShell
+          workbench={workbench}
+          activeArtifactKind={activeArtifactKind}
+          onCloseWorkbench={() => onToggleWorkbench?.()}
+        >
         <div className="assistant-main-stage">
           {state.turns.length > 0 ? (
             <header className="assistant-session-header">
@@ -311,7 +337,11 @@ export function AssistantView({
               onApprove={onApprove}
               onReject={onReject}
               onExecute={onExecute}
+              onApplyProposal={onApplyProposal}
               onRegenerate={onRegenerate}
+              onOpenArtifact={onOpenArtifact}
+              renderInlineArtifact={renderInlineArtifact}
+              assistantUiRuntimeEnabled={assistantUiRuntimeEnabled}
             />
           )}
 
@@ -348,8 +378,7 @@ export function AssistantView({
             onCancel={currentTurnRunning ? onCancel : undefined}
           />
         </div>
-
-        {workbench ? <div className="assistant-workbench-slot">{workbench}</div> : null}
+        </ArtifactWorkbenchShell>
 
         {rightRail ? (
           <>
@@ -379,4 +408,7 @@ export function AssistantView({
       </div>
     </section>
   );
+  return assistantUiRuntimeEnabled ? (
+    <AssistantRuntimeProvider runtime={assistantRuntime}>{surface}</AssistantRuntimeProvider>
+  ) : surface;
 }

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from binliquid.control_plane.provider_governance import evaluate_provider_policy
-from binliquid.control_plane.providers.openai_responses import OpenAIResponsesAdapter
+from imperaos.control_plane.provider_governance import evaluate_provider_policy
+from imperaos.control_plane.providers.openai_responses import OpenAIResponsesAdapter
 
 
 def test_openai_responses_request_builder_enforces_retention_and_tool_invariants() -> None:

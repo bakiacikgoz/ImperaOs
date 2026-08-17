@@ -1,6 +1,6 @@
 # Agent Control Plane Product Boundary
 
-BinLiquid / AegisOS is a constrained, self-hosted Agent Control Plane for
+ImperaOS / ImperaOS is a constrained, self-hosted Agent Control Plane for
 governed AI agent production readiness. Its product promise is policy
 evaluation, approval lifecycle, verified identity, audit/replay, signed
 evidence, qualification gates, and fail-closed execution boundaries before an

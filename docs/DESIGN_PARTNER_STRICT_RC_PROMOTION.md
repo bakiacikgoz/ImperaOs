@@ -18,7 +18,7 @@ is blocked.
 Run the evaluator:
 
 ```bash
-uv run binliquid pilot field promote-rc \
+uv run imperaos pilot field promote-rc \
   --profile enterprise \
   --field-root artifacts/design-partner-field-evidence \
   --rc-root artifacts/design-partner-rc

@@ -1,0 +1,38 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-export-cancel-command.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "exportId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Exportid",
+      "type": "string"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Idempotencykey",
+      "type": "string"
+    },
+    "reason": {
+      "enum": [
+        "user_cancelled",
+        "serialization_failed",
+        "native_write_failed",
+        "ticket_expired"
+      ],
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "exportId",
+    "reason",
+    "idempotencyKey"
+  ],
+  "title": "CancelArtifactExportCommand",
+  "type": "object",
+  "x-imperaos-contract": "artifact-export-cancel-command.v1"
+}

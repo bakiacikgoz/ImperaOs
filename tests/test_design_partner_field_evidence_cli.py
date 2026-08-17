@@ -6,8 +6,8 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.pilot_workflow import (
+from imperaos.cli import app
+from imperaos.control_plane.pilot_workflow import (
     load_governed_pilot_workflow_spec,
     run_governed_pilot_workflow,
 )
@@ -95,7 +95,7 @@ def test_pilot_field_cli_target_ready_path(tmp_path: Path) -> None:
     attestation_path.write_text(
         json.dumps(
             {
-                "schemaVersion": "binliquid-non-developer-operator-attestation/v1",
+                "schemaVersion": "imperaos-non-developer-operator-attestation/v2",
                 "sessionId": session["sessionId"],
                 "releasePackId": "design-partner-rc-v1",
                 "targetEnvironmentLabelHash": session["targetEnvironment"]["environmentLabelHash"],

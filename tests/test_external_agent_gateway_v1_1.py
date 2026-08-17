@@ -6,22 +6,22 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.agent_enrollment import EnrolledAgent
-from binliquid.control_plane.enterprise_workspace import (
+from imperaos.cli import app
+from imperaos.control_plane.agent_enrollment import EnrolledAgent
+from imperaos.control_plane.enterprise_workspace import (
     EnterpriseDevice,
     EnterprisePrincipal,
     hash_identity_ref,
     utc_now,
 )
-from binliquid.control_plane.enterprise_workspace_store import EnterpriseWorkspaceStore
-from binliquid.control_plane.external_contracts import (
+from imperaos.control_plane.enterprise_workspace_store import EnterpriseWorkspaceStore
+from imperaos.control_plane.external_contracts import (
     ExternalAgentActionV11,
     ExternalAgentRequestV11,
 )
-from binliquid.control_plane.external_gateway import ExternalAgentGateway
-from binliquid.control_plane.registry import AgentRegistry, load_agent_spec
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.control_plane.external_gateway import ExternalAgentGateway
+from imperaos.control_plane.registry import AgentRegistry, load_agent_spec
+from imperaos.runtime.config import RuntimeConfig
 
 runner = CliRunner()
 REPO_ROOT = Path(__file__).resolve().parents[1]

@@ -1,0 +1,148 @@
+{
+  "$defs": {
+    "ArtifactAssetDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "assetId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Assetid",
+          "type": "string"
+        },
+        "createdAtUtc": {
+          "format": "date-time",
+          "title": "Createdatutc",
+          "type": "string"
+        },
+        "createdById": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Createdbyid",
+          "type": "string"
+        },
+        "dataClass": {
+          "$ref": "#/$defs/ArtifactDataClass"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "mediaType": {
+          "enum": [
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/webp"
+          ],
+          "title": "Mediatype",
+          "type": "string"
+        },
+        "originalName": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Originalname"
+        },
+        "relativePath": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Relativepath",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "sizeBytes": {
+          "maximum": 20971520,
+          "minimum": 1,
+          "title": "Sizebytes",
+          "type": "integer"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        },
+        "workspaceId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Workspaceid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId",
+        "workspaceId",
+        "sha256",
+        "mediaType",
+        "sizeBytes",
+        "relativePath",
+        "dataClass",
+        "createdById",
+        "createdAtUtc"
+      ],
+      "title": "ArtifactAssetDescriptor",
+      "type": "object"
+    },
+    "ArtifactDataClass": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "regulated"
+      ],
+      "title": "ArtifactDataClass",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-asset-read-result.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "asset": {
+      "$ref": "#/$defs/ArtifactAssetDescriptor"
+    },
+    "contentBase64": {
+      "title": "Contentbase64",
+      "type": "string"
+    }
+  },
+  "required": [
+    "asset",
+    "contentBase64"
+  ],
+  "title": "ArtifactAssetReadResult",
+  "type": "object",
+  "x-imperaos-contract": "artifact-asset-read-result.v1"
+}

@@ -4,11 +4,11 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from binliquid.computer_use.vision_runtime.capability_resolver import (
+from imperaos.computer_use.vision_runtime.capability_resolver import (
     resolve_capability_decision_snapshot,
     resolve_computer_use_capabilities,
 )
-from binliquid.runtime.config import ComputerUseRuntimeConfig
+from imperaos.runtime.config import ComputerUseRuntimeConfig
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_ROOT = REPO_ROOT / "contracts" / "computer_use" / "fixtures"
@@ -283,7 +283,7 @@ def test_capability_decision_snapshot_fails_closed_on_resolver_exception(monkeyp
         raise RuntimeError("resolver unavailable")
 
     monkeypatch.setattr(
-        "binliquid.computer_use.vision_runtime.capability_resolver."
+        "imperaos.computer_use.vision_runtime.capability_resolver."
         "resolve_computer_use_capabilities",
         _raise_resolution_error,
     )

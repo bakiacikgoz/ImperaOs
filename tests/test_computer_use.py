@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.computer_use import (
+from imperaos.computer_use import (
     BrowserAllowlistPolicy,
     BrowserTaskFamily,
     ComputerUseMode,
@@ -12,11 +12,11 @@ from binliquid.computer_use import (
     SessionRequest,
     TargetDescriptor,
 )
-from binliquid.computer_use.models import EvidenceEnvelope, PerceptionSource, SelectorContext
-from binliquid.computer_use.perception import build_perception_fingerprint, select_perception_source
-from binliquid.computer_use.planner import plan_browser_task
-from binliquid.governance.runtime import GovernanceRuntime
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.computer_use.models import EvidenceEnvelope, PerceptionSource, SelectorContext
+from imperaos.computer_use.perception import build_perception_fingerprint, select_perception_source
+from imperaos.computer_use.planner import plan_browser_task
+from imperaos.governance.runtime import GovernanceRuntime
+from imperaos.runtime.config import RuntimeConfig
 
 
 def _target(url: str = "https://ops.example.internal/queue") -> TargetDescriptor:
@@ -128,7 +128,7 @@ def test_step_approval_records_device_action_snapshot(tmp_path: Path) -> None:
 
     assert outcome.status.value == "awaiting_approval"
     assert len(outcome.approval_ids) == 1
-    ticket = runtime.approval_store.get(outcome.approval_ids[0])
+    ticket = runtime.get_approval(outcome.approval_ids[0])
     assert ticket is not None
     assert ticket.target_kind == "device_action"
     assert ticket.snapshot["kind"] == "device_action"

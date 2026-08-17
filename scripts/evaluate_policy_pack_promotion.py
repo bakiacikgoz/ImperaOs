@@ -12,7 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.policy_packs import (
+from imperaos.control_plane.policy_packs import (
     diff_policy_packs,
     load_policy_pack_manifest,
     promote_policy_pack_dry_run,

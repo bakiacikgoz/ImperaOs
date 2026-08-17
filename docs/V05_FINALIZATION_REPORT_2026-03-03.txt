@@ -1,7 +1,7 @@
-AegisOS / BinLiquid v0.5 Finalization Report (Zero-Gap Closure)
+ImperaOS / ImperaOS v0.5 Finalization Report (Zero-Gap Closure)
 Date: 2026-03-03
 Generated At (UTC): 2026-03-03T21:08:00Z
-Repository: https://github.com/bakiacikgoz/BinLiquidAI
+Repository: https://github.com/bakiacikgoz/ImperaOS
 Branch: main
 
 ====================================================================
@@ -38,9 +38,9 @@ This means the code and pipelines are release-ready in behavior and contracts, b
 - Bundled runtime gate hardened with:
   - architecture compatibility checks,
   - executable interpreter check,
-  - binliquid module execution check,
+  - imperaos module execution check,
   - runtime manifest generation.
-- Python module entrypoint added for deterministic `python -m binliquid` behavior.
+- Python module entrypoint added for deterministic `python -m imperaos` behavior.
 
 2.2 Security/contract guard formalization
 - Capability handshake mismatch logic extracted and unit tested.
@@ -80,9 +80,9 @@ All commands executed from repository root unless noted.
 - `uv run pytest -q` -> PASS
 
 3.2 Core contract/API
-- `uv run binliquid --version` -> 0.4.1
-- `uv run python -m binliquid --version` -> 0.4.1
-- `uv run binliquid operator capabilities --json` checks -> PASS:
+- `uv run imperaos --version` -> 0.4.1
+- `uv run python -m imperaos --version` -> 0.4.1
+- `uv run imperaos operator capabilities --json` checks -> PASS:
   - contractVersion == "1.0"
   - commands.teamListJson == true
   - commands.teamReplayJson == true
@@ -91,9 +91,9 @@ All commands executed from repository root unless noted.
   - artifactSchema.events == "1"
 
 3.3 Functional JSON gates
-- `uv run binliquid team list --root-dir .binliquid/team/jobs --json` -> PASS
-- `uv run binliquid team replay --job-id <fixture> --root-dir .binliquid/team/jobs --json` -> parse PASS
-- `uv run binliquid approval show --id <fixture_approval_id> --json` -> redaction default PASS (`***REDACTED***`)
+- `uv run imperaos team list --root-dir .imperaos/team/jobs --json` -> PASS
+- `uv run imperaos team replay --job-id <fixture> --root-dir .imperaos/team/jobs --json` -> parse PASS
+- `uv run imperaos approval show --id <fixture_approval_id> --json` -> redaction default PASS (`***REDACTED***`)
 
 3.4 Operator panel quality gates
 - `pnpm --dir apps/operator-panel test` -> PASS
@@ -106,7 +106,7 @@ All commands executed from repository root unless noted.
 3.5 Runtime bundling gates
 - `apps/operator-panel/scripts/build_bundled_runtime_macos.sh arm64` -> PASS
 - Runtime executable gate confirmed:
-  - `apps/operator-panel/src-tauri/resources/binliquid-runtime/python/bin/python -m binliquid --version` -> 0.4.1
+  - `apps/operator-panel/src-tauri/resources/imperaos-runtime/python/bin/python -m imperaos --version` -> 0.4.1
 - Local x86_64 build with arm64 interpreter intentionally fails fast (expected guard behavior):
   - architecture mismatch correctly rejected.
 
@@ -119,11 +119,11 @@ Head SHA: 2b5032486f451e1b238461066a60beed16364e3f
 
 Runs:
 - CI: success
-  https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22642335382
+  https://github.com/bakiacikgoz/ImperaOS/actions/runs/22642335382
 - Operator Panel CI: success
-  https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22642335358
+  https://github.com/bakiacikgoz/ImperaOS/actions/runs/22642335358
 - Operator Panel Release (macOS): cancelled/failure
-  https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22642335356
+  https://github.com/bakiacikgoz/ImperaOS/actions/runs/22642335356
   Notes:
   - arm64 lane built runtime + bundle then failed at sign/notarize phase
   - x86 lane on old runner label did not execute cleanly (cancelled)
@@ -134,27 +134,27 @@ Head SHA: e5ae779a46b8cd327bb9326a6c8e96566bd110e0
 
 Runs:
 - CI: success
-  https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22642550630
+  https://github.com/bakiacikgoz/ImperaOS/actions/runs/22642550630
 - Operator Panel CI: success
-  https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22642550601
+  https://github.com/bakiacikgoz/ImperaOS/actions/runs/22642550601
 - Operator Panel Runtime Matrix Proof: success
-  https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22642550604
+  https://github.com/bakiacikgoz/ImperaOS/actions/runs/22642550604
   Job results:
   - runtime-matrix (macos-15-intel, x86_64): success
-    https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22642550604/job/65622111279
+    https://github.com/bakiacikgoz/ImperaOS/actions/runs/22642550604/job/65622111279
   - runtime-matrix (macos-14, arm64): success
-    https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22642550604/job/65622111281
+    https://github.com/bakiacikgoz/ImperaOS/actions/runs/22642550604/job/65622111281
   Artifacts generated:
   - runtime-proof-arm64 (artifact id: 5748631871)
   - runtime-proof-x86_64 (artifact id: 5748632806)
 
 - Operator Panel Release (macOS): failure
-  https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22642550636
+  https://github.com/bakiacikgoz/ImperaOS/actions/runs/22642550636
   Job results:
   - build-and-notarize (macos-15-intel, x86_64): failure
-    https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22642550636/job/65622111338
+    https://github.com/bakiacikgoz/ImperaOS/actions/runs/22642550636/job/65622111338
   - build-and-notarize (macos-14, arm64): failure
-    https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22642550636/job/65622111368
+    https://github.com/bakiacikgoz/ImperaOS/actions/runs/22642550636/job/65622111368
 
 Failure point for both lanes (explicit step-level evidence):
 - Step 11: "Validate notarization credentials" -> failure
@@ -239,7 +239,7 @@ High-impact files changed/added in this closure:
 - apps/operator-panel/src/operator.test.ts
 - apps/operator-panel/eslint.config.js
 - apps/operator-panel/src/App.tsx
-- binliquid/__main__.py
+- imperaos/__main__.py
 - tests/test_module_entrypoint.py
 - docs/RELEASE_GATE_v0.5.md
 - docs/RELEASE_CHECKLIST.md
@@ -263,17 +263,17 @@ This addendum preserves the historical March 2026 evidence above and records
 the May 2026 revalidation drift observed while resuming release finalization.
 
 9.1 Current local validation deltas
-- `uv run binliquid operator capabilities --json` now reports:
+- `uv run imperaos operator capabilities --json` now reports:
   - contractVersion == "2.0"
   - artifactSchema.auditEnvelope == "3"
   - artifactSchema.events == "3"
-- BinLiquid core version remains 0.4.1.
+- ImperaOS core version remains 0.4.1.
 - Operator Panel remains 0.5.0-beta.1.
 
 9.2 Latest remote release workflow evidence
 - Latest observed release run:
   - Tag/branch: operator-panel-v0.5.0-beta.1-final3
-  - Run: https://github.com/bakiacikgoz/BinLiquidAI/actions/runs/22643394480
+  - Run: https://github.com/bakiacikgoz/ImperaOS/actions/runs/22643394480
   - Result: failure on both macOS lanes
   - Failure point: "Import signing certificate"
   - Build/runtime/sign/notary follow-on steps were skipped because signing

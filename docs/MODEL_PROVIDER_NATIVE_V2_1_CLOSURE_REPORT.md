@@ -55,8 +55,8 @@ uv run --extra dev ruff check .
 uv run --extra dev python -m pytest -q
 uv run python scripts/run_provider_governance_gate.py --profile enterprise --json
 uv run python scripts/run_provider_native_adapter_gate.py --profile enterprise --json
-uv run python -m binliquid provider native conformance run --profile enterprise --provider-kind anthropic_messages --offline --json
-uv run python -m binliquid provider native conformance verify --input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json --json
+uv run python -m imperaos provider native conformance run --profile enterprise --provider-kind anthropic_messages --offline --json
+uv run python -m imperaos provider native conformance verify --input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json --json
 corepack pnpm --dir apps/operator-panel test
 corepack pnpm --dir apps/operator-panel lint
 corepack pnpm --dir apps/operator-panel build

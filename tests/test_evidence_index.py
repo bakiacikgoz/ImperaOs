@@ -5,12 +5,12 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.evidence_index import build_evidence_index
-from binliquid.control_plane.evidence_pack import EvidencePackBuilder
-from binliquid.control_plane.registry import AgentRegistry, load_agent_spec
-from binliquid.control_plane.run_coordinator import ControlPlaneRunCoordinator
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.cli import app
+from imperaos.control_plane.evidence_index import build_evidence_index
+from imperaos.control_plane.evidence_pack import EvidencePackBuilder
+from imperaos.control_plane.registry import AgentRegistry, load_agent_spec
+from imperaos.control_plane.run_coordinator import ControlPlaneRunCoordinator
+from imperaos.runtime.config import RuntimeConfig
 
 runner = CliRunner()
 

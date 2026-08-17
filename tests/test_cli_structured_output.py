@@ -4,8 +4,8 @@ import json
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.schemas.models import OrchestratorResult
+from imperaos.cli import app
+from imperaos.schemas.models import OrchestratorResult
 
 runner = CliRunner()
 
@@ -55,7 +55,7 @@ class FakeOrchestrator:
 
 
 def test_chat_json_stream_emits_token_and_final(monkeypatch) -> None:
-    monkeypatch.setattr("binliquid.cli._build_orchestrator", lambda *a, **k: FakeOrchestrator())
+    monkeypatch.setattr("imperaos.cli._build_orchestrator", lambda *a, **k: FakeOrchestrator())
     result = runner.invoke(
         app,
         ["chat", "--profile", "lite", "--once", "selam", "--json-stream", "--stream"],
@@ -69,7 +69,7 @@ def test_chat_json_stream_emits_token_and_final(monkeypatch) -> None:
 
 
 def test_chat_json_emits_single_payload(monkeypatch) -> None:
-    monkeypatch.setattr("binliquid.cli._build_orchestrator", lambda *a, **k: FakeOrchestrator())
+    monkeypatch.setattr("imperaos.cli._build_orchestrator", lambda *a, **k: FakeOrchestrator())
     result = runner.invoke(
         app,
         ["chat", "--profile", "lite", "--once", "selam", "--json", "--no-stream"],

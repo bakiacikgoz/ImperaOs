@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.memory.semantic.models import (
+from imperaos.memory.semantic.models import (
     IndexRebuildResult,
     MemoryBackendBenchmarkReport,
     MemoryIndexRecord,

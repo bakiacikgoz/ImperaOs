@@ -18,7 +18,7 @@ def main() -> None:
         [
             "uv",
             "run",
-            "binliquid",
+            "imperaos",
             "control-plane",
             "agent",
             "register",
@@ -31,7 +31,7 @@ def main() -> None:
         [
             "uv",
             "run",
-            "binliquid",
+            "imperaos",
             "control-plane",
             "policy",
             "simulate",
@@ -44,7 +44,7 @@ def main() -> None:
         [
             "uv",
             "run",
-            "binliquid",
+            "imperaos",
             "control-plane",
             "claims",
             "verify",

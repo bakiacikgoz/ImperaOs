@@ -1,10 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
+import { frontendQaE2eBlockers, type SuiteStatus } from './frontend-qa-policy.ts';
 
 type JsonObject = Record<string, unknown>;
-
-type SuiteStatus = 'passed' | 'failed' | 'skipped';
 
 type QaSummary = {
   generatedAtUtc: string;
@@ -67,7 +67,7 @@ type QaSummary = {
   blockers: string[];
 };
 
-const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const REPO_ROOT = findRepoRoot(APP_ROOT);
 const OUTPUT_ROOT = path.join(REPO_ROOT, 'artifacts', 'operator-panel-ui');
@@ -247,8 +247,7 @@ function buildSummary(): QaSummary {
   const blockers = [
     ...(criticalFindings > 0 ? [`Critical UI control findings: ${criticalFindings}`] : []),
     ...(highFindings > 0 ? [`High UI control findings: ${highFindings}`] : []),
-    ...(E2E_REQUIRED && e2eSuiteStatus === 'skipped' ? ['Playwright E2E did not run'] : []),
-    ...(e2eSuiteStatus === 'failed' ? ['Playwright E2E failed'] : []),
+    ...frontendQaE2eBlockers(e2eSuiteStatus, E2E_REQUIRED),
     ...(tauriBridgeSmokeStatus === 'failed' ? ['Tauri bridge smoke failed'] : []),
     ...(liveCliSmokeStatus === 'failed' ? ['Live CLI smoke failed'] : []),
     ...(accessibilityStatus === 'failed' ? ['Accessibility smoke failed'] : []),

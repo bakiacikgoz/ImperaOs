@@ -1,15 +1,15 @@
 from pathlib import Path
 
-from binliquid.memory.authority import build_memory_authority
-from binliquid.memory.runtime_bridge import MemoryRuntimeBridge, RuntimeMemoryRequest
-from binliquid.memory.workspace_authority import build_workspace_memory_authority
-from binliquid.memory.workspace_models import (
+from imperaos.memory.authority import build_memory_authority
+from imperaos.memory.runtime_bridge import MemoryRuntimeBridge, RuntimeMemoryRequest
+from imperaos.memory.workspace_authority import build_workspace_memory_authority
+from imperaos.memory.workspace_models import (
     MemoryPrincipal,
     MemoryWorkspace,
     MemoryWorkspaceMembership,
     WorkspaceMemoryWriteRequest,
 )
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_runtime_bridge_uses_workspace_authority_when_enabled(tmp_path: Path) -> None:

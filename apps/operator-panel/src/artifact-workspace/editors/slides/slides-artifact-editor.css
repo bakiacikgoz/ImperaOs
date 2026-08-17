@@ -1,0 +1,10 @@
+.slides-artifact-editor { display: grid; gap: 12px; min-height: 520px; }
+.slides-artifact-editor > header { align-items: center; display: flex; gap: 12px; justify-content: space-between; }
+.slides-artifact-layout { display: grid; gap: 12px; grid-template-columns: minmax(150px, 0.8fr) minmax(420px, 4fr) minmax(180px, 1fr); }
+.slides-artifact-layout nav ol { display: grid; gap: 6px; list-style: none; margin: 0 0 8px; padding: 0; }
+.slides-artifact-layout button { min-height: 36px; }
+.slides-artifact-stage { aspect-ratio: 16 / 9; border: 1px solid var(--border-subtle); overflow: hidden; position: relative; }
+.slides-artifact-element { overflow: hidden; position: absolute; text-align: left; }
+.slides-artifact-layout aside { display: grid; gap: 8px; align-content: start; }
+.slides-artifact-layout textarea { min-height: 120px; width: 100%; }
+@media (max-width: 900px) { .slides-artifact-layout { grid-template-columns: 1fr; } }

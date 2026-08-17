@@ -4,6 +4,7 @@
       "enum": [
         "pending",
         "approved",
+        "executing",
         "rejected",
         "expired",
         "executed",
@@ -105,6 +106,43 @@
           "default": null,
           "title": "Executed At"
         },
+        "executed_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Executed By"
+        },
+        "execution_attempt_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Execution Attempt Id"
+        },
+        "execution_claimed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Execution Claimed At"
+        },
         "execution_contract_hash": {
           "anyOf": [
             {
@@ -128,6 +166,18 @@
           ],
           "default": null,
           "title": "Execution Error Code"
+        },
+        "execution_result_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Execution Result Hash"
         },
         "execution_status": {
           "$ref": "#/$defs/ExecutionStatus",
@@ -215,6 +265,11 @@
           "minimum": 0,
           "title": "Version",
           "type": "integer"
+        },
+        "workspace_id": {
+          "default": "default",
+          "title": "Workspace Id",
+          "type": "string"
         }
       },
       "required": [
@@ -237,6 +292,7 @@
     "ExecutionStatus": {
       "enum": [
         "not_executed",
+        "executing",
         "executed",
         "execution_failed"
       ],
@@ -247,7 +303,7 @@
   "additionalProperties": false,
   "properties": {
     "contract_version": {
-      "const": "2.0",
+      "const": "3.0",
       "title": "Contract Version",
       "type": "string"
     },

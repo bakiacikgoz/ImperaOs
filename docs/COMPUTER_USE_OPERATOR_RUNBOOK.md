@@ -3,9 +3,9 @@
 ## Daily Status Check
 
 ```bash
-uv run binliquid computer-use doctor --platform all --json
-uv run binliquid computer-use summary --root-dir .binliquid/team/jobs --limit 20 --json
-uv run binliquid operator capabilities --json
+uv run imperaos computer-use doctor --platform all --json
+uv run imperaos computer-use summary --root-dir .imperaos/team/jobs --limit 20 --json
+uv run imperaos operator capabilities --json
 ```
 
 Expected default:
@@ -39,7 +39,7 @@ summary: status=ok, zero or recent local outcomes
 6. Verify the report with:
 
 ```bash
-uv run binliquid computer-use qualification verify \
+uv run imperaos computer-use qualification verify \
   --platform macos \
   --report artifacts/computer_use/macos_qualification_report.json \
   --json
@@ -48,7 +48,7 @@ uv run binliquid computer-use qualification verify \
 Replay/audit verification for the macOS qualification report is separate:
 
 ```bash
-uv run binliquid computer-use replay \
+uv run imperaos computer-use replay \
   --report artifacts/computer_use/macos_qualification_report.json \
   --verify \
   --json
@@ -57,10 +57,10 @@ uv run binliquid computer-use replay \
 The live fixture command requires all of:
 
 ```text
-BINLIQUID_COMPUTER_USE_LIVE_MACOS=1
-BINLIQUID_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1
-BINLIQUID_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1
-BINLIQUID_COMPUTER_USE_ACK=I understand BinLiquid will control my macOS desktop only for local supervised fixtures.
+IMPERAOS_COMPUTER_USE_LIVE_MACOS=1
+IMPERAOS_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1
+IMPERAOS_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1
+IMPERAOS_COMPUTER_USE_ACK=I understand ImperaOS will control my macOS desktop only for local supervised fixtures.
 ```
 
 Without those values and a ready local provider, permissions, backends, matching
@@ -72,7 +72,7 @@ separately as `qualificationPassed`.
 Provider readiness is checked with a synthetic non-sensitive fixture image:
 
 ```bash
-uv run binliquid computer-use provider doctor \
+uv run imperaos computer-use provider doctor \
   --provider ollama \
   --model <local-vision-model> \
   --synthetic-fixture \

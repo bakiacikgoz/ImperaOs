@@ -6,7 +6,7 @@ import pytest
 
 
 @pytest.mark.skipif(
-    os.environ.get("BINLIQUID_ENABLE_REAL_VISION_COMPUTER_USE_TESTS") != "1",
+    os.environ.get("IMPERAOS_ENABLE_REAL_VISION_COMPUTER_USE_TESTS") != "1",
     reason="live macOS vision computer-use tests require explicit opt-in",
 )
 def test_live_macos_vision_acceptance_placeholder() -> None:

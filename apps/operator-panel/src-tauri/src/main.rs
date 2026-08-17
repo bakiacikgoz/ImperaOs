@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    operator_panel_lib::run();
+    imperaos_operator_panel_lib::run();
 }

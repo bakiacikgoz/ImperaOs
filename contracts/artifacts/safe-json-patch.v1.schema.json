@@ -1,0 +1,67 @@
+{
+  "$defs": {
+    "JsonValue": {},
+    "SafeJsonPatchOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "op": {
+          "enum": [
+            "add",
+            "remove",
+            "replace",
+            "test"
+          ],
+          "title": "Op",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^/",
+          "title": "Path",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/JsonValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "op",
+        "path"
+      ],
+      "title": "SafeJsonPatchOperation",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/safe-json-patch.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "operations": {
+      "items": {
+        "$ref": "#/$defs/SafeJsonPatchOperation"
+      },
+      "maxItems": 100,
+      "minItems": 1,
+      "title": "Operations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "operations"
+  ],
+  "title": "SafeJsonPatch",
+  "type": "object",
+  "x-imperaos-contract": "safe-json-patch.v1",
+  "x-imperaos-security": {
+    "operations": "add/remove/replace/test only",
+    "paths": "prototype pollution segments are forbidden"
+  }
+}

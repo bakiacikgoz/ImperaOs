@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.computer_use.vision_runtime.qualification import run_vision_qualification
-from binliquid.runtime.config import ComputerUseRuntimeConfig
+from imperaos.computer_use.vision_runtime.qualification import run_vision_qualification
+from imperaos.runtime.config import ComputerUseRuntimeConfig
 
 
 def test_deterministic_qualification_writes_machine_readable_report(tmp_path: Path) -> None:
@@ -47,4 +47,4 @@ def test_live_qualification_blocks_without_opt_in(tmp_path: Path) -> None:
     )
 
     assert report["status"] == "skipped"
-    assert report["blocking_reasons"] == ["BINLIQUID_ENABLE_REAL_VISION_COMPUTER_USE_TESTS_NOT_SET"]
+    assert report["blocking_reasons"] == ["IMPERAOS_ENABLE_REAL_VISION_COMPUTER_USE_TESTS_NOT_SET"]

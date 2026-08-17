@@ -1,0 +1,39 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-history-query.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifactId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "cursor": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cursor"
+    },
+    "limit": {
+      "default": 100,
+      "maximum": 500,
+      "minimum": 1,
+      "title": "Limit",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "artifactId"
+  ],
+  "title": "ArtifactHistoryQuery",
+  "type": "object",
+  "x-imperaos-contract": "artifact-history-query.v1"
+}

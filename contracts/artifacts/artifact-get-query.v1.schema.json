@@ -1,0 +1,34 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-get-query.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifactId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "revisionId": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revisionid"
+    }
+  },
+  "required": [
+    "artifactId"
+  ],
+  "title": "GetArtifactQuery",
+  "type": "object",
+  "x-imperaos-contract": "artifact-get-query.v1"
+}

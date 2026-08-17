@@ -6,7 +6,7 @@
 : CI-friendly mock qualification using `benchmarks/tasks/computer_use_vision/smoke_tasks.jsonl`.
 
 `live`
-: Opt-in macOS local qualification. It requires `BINLIQUID_COMPUTER_USE_LIVE_MACOS=1`, `BINLIQUID_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1`, `BINLIQUID_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1`, `BINLIQUID_COMPUTER_USE_ACK`, Screen Recording, Accessibility, `macos_live_enabled=true`, and a configured local vision provider.
+: Opt-in macOS local qualification. It requires `IMPERAOS_COMPUTER_USE_LIVE_MACOS=1`, `IMPERAOS_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1`, `IMPERAOS_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1`, `IMPERAOS_COMPUTER_USE_ACK`, Screen Recording, Accessibility, `macos_live_enabled=true`, and a configured local vision provider.
 
 ## Report Contract
 
@@ -55,20 +55,20 @@ paths without storing raw screenshots.
 ## Commands
 
 ```bash
-uv run binliquid computer-use qualify --runtime vision-first --suite smoke --mode deterministic --json
-uv run binliquid computer-use vision doctor --profile balanced --json
-uv run python -m binliquid computer-use doctor --profile balanced --platform all --json
+uv run imperaos computer-use qualify --runtime vision-first --suite smoke --mode deterministic --json
+uv run imperaos computer-use vision doctor --profile balanced --json
+uv run python -m imperaos computer-use doctor --profile balanced --platform all --json
 uv run python scripts/evaluate_computer_use_platform_matrix.py --profile balanced --output artifacts/computer_use_platform_matrix.json --markdown artifacts/COMPUTER_USE_PLATFORM_MATRIX.md
 ```
 
 Live macOS qualification is intentionally skipped unless explicitly opted in:
 
 ```bash
-BINLIQUID_COMPUTER_USE_LIVE_MACOS=1 \
-BINLIQUID_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1 \
-BINLIQUID_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1 \
-BINLIQUID_COMPUTER_USE_ACK="I understand BinLiquid will control my macOS desktop only for local supervised fixtures." \
-uv run binliquid computer-use qualification run \
+IMPERAOS_COMPUTER_USE_LIVE_MACOS=1 \
+IMPERAOS_COMPUTER_USE_SUPERVISED_FIXTURE_ONLY=1 \
+IMPERAOS_COMPUTER_USE_REQUIRE_STEP_APPROVAL=1 \
+IMPERAOS_COMPUTER_USE_ACK="I understand ImperaOS will control my macOS desktop only for local supervised fixtures." \
+uv run imperaos computer-use qualification run \
   --platform macos \
   --suite live-fixture-smoke \
   --mode supervised \

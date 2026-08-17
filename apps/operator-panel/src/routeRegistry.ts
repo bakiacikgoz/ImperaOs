@@ -1,4 +1,5 @@
 import type { IconName } from './components/primitives/Icon';
+import { PRODUCT_IDENTITY } from './productIdentity';
 
 export type RouteId =
   | 'dashboard'
@@ -54,7 +55,7 @@ export type RouteGroup = {
   routes: RouteDefinition[];
 };
 
-export const routeGroups: RouteGroup[] = [
+const legacyRouteGroups: RouteGroup[] = [
   {
     title: 'ÇALIŞMA ALANI',
     routes: [
@@ -79,7 +80,13 @@ export const routeGroups: RouteGroup[] = [
         icon: 'shield',
       },
       { id: 'mission-control', routeId: 'workspace', label: 'Mission Control', heading: 'Mission Control', icon: 'target' },
-      { id: 'ai-assistant', routeId: 'assistant', label: 'AI Assistant', heading: 'AegisOS Assistant', icon: 'sparkle' },
+      {
+        id: 'ai-assistant',
+        routeId: 'assistant',
+        label: 'AI Assistant',
+        heading: `${PRODUCT_IDENTITY.displayName} Assistant`,
+        icon: 'sparkle',
+      },
       { id: 'tasks', routeId: 'tasks', label: 'Görevler', heading: 'Tasks', icon: 'list' },
     ],
   },
@@ -215,12 +222,33 @@ export const routeGroups: RouteGroup[] = [
   },
 ];
 
-routeGroups[1]?.routes.splice(routeGroups[1].routes.length - 2, 0, {
+legacyRouteGroups[1]?.routes.splice(legacyRouteGroups[1].routes.length - 2, 0, {
   id: 'rc-release-decision',
   routeId: 'rc-release-decision',
   label: 'RC Release Decision',
   heading: 'RC Release Decision',
   icon: 'check',
 });
+
+const allRoutes = legacyRouteGroups.flatMap((group) => group.routes);
+const byId = new Map(allRoutes.map((route) => [route.routeId, route]));
+const take = (ids: RouteId[]) => ids.map((id) => byId.get(id)).filter((route): route is RouteDefinition => Boolean(route));
+const productIds = new Set<RouteId>(['dashboard', 'workspace', 'assistant', 'tasks', 'runs', 'approvals', 'evidence']);
+const internalIds = new Set<RouteId>([
+  'governed-pilot-workflow', 'design-partner-field-evidence', 'design-partner-handoff',
+  'mainline-rc-freeze', 'rc-gate-evidence', 'rc-release-decision',
+]);
+
+export const routeGroups: RouteGroup[] = [
+  { title: 'WORKSPACE', routes: take(['workspace', 'assistant', 'tasks', 'dashboard']) },
+  { title: 'RUNS', routes: take(['runs']) },
+  { title: 'APPROVALS', routes: take(['approvals']) },
+  { title: 'EVIDENCE', routes: take(['evidence']) },
+  {
+    title: 'ADMINISTRATION',
+    routes: allRoutes.filter((route) => !productIds.has(route.routeId) && !internalIds.has(route.routeId)),
+  },
+  { title: 'ADVANCED / INTERNAL', routes: allRoutes.filter((route) => internalIds.has(route.routeId)) },
+];
 
 export const routes = routeGroups.flatMap((group) => group.routes);

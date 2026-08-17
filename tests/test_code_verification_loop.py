@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from binliquid.experts.code_expert import CodeExpert
-from binliquid.runtime.config import CodeVerifyConfig
-from binliquid.schemas.models import ExpertRequest, ExpertStatus, TaskType
-from binliquid.tools.code_verify import verify_python_snippet
+from imperaos.experts.code_expert import CodeExpert
+from imperaos.runtime.config import CodeVerifyConfig
+from imperaos.schemas.models import ExpertRequest, ExpertStatus, TaskType
+from imperaos.tools.code_verify import verify_python_snippet
 
 
 def _request(text: str) -> ExpertRequest:
@@ -48,7 +48,7 @@ def test_verify_python_snippet_collects_tests_with_python_module(monkeypatch) ->
 
             return Result()
 
-    monkeypatch.setattr("binliquid.tools.code_verify.SandboxRunner", FakeRunner)
+    monkeypatch.setattr("imperaos.tools.code_verify.SandboxRunner", FakeRunner)
 
     result = verify_python_snippet(
         "def ok():\n    return 1\n",
@@ -97,7 +97,7 @@ def test_code_expert_retries_and_recovers(monkeypatch) -> None:
             "details": {},
         }
 
-    monkeypatch.setattr("binliquid.experts.code_expert.verify_python_snippet", fake_verify)
+    monkeypatch.setattr("imperaos.experts.code_expert.verify_python_snippet", fake_verify)
 
     expert = CodeExpert(
         verify_config=CodeVerifyConfig(
@@ -132,7 +132,7 @@ def test_code_expert_returns_partial_after_retry_exhausted(monkeypatch) -> None:
             "details": {},
         }
 
-    monkeypatch.setattr("binliquid.experts.code_expert.verify_python_snippet", always_fail)
+    monkeypatch.setattr("imperaos.experts.code_expert.verify_python_snippet", always_fail)
 
     expert = CodeExpert(
         verify_config=CodeVerifyConfig(

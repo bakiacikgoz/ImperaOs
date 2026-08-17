@@ -3,7 +3,7 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-from binliquid.memory.persistent_store import PersistentMemoryStore
+from imperaos.memory.persistent_store import PersistentMemoryStore
 
 
 def test_legacy_memory_schema_migrates_without_scope_index_failure(tmp_path: Path) -> None:

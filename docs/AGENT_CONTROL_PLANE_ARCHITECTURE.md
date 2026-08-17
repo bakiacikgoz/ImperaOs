@@ -26,7 +26,7 @@ Control Plane
 State is local by default:
 
 ```text
-.binliquid/control-plane/agents.json
-.binliquid/control-plane/runs/<run_id>.json
+.imperaos/control-plane/agents.json
+.imperaos/control-plane/runs/<run_id>.json
 artifacts/control-plane/evidence/<run_id>/manifest.json
 ```

@@ -8,13 +8,13 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.pilot_pack import generate_design_partner_pilot_pack
-from binliquid.control_plane.qualification_closure import (
+from imperaos.cli import app
+from imperaos.control_plane.pilot_pack import generate_design_partner_pilot_pack
+from imperaos.control_plane.qualification_closure import (
     generate_enterprise_hat_a_closure,
     write_pilot_qualification_fixture,
 )
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.runtime.config import RuntimeConfig
 
 runner = CliRunner()
 REPO_ROOT = Path(__file__).resolve().parents[1]

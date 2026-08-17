@@ -55,7 +55,7 @@ Raw screenshot paths remain `null` and must not be used for resume validation.
 Targeted gate:
 
 ```bash
-uv run --extra dev ruff check binliquid/computer_use/vision_runtime/approval.py binliquid/computer_use/vision_runtime/runtime.py tests/test_computer_use_vision_approval.py tests/test_approval_flow.py
+uv run --extra dev ruff check imperaos/computer_use/vision_runtime/approval.py imperaos/computer_use/vision_runtime/runtime.py tests/test_computer_use_vision_approval.py tests/test_approval_flow.py
 uv run --extra dev pytest -q tests/test_computer_use_vision_approval.py tests/test_approval_flow.py tests/test_privacy_regression.py
 git diff --check
 ```

@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from binliquid.memory.runtime_bridge import RuntimeMemoryRequest
-from binliquid.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
+from imperaos.memory.runtime_bridge import RuntimeMemoryRequest
+from imperaos.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
 
 
 def test_semantic_runtime_enforced_returns_only_allowed_prefiltered_hits(tmp_path: Path) -> None:

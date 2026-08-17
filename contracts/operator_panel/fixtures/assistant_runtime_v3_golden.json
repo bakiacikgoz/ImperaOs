@@ -1,0 +1,66 @@
+{
+  "version": "1",
+  "contractVersion": "3.0",
+  "scenarios": [
+    {
+      "id": "text_stream_final",
+      "events": [
+        {"contractVersion":"3.0","assistantTurnId":"turn-text","sessionId":"session-golden","event":"status","sequence":1,"timestampUtc":"2026-07-16T07:00:01Z","data":{"phase":"routing","message":"Routing request"}},
+        {"contractVersion":"3.0","assistantTurnId":"turn-text","sessionId":"session-golden","event":"token","sequence":2,"timestampUtc":"2026-07-16T07:00:02Z","data":{"text":"Hello "}},
+        {"contractVersion":"3.0","assistantTurnId":"turn-text","sessionId":"session-golden","event":"token","sequence":3,"timestampUtc":"2026-07-16T07:00:03Z","data":{"text":"world"}},
+        {"contractVersion":"3.0","assistantTurnId":"turn-text","sessionId":"session-golden","event":"final","sequence":4,"timestampUtc":"2026-07-16T07:00:04Z","data":{"final_text":"Hello world","trace_id":"trace-text","used_path":"llm_only","fallback_events":[]}}
+      ],
+      "expectedSession": {"status":"completed","text":"Hello world","pendingApprovalId":null,"referencedArtifactCount":0}
+    },
+    {
+      "id": "router_policy_timeline",
+      "events": [
+        {"contractVersion":"3.0","assistantTurnId":"turn-policy","sessionId":"session-golden","event":"router_decision","sequence":1,"timestampUtc":"2026-07-16T07:01:01Z","data":{"title":"Router decision","summary":"Use governed path"}},
+        {"contractVersion":"3.0","assistantTurnId":"turn-policy","sessionId":"session-golden","event":"policy_decision","sequence":2,"timestampUtc":"2026-07-16T07:01:02Z","data":{"title":"Policy decision","reason_code":"POLICY_ALLOW"}},
+        {"contractVersion":"3.0","assistantTurnId":"turn-policy","sessionId":"session-golden","event":"final","sequence":3,"timestampUtc":"2026-07-16T07:01:03Z","data":{"final_text":"Policy path complete","trace_id":"trace-policy","used_path":"governed","fallback_events":[]}}
+      ],
+      "expectedSession": {"status":"completed","text":"Policy path complete","timelineCount":2,"pendingApprovalId":null}
+    },
+    {
+      "id": "approval_pending",
+      "events": [
+        {"contractVersion":"3.0","assistantTurnId":"turn-approval","sessionId":"session-golden","event":"approval_pending","sequence":1,"timestampUtc":"2026-07-16T07:02:01Z","data":{"approval_id":"approval-golden","title":"Approval required","status":"pending","risk":"medium","target":"artifact:document","dry_run_summary":"Create a governed draft"}}
+      ],
+      "expectedSession": {"status":"awaiting_approval","text":"","pendingApprovalId":"approval-golden","approvalStatus":"pending"}
+    },
+    {
+      "id": "audit_artifact_reference",
+      "events": [
+        {"contractVersion":"3.0","assistantTurnId":"turn-artifact","sessionId":"session-golden","event":"audit_artifact","sequence":1,"timestampUtc":"2026-07-16T07:03:01Z","data":{"name":"audit-envelope","path":"artifacts/job-golden/audit_envelope.json","summary":"Immutable evidence reference"}},
+        {"contractVersion":"3.0","assistantTurnId":"turn-artifact","sessionId":"session-golden","event":"final","sequence":2,"timestampUtc":"2026-07-16T07:03:02Z","data":{"final_text":"Evidence ready","trace_id":"trace-artifact","used_path":"governed","fallback_events":[]}}
+      ],
+      "expectedSession": {"status":"completed","text":"Evidence ready","pendingApprovalId":null,"referencedArtifactCount":1}
+    },
+    {
+      "id": "cancelled_deduplicated",
+      "events": [
+        {"contractVersion":"3.0","assistantTurnId":"turn-cancel","sessionId":"session-golden","event":"status","sequence":1,"timestampUtc":"2026-07-16T07:04:01Z","data":{"phase":"generation","message":"Generating"}},
+        {"contractVersion":"3.0","assistantTurnId":"turn-cancel","sessionId":"session-golden","event":"cancelled","sequence":9000000000,"timestampUtc":"2026-07-16T07:04:02Z","data":{"message":"Assistant turn cancelled by operator."}},
+        {"contractVersion":"3.0","assistantTurnId":"turn-cancel","sessionId":"session-golden","event":"cancelled","sequence":9000000000,"timestampUtc":"2026-07-16T07:04:02Z","data":{"message":"Duplicate cancellation must be ignored."}}
+      ],
+      "expectedSession": {"status":"cancelled","text":"","timelineCount":2,"pendingApprovalId":null}
+    },
+    {
+      "id": "error_and_missing_final",
+      "events": [
+        {"contractVersion":"3.0","assistantTurnId":"turn-error","sessionId":"session-golden","event":"warning","sequence":1,"timestampUtc":"2026-07-16T07:05:01Z","data":{"message":"Malformed sidecar line ignored"}},
+        {"contractVersion":"3.0","assistantTurnId":"turn-error","sessionId":"session-golden","event":"error","sequence":2,"timestampUtc":"2026-07-16T07:05:02Z","data":{"code":"ASSISTANT_STREAM_MISSING_FINAL","message":"Assistant stream ended before final event.","retryable":true}}
+      ],
+      "expectedSession": {"status":"failed","text":"","errorCode":"ASSISTANT_STREAM_MISSING_FINAL","pendingApprovalId":null}
+    },
+    {
+      "id": "preview_projection",
+      "events": [
+        {"contractVersion":"3.0","assistantTurnId":"turn-preview","sessionId":"session-preview","event":"status","sequence":1,"timestampUtc":"2026-07-16T07:06:01Z","data":{"phase":"preview","message":"Preview assistant started"}},
+        {"contractVersion":"3.0","assistantTurnId":"turn-preview","sessionId":"session-preview","event":"token","sequence":2,"timestampUtc":"2026-07-16T07:06:02Z","data":{"text":"Preview response"}},
+        {"contractVersion":"3.0","assistantTurnId":"turn-preview","sessionId":"session-preview","event":"final","sequence":3,"timestampUtc":"2026-07-16T07:06:03Z","data":{"final_text":"Preview response","trace_id":"trace-preview","used_path":"preview","fallback_events":[]}}
+      ],
+      "expectedSession": {"status":"completed","text":"Preview response","pendingApprovalId":null,"referencedArtifactCount":0}
+    }
+  ]
+}

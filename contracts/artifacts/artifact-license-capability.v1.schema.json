@@ -1,0 +1,49 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-license-capability.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": {
+      "const": "artifact-license-capability/v1",
+      "default": "artifact-license-capability/v1",
+      "title": "Contractversion",
+      "type": "string"
+    },
+    "enabled": {
+      "title": "Enabled",
+      "type": "boolean"
+    },
+    "kind": {
+      "enum": [
+        "spreadsheet",
+        "canvas"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "reasonCode": {
+      "enum": [
+        "ARTIFACT_LICENSE_ENABLED",
+        "ARTIFACT_LICENSE_FEATURE_DISABLED",
+        "ARTIFACT_LICENSE_EVIDENCE_MISSING",
+        "ARTIFACT_LICENSE_EVIDENCE_INVALID",
+        "ARTIFACT_LICENSE_EXPIRED",
+        "ARTIFACT_LICENSE_MODE_FORBIDDEN",
+        "ARTIFACT_LICENSE_VERSION_MISMATCH",
+        "ARTIFACT_LICENSE_TARGET_MISMATCH",
+        "ARTIFACT_LICENSE_OFFLINE_UNVERIFIED",
+        "ARTIFACT_LICENSE_ACTIVATION_UNSUPPORTED",
+        "ARTIFACT_LICENSE_PACKAGE_MISSING"
+      ],
+      "title": "Reasoncode",
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "enabled",
+    "reasonCode"
+  ],
+  "title": "ArtifactLicenseCapability",
+  "type": "object",
+  "x-imperaos-contract": "artifact-license-capability.v1"
+}

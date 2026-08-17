@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from binliquid.model_providers.adapters.openai_responses import OpenAIResponsesNativeAdapter
-from binliquid.model_providers.errors import ProviderPolicyError
-from binliquid.model_providers.models import (
+from imperaos.model_providers.adapters.openai_responses import OpenAIResponsesNativeAdapter
+from imperaos.model_providers.errors import ProviderPolicyError
+from imperaos.model_providers.models import (
     ChatMessage,
     ModelProviderRecord,
     NativeAdapterV2Request,

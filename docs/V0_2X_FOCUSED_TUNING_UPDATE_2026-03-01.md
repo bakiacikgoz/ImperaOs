@@ -1,4 +1,4 @@
-# BinLiquid AI v0.2.x Focused Tuning Update (2026-03-01)
+# ImperaOS AI v0.2.x Focused Tuning Update (2026-03-01)
 
 ## Scope
 This update implements the focused v0.2.x package without LoRA/UI expansion:
@@ -11,7 +11,7 @@ This update implements the focused v0.2.x package without LoRA/UI expansion:
 ## Implementation Summary
 
 ### 1) Planner Prompt/Repair Tuning
-- `binliquid/core/planner.py`
+- `imperaos/core/planner.py`
   - Added strict prompt variants: `strict_v1|strict_v2|strict_v3`
   - Added controlled repair controls:
     - `repair_enabled`
@@ -21,7 +21,7 @@ This update implements the focused v0.2.x package without LoRA/UI expansion:
     - repair failure
     - schema invalid
   - Deterministic fallback preserved for all planner failures.
-- `binliquid/schemas/reason_codes.py`
+- `imperaos/schemas/reason_codes.py`
   - Added/used planner-specific reason codes:
     - `PLANNER_JSON_EXTRACT_FAILED`
     - `PLANNER_REPAIR_FAILED`
@@ -39,7 +39,7 @@ Planner metrics now available in benchmark outputs:
 - `planner_fallback_rate`
 
 ### 2) Code Expert Verification Loop Strengthening
-- `binliquid/tools/code_verify.py`
+- `imperaos/tools/code_verify.py`
   - Staged verification pipeline:
     - Stage 1: AST parse
     - Stage 2: compile/lint checks
@@ -47,11 +47,11 @@ Planner metrics now available in benchmark outputs:
     - Stage 4: targeted tests (config-driven)
     - Stage 5: full success state
   - Added normalized failure classification (`SYNTAX_INVALID`, `IMPORT_PARSE_FAIL`, `TEST_COLLECT_FAILED`, timeout/allowlist classes).
-- `binliquid/experts/code_expert.py`
+- `imperaos/experts/code_expert.py`
   - Added failure-aware retry loop (`retry_max`, `retry_strategy`)
   - Strategy adapts by failure category (`minimal_patch`, `explain_only`, etc.)
   - Returns `partial` when verification is incomplete/failing, instead of crashing.
-- `binliquid/schemas/expert_payloads.py`
+- `imperaos/schemas/expert_payloads.py`
   - Verification payload expanded with:
     - `stage_reached`
     - `failure_reason`
@@ -69,9 +69,9 @@ Planner metrics now available in benchmark outputs:
     - `router_calibration_candidates.json`
     - `router_calibration_report.json`
     - `router_calibration_report.md`
-- `binliquid/cli.py`
-  - New command: `binliquid research calibrate-router`
-- `binliquid/router/sltc_router.py`
+- `imperaos/cli.py`
+  - New command: `imperaos research calibrate-router`
+- `imperaos/router/sltc_router.py`
   - Exposed calibration tunables in runtime path:
     - `failure_penalty_weight`
     - `latency_penalty_weight`
@@ -82,25 +82,25 @@ Planner metrics now available in benchmark outputs:
   - `tests/test_router_calibration.py`
 
 ### 4) Memory Salience Tuning
-- `binliquid/memory/salience_gate.py`
+- `imperaos/memory/salience_gate.py`
   - Tunables now configurable:
     - `task_bonus`
     - `expert_bonus`
     - `spike_reduction`
     - `keyword_weights`
-- `binliquid/memory/retrieval_ranker.py`
+- `imperaos/memory/retrieval_ranker.py`
   - Weighted ranking: `score = a*salience + b*recency`
-- `binliquid/memory/manager.py`
+- `imperaos/memory/manager.py`
   - Added metrics counters for write/retrieval usefulness path
   - Added ranking weight controls in manager constructor
   - Exposes tuning metrics in `stats()` payload
-- `binliquid/memory/persistent_store.py`
+- `imperaos/memory/persistent_store.py`
   - Added `write_with_status` with dedup-aware return payload
 - Added metrics test:
   - `tests/test_memory_tuning_metrics.py`
 
 ## Config Surface Added/Updated
-- `binliquid/runtime/config.py`
+- `imperaos/runtime/config.py`
   - New typed config sections:
     - `planner_tuning`
     - `code_verify`
@@ -113,13 +113,13 @@ Planner metrics now available in benchmark outputs:
   - `config/research.toml`
 
 ## Runtime Wiring
-- `binliquid/cli.py`
+- `imperaos/cli.py`
   - Orchestrator builder now wires:
     - planner tuning config
     - code verify config
     - memory tuning weights
     - sLTC runtime mode (`active|shadow|off`)
-- `binliquid/core/orchestrator.py`
+- `imperaos/core/orchestrator.py`
   - Exposes planner/code verification telemetry fields in request metrics
 
 ## Flow / Algorithm (Updated)
@@ -134,13 +134,13 @@ Planner metrics now available in benchmark outputs:
 ## Validation Run (Current)
 - `uv run ruff check .` -> passed
 - `uv run pytest -q` -> passed
-- `uv run binliquid doctor --profile balanced` -> healthy provider chain
-- `uv run binliquid benchmark smoke --mode all --profile balanced --provider transformers --fallback-provider transformers` -> passed
-- `uv run binliquid benchmark ablation --mode all --profile balanced --suite quality --provider transformers --fallback-provider transformers` -> passed (120 tasks)
-- `uv run binliquid benchmark energy --profile balanced --energy-mode measured --provider transformers --fallback-provider transformers` -> deterministic measured-fail payload (no superuser) + estimated fallback metadata
-- `uv run binliquid research train-router ...` -> artifacts generated
-- `uv run binliquid research eval-router ...` -> artifacts generated
-- `uv run binliquid research calibrate-router ...` -> calibration artifacts generated
+- `uv run imperaos doctor --profile balanced` -> healthy provider chain
+- `uv run imperaos benchmark smoke --mode all --profile balanced --provider transformers --fallback-provider transformers` -> passed
+- `uv run imperaos benchmark ablation --mode all --profile balanced --suite quality --provider transformers --fallback-provider transformers` -> passed (120 tasks)
+- `uv run imperaos benchmark energy --profile balanced --energy-mode measured --provider transformers --fallback-provider transformers` -> deterministic measured-fail payload (no superuser) + estimated fallback metadata
+- `uv run imperaos research train-router ...` -> artifacts generated
+- `uv run imperaos research eval-router ...` -> artifacts generated
+- `uv run imperaos research calibrate-router ...` -> calibration artifacts generated
 
 ## Artifacts Generated in This Update
 - `benchmarks/results/smoke_*.json`

@@ -1,7 +1,7 @@
 # Install
 
 After installation, validate the Agent Control Plane boundary with
-`uv run binliquid control-plane doctor --profile enterprise --json` before
+`uv run imperaos control-plane doctor --profile enterprise --json` before
 claiming governed agent production-readiness.
 
 ## Supported Baseline
@@ -16,8 +16,8 @@ claiming governed agent production-readiness.
 
 ```bash
 make install
-uv run binliquid --version
-uv run binliquid doctor --profile balanced
+uv run imperaos --version
+uv run imperaos doctor --profile balanced
 ```
 
 ## Windows Online Install
@@ -25,9 +25,9 @@ uv run binliquid doctor --profile balanced
 ```powershell
 winget install --id=astral-sh.uv -e
 uv sync --python 3.11 --extra dev
-uv run python -m binliquid --version
-uv run python -m binliquid doctor --profile balanced --json
-uv run python -m binliquid operator capabilities --json
+uv run python -m imperaos --version
+uv run python -m imperaos doctor --profile balanced --json
+uv run python -m imperaos operator capabilities --json
 ```
 
 Alternative uv installer:
@@ -71,9 +71,9 @@ Expected offline bundle contents:
 ## Enterprise Validation After Install
 
 ```bash
-uv run binliquid security baseline --profile enterprise --json
-uv run binliquid auth whoami --profile enterprise --json
-uv run binliquid ga readiness --profile enterprise --report artifacts/ga_readiness_report.json --json
+uv run imperaos security baseline --profile enterprise --json
+uv run imperaos auth whoami --profile enterprise --json
+uv run imperaos ga readiness --profile enterprise --report artifacts/ga_readiness_report.json --json
 ```
 # Product-Complete First Run
 
@@ -82,7 +82,7 @@ After installing Python, `uv`, Node/Corepack/pnpm, and the Rust toolchain, run:
 ```bash
 uv sync --python 3.11 --extra dev
 corepack pnpm --dir apps/operator-panel install --frozen-lockfile
-uv run binliquid setup first-run --profile enterprise --mode local-enterprise --json
+uv run imperaos setup first-run --profile enterprise --mode local-enterprise --json
 ```
 
 The diagnostic command is non-destructive and reports setup-required reason

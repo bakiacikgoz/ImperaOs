@@ -2,6 +2,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 
 type CheckStatus = 'passed' | 'failed' | 'skipped' | 'conditional';
 type Check = {
@@ -10,7 +11,7 @@ type Check = {
   detail: string;
 };
 
-const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const REPO_ROOT = findRepoRoot(APP_ROOT);
 const OUTPUT_ROOT = path.join(REPO_ROOT, 'artifacts', 'operator-panel-ui', 'tauri-smoke');
@@ -22,16 +23,32 @@ const RUN_LAUNCH = MODE === 'launched' || process.argv.includes('--launch') || p
 const SKIP_RUST = process.argv.includes('--skip-rust');
 const LAUNCH_TIMEOUT_MS = readTimeoutMs();
 const REQUIRED_HANDLERS = [
-  'bridge_handshake',
-  'bridge_config_resolve',
-  'bridge_control_plane_snapshot',
-  'bridge_assistant_provider_models',
-  'bridge_assistant_start_turn',
-  'bridge_assistant_cancel_turn',
-  'bridge_team_list',
-  'bridge_approval_pending',
-  'bridge_control_plane_evidence_verify',
-  'bridge_control_plane_claims_verify',
+  'bridge::bridge_handshake',
+  'bridge::bridge_config_resolve',
+  'bridge::bridge_control_plane_snapshot',
+  'bridge::bridge_assistant_provider_models',
+  'bridge::bridge_assistant_start_turn',
+  'bridge::bridge_assistant_cancel_turn',
+  'bridge::bridge_team_list',
+  'bridge::bridge_approval_pending',
+  'bridge::bridge_control_plane_evidence_verify',
+  'bridge::bridge_control_plane_claims_verify',
+  'bridge::bridge_product_project_list',
+  'bridge::bridge_product_task_get',
+  'bridge::bridge_product_task_list',
+  'bridge::bridge_product_task_message_list',
+  'bridge::bridge_product_task_link_list',
+  'bridge::bridge_artifact_list',
+  'terminal::terminal_start',
+  'terminal::terminal_write',
+  'terminal::terminal_resize',
+  'terminal::terminal_interrupt',
+  'terminal::terminal_kill',
+  'browser::browser_open',
+  'browser::browser_list_preview_origins',
+  'browser::browser_navigate',
+  'browser::browser_set_bounds',
+  'browser::browser_close',
 ];
 
 function findRepoRoot(start: string): string {
@@ -112,7 +129,7 @@ function checkTauriContract(checks: Check[]): void {
   );
 
   const libSource = fs.existsSync(libPath) ? fs.readFileSync(libPath, 'utf8') : '';
-  const missingHandlers = REQUIRED_HANDLERS.filter((handler) => !libSource.includes(`bridge::${handler}`));
+  const missingHandlers = REQUIRED_HANDLERS.filter((handler) => !libSource.includes(handler));
   addCheck(
     checks,
     'bridgeHandlers',

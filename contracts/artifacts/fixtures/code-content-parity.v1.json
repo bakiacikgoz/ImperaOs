@@ -1,0 +1,122 @@
+{
+  "contractVersion": 1,
+  "cases": [
+    {
+      "id": "python-lf",
+      "expectedValid": true,
+      "content": {
+        "kind": "code",
+        "schemaVersion": 2,
+        "filename": "main.py",
+        "language": "python",
+        "text": "print('display only')\n",
+        "lineEnding": "lf",
+        "executionPolicy": "deny"
+      }
+    },
+    {
+      "id": "powershell-crlf",
+      "expectedValid": true,
+      "content": {
+        "kind": "code",
+        "schemaVersion": 2,
+        "filename": "setup.ps1",
+        "language": "powershell",
+        "text": "Write-Output 'safe'\r\n",
+        "lineEnding": "crlf",
+        "executionPolicy": "deny"
+      }
+    },
+    {
+      "id": "unknown-language",
+      "expectedValid": false,
+      "content": {
+        "kind": "code",
+        "schemaVersion": 2,
+        "filename": "main.ts",
+        "language": "tsx",
+        "text": "export {};\n",
+        "lineEnding": "lf",
+        "executionPolicy": "deny"
+      }
+    },
+    {
+      "id": "reserved-device-name",
+      "expectedValid": false,
+      "content": {
+        "kind": "code",
+        "schemaVersion": 2,
+        "filename": "CON.ts",
+        "language": "typescript",
+        "text": "export {};\n",
+        "lineEnding": "lf",
+        "executionPolicy": "deny"
+      }
+    },
+    {
+      "id": "trailing-dot",
+      "expectedValid": false,
+      "content": {
+        "kind": "code",
+        "schemaVersion": 2,
+        "filename": "main.py.",
+        "language": "python",
+        "text": "pass\n",
+        "lineEnding": "lf",
+        "executionPolicy": "deny"
+      }
+    },
+    {
+      "id": "bidi-control",
+      "expectedValid": false,
+      "content": {
+        "kind": "code",
+        "schemaVersion": 2,
+        "filename": "safe\u202Etxt.py",
+        "language": "python",
+        "text": "pass\n",
+        "lineEnding": "lf",
+        "executionPolicy": "deny"
+      }
+    },
+    {
+      "id": "unicode-17-format-control",
+      "expectedValid": false,
+      "content": {
+        "kind": "code",
+        "schemaVersion": 2,
+        "filename": "safe\ud80d\udc39.py",
+        "language": "python",
+        "text": "pass\n",
+        "lineEnding": "lf",
+        "executionPolicy": "deny"
+      }
+    },
+    {
+      "id": "mixed-line-endings",
+      "expectedValid": false,
+      "content": {
+        "kind": "code",
+        "schemaVersion": 2,
+        "filename": "main.py",
+        "language": "python",
+        "text": "first\r\nsecond\n",
+        "lineEnding": "crlf",
+        "executionPolicy": "deny"
+      }
+    },
+    {
+      "id": "execution-enabled",
+      "expectedValid": false,
+      "content": {
+        "kind": "code",
+        "schemaVersion": 2,
+        "filename": "main.py",
+        "language": "python",
+        "text": "pass\n",
+        "lineEnding": "lf",
+        "executionPolicy": "allow"
+      }
+    }
+  ]
+}

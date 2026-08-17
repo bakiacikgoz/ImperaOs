@@ -14,6 +14,8 @@ import { AssistantComposer } from './AssistantComposer';
 function ComposerHarness({
   onSend,
   modelDiscovery = null,
+  variant = 'operator',
+  locale = 'en',
 }: {
   onSend: (
     message: string,
@@ -21,6 +23,8 @@ function ComposerHarness({
     controls: AssistantComposerControls,
   ) => void;
   modelDiscovery?: AssistantModelDiscoveryState | null;
+  variant?: 'operator' | 'product';
+  locale?: 'en' | 'tr';
 }) {
   const [runtimeSettings, setRuntimeSettings] = useState<AssistantRuntimeSettings>({
     ...DEFAULT_ASSISTANT_RUNTIME_SETTINGS,
@@ -34,6 +38,8 @@ function ComposerHarness({
       disabled={false}
       runtimeSettings={runtimeSettings}
       modelDiscovery={modelDiscovery}
+      variant={variant}
+      locale={locale}
       onRuntimeSettingsChange={(next) => setRuntimeSettings((prev) => ({ ...prev, ...next }))}
       onSend={onSend}
     />
@@ -60,6 +66,33 @@ const discoveredModels: AssistantModelDiscoveryState = {
 };
 
 describe('AssistantComposer runtime controls', () => {
+  it('uses the UI Lab composer hierarchy for product surfaces', () => {
+    const { container } = renderOperatorPanel(
+      <ComposerHarness onSend={vi.fn()} variant="product" />,
+    );
+
+    expect(container.querySelector('.composer-stack.is-home')).toBeInTheDocument();
+    expect(container.querySelector('form.composer.codex-composer.is-home')).toBeInTheDocument();
+    expect(container.querySelector('.composer-context-bar')).toBeInTheDocument();
+    expect(container.querySelector('.composer-actions')).toBeInTheDocument();
+    expect(container.querySelector('.model-picker .composer-model')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Voice input unavailable' })).toBeDisabled();
+    expect(screen.getByText('No branch').closest('.composer-chip')).toHaveAttribute(
+      'data-disabled-reason',
+      'GIT_BRANCH_CONTEXT_UNAVAILABLE',
+    );
+  });
+
+  it('uses governance-accurate Turkish approval labels', async () => {
+    const { user } = renderOperatorPanel(
+      <ComposerHarness onSend={vi.fn()} variant="product" locale="tr" />,
+    );
+
+    expect(screen.getByText('Riske göre onay iste')).toBeInTheDocument();
+    await user.selectOptions(screen.getByLabelText('Approval profile'), 'policy_automatic');
+    expect(screen.getByText('Politika içinde otomatik')).toBeInTheDocument();
+  });
+
   it('selects provider/model metadata and sends it with the message', async () => {
     const onSend = vi.fn();
     const { user } = renderOperatorPanel(
@@ -146,6 +179,30 @@ describe('AssistantComposer runtime controls', () => {
         contextAttachmentKinds: expect.not.arrayContaining(['artifact_summary']),
         toolIntents: expect.arrayContaining(['inspect_run', 'draft_remediation_plan']),
       }),
+    );
+  });
+
+  it('maps a registered slash command to safe controls and rejects unknown commands', async () => {
+    const onSend = vi.fn();
+    const { user } = renderOperatorPanel(<ComposerHarness onSend={onSend} />);
+
+    await user.type(screen.getByLabelText('Message'), '/inspect-run summarize the active deployment');
+    await user.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(onSend).toHaveBeenCalledWith(
+      'summarize the active deployment',
+      expect.any(Object),
+      expect.objectContaining({
+        contextAttachmentKinds: expect.arrayContaining(['active_run']),
+        toolIntents: expect.arrayContaining(['inspect_run']),
+      }),
+    );
+
+    await user.type(screen.getByLabelText('Message'), '/full-access deploy now');
+    expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Send' })).toHaveAttribute(
+      'data-disabled-reason',
+      'This slash command is not available in the governed assistant.',
     );
   });
 

@@ -94,5 +94,5 @@ def test_macos_local_trial_gate_redacts_secret_like_tail(tmp_path: Path, monkeyp
     assert report["status"] == "blocked"
     assert "<redacted>" in report["checks"][0]["tail"][0]
     assert report["secretLeakScan"]["redactedFindings"] == [
-        "SECRET_LIKE_OUTPUT_REDACTED:binliquid_version"
+        "SECRET_LIKE_OUTPUT_REDACTED:imperaos_version"
     ]

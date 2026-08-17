@@ -41,7 +41,7 @@ This report covers the Windows release hardening work applied after the initial 
 - `platform`
 - `arch`
 - `python`
-- `binliquid_version`
+- `imperaos_version`
 - `created_at_utc`
 - `source_wheel`
 - `source_wheel_sha256`
@@ -49,7 +49,7 @@ This report covers the Windows release hardening work applied after the initial 
 - `uv_lock_sha256`
 - `git_sha`
 
-`apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1` checks the manifest, Python entrypoint, hash format, Python executable hash, and `python.exe -m binliquid --version`.
+`apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1` checks the manifest, Python entrypoint, hash format, Python executable hash, and `python.exe -m imperaos --version`.
 
 Generated runtime trees remain ignored by git.
 
@@ -136,7 +136,7 @@ corepack pnpm --dir apps/operator-panel lint
 corepack pnpm --dir apps/operator-panel build
 cargo test -q --manifest-path apps/operator-panel/src-tauri/Cargo.toml
 cargo fmt --manifest-path apps/operator-panel/src-tauri/Cargo.toml --check
-powershell -NoProfile -ExecutionPolicy Bypass -File apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 -RuntimeDir apps/operator-panel/src-tauri/resources/binliquid-runtime
+powershell -NoProfile -ExecutionPolicy Bypass -File apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 -RuntimeDir apps/operator-panel/src-tauri/resources/imperaos-runtime
 corepack pnpm --dir apps/operator-panel exec tauri build --debug --no-bundle
 git diff --check
 ```
@@ -148,8 +148,8 @@ Summary:
 - Operator panel Vitest suite: 12 files / 43 tests passed.
 - Operator panel lint and production build: pass.
 - Tauri bridge Cargo tests: 13 tests passed.
-- Bundled runtime verify: manifest pass, `binliquid_version=0.4.1`.
-- Tauri debug no-bundle smoke: pass, produced `apps/operator-panel/src-tauri/target/debug/aegisos_operator_panel.exe`.
+- Bundled runtime verify: manifest pass, `imperaos_version=0.4.1`.
+- Tauri debug no-bundle smoke: pass, produced `apps/operator-panel/src-tauri/target/debug/imperaos_operator_panel.exe`.
 - Diff whitespace check: pass.
 
 ## 10. Remaining Blockers

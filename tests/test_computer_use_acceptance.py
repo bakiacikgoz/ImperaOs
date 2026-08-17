@@ -13,16 +13,16 @@ from urllib.parse import parse_qs, urlparse
 
 import pytest
 
-from binliquid.computer_use import ComputerUseMode, ComputerUseRunner, SessionCommand
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.computer_use import ComputerUseMode, ComputerUseRunner, SessionCommand
+from imperaos.runtime.config import RuntimeConfig
 
-REAL_COMPUTER_USE_ENABLED = os.getenv("AEGISOS_ENABLE_REAL_COMPUTER_USE_TESTS") == "1"
+REAL_COMPUTER_USE_ENABLED = os.getenv("IMPERAOS_ENABLE_REAL_COMPUTER_USE_TESTS") == "1"
 
 
 def _real_computer_use_skip_reason() -> str | None:
     if sys.platform != "darwin" or not REAL_COMPUTER_USE_ENABLED:
         return (
-            "Enable with AEGISOS_ENABLE_REAL_COMPUTER_USE_TESTS=1 on macOS "
+            "Enable with IMPERAOS_ENABLE_REAL_COMPUTER_USE_TESTS=1 on macOS "
             "with Safari automation permissions."
         )
     try:
@@ -63,7 +63,7 @@ REAL_COMPUTER_USE_SKIP_REASON = _real_computer_use_skip_reason()
 def _real_local_computer_use_skip_reason() -> str | None:
     if sys.platform != "darwin" or not REAL_COMPUTER_USE_ENABLED:
         return (
-            "Enable with AEGISOS_ENABLE_REAL_COMPUTER_USE_TESTS=1 on macOS "
+            "Enable with IMPERAOS_ENABLE_REAL_COMPUTER_USE_TESTS=1 on macOS "
             "with AppleScript automation permissions."
         )
     try:
@@ -197,7 +197,7 @@ def _start_site_server(site_dir: Path) -> tuple[ThreadingHTTPServer, threading.T
 
 
 def _start_auth_site_server() -> tuple[ThreadingHTTPServer, threading.Thread]:
-    session_cookie = "aegis_session=pilot"
+    session_cookie = "imperaos_session=pilot"
 
     class _AuthSiteHandler(BaseHTTPRequestHandler):
         def log_message(self, format: str, *args) -> None:  # noqa: A003
@@ -408,7 +408,7 @@ def test_real_safari_upload_acceptance(tmp_path: Path) -> None:
                 [
                     'launch "Safari"',
                     f'open "http://127.0.0.1:{server.server_port}/index.html"',
-                    'type "Aegis Operator" into "#name"',
+                    'type "ImperaOS Operator" into "#name"',
                     'select "operator" in "#role"',
                     f'upload "{upload_path}" to "#upload"',
                 ]
@@ -491,7 +491,7 @@ def test_real_safari_surface_drift_acceptance(tmp_path: Path) -> None:
                     prompt="\n".join(
                         [
                             f'open "http://127.0.0.1:{server.server_port}/index.html"',
-                            'type "Aegis Operator" into "#name"',
+                            'type "ImperaOS Operator" into "#name"',
                             'wait "2.0"',
                             'type "This step should fail after drift" into "#notes"',
                         ]
@@ -710,7 +710,7 @@ def test_real_safari_pause_resume_acceptance(tmp_path: Path) -> None:
                         [
                             'launch "Safari"',
                             f'open "http://127.0.0.1:{server.server_port}/index.html"',
-                            'type "Aegis Operator" into "#name"',
+                            'type "ImperaOS Operator" into "#name"',
                             'wait "2.0"',
                             'type "Recovered after pause" into "#name"',
                         ]

@@ -35,7 +35,7 @@ make rc-evidence-orchestrator-gate
 The evidence ledger lives at `artifacts/release-gates/mainline-rc/gate_evidence_ledger.json`. To apply it to the RC freeze verifier:
 
 ```bash
-uv run binliquid release rc-freeze verify --manifest artifacts/mainline-rc-freeze/manifest.json --gate-ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --json
+uv run imperaos release rc-freeze verify --manifest artifacts/mainline-rc-freeze/manifest.json --gate-ledger artifacts/release-gates/mainline-rc/gate_evidence_ledger.json --json
 ```
 
 Only a verified `ready` ledger can clear `REQUIRED_GATE_MISSING:*` warnings. Missing artifacts, tampered hashes, raw payload markers, or secret markers keep the freeze decision blocked or conditional.

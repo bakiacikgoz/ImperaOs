@@ -7,7 +7,7 @@ Conditional pass pending CI execution on the final branch. Local closure is expe
 ```bash
 uv run --extra dev python scripts/run_provider_governance_gate.py --profile enterprise --json
 uv run --extra dev python scripts/run_provider_canary_fixture.py --profile enterprise --json
-uv run --extra dev python -m binliquid provider canary verify \
+uv run --extra dev python -m imperaos provider canary verify \
   --evidence-root artifacts/model-provider-governance/canary \
   --json
 uv run --extra dev python scripts/generate_model_provider_governance_evidence.py --profile enterprise --json

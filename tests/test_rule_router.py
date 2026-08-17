@@ -1,5 +1,5 @@
-from binliquid.router.rule_router import RuleRouter
-from binliquid.schemas.models import ExpertName, PlannerOutput, ResponseMode, TaskType
+from imperaos.router.rule_router import RuleRouter
+from imperaos.schemas.models import ExpertName, PlannerOutput, ResponseMode, TaskType
 
 
 def _planner(task_type: TaskType, confidence: float = 0.9) -> PlannerOutput:

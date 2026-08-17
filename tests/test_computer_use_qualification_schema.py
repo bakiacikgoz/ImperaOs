@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from binliquid import __version__
-from binliquid.computer_use.vision_runtime.qualification import (
+from imperaos import __version__
+from imperaos.computer_use.vision_runtime.qualification import (
     platform_config_hash,
     validate_platform_qualification_report,
 )
-from binliquid.runtime.config import ComputerUseRuntimeConfig
+from imperaos.runtime.config import ComputerUseRuntimeConfig
 
 
 def _valid_report(

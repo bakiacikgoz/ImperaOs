@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 import pytest
 from pydantic import ValidationError
 
-from binliquid.release.gate_models import (
+from imperaos.release.gate_models import (
     GateArtifactRef,
     GateArtifactRequirement,
     GateCommandSpec,

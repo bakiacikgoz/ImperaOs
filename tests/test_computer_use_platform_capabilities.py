@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from binliquid.computer_use.vision_runtime.platforms import (
+from imperaos.computer_use.vision_runtime.platforms import (
     ComputerUsePlatform,
     build_platform_capabilities,
 )
-from binliquid.computer_use.vision_runtime.qualification import platform_config_hash
-from binliquid.runtime.config import ComputerUseRuntimeConfig
+from imperaos.computer_use.vision_runtime.qualification import platform_config_hash
+from imperaos.runtime.config import ComputerUseRuntimeConfig
 
 
 def test_default_config_reports_all_platforms_fail_closed() -> None:

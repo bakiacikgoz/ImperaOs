@@ -1,4 +1,4 @@
-# BinLiquid Yazılımsal Kapanış ve Yol Haritası
+# ImperaOS Yazılımsal Kapanış ve Yol Haritası
 
 **Tarih:** 10 Mayıs 2026
 **Kapsam:** Yazılım geliştirme, teknik olgunluk, release gate, qualification, güvenlik, CI/CD ve çalıştırılabilirlik
@@ -8,7 +8,7 @@
 
 ## 1. Bu planın amacı
 
-Bu dosyanın amacı BinLiquid geliştirme döngüsünü “sürekli yeni özellik ekleme” halinden çıkarıp **kanıta dayalı kapanış kapıları olan bir yazılım release hattına** dönüştürmektir.
+Bu dosyanın amacı ImperaOS geliştirme döngüsünü “sürekli yeni özellik ekleme” halinden çıkarıp **kanıta dayalı kapanış kapıları olan bir yazılım release hattına** dönüştürmektir.
 
 Bu plan şunları netleştirir:
 
@@ -22,7 +22,7 @@ Bu plan şunları netleştirir:
 
 ## 2. Tek cümlelik teknik hedef
 
-**BinLiquid, yerel / self-hosted çalışan, güvenlik ve onay kapılarıyla yönetilen, audit/replay kanıtı üreten, Core Runtime + Team Runtime + Operator Panel + qualification-gated Computer-Use temeline sahip kontrollü bir agentic runtime olarak release-ready hale gelmelidir.**
+**ImperaOS, yerel / self-hosted çalışan, güvenlik ve onay kapılarıyla yönetilen, audit/replay kanıtı üreten, Core Runtime + Team Runtime + Operator Panel + qualification-gated Computer-Use temeline sahip kontrollü bir agentic runtime olarak release-ready hale gelmelidir.**
 
 Bu hedefin pratik karşılığı:
 
@@ -135,10 +135,10 @@ mkdir -p artifacts/readiness/2026-05-10
 
 git status --short | tee artifacts/readiness/2026-05-10/git_status.txt
 git rev-parse HEAD | tee artifacts/readiness/2026-05-10/head_commit.txt
-uv run binliquid --version | tee artifacts/readiness/2026-05-10/version.txt
-uv run binliquid config resolve --profile balanced --json \
+uv run imperaos --version | tee artifacts/readiness/2026-05-10/version.txt
+uv run imperaos config resolve --profile balanced --json \
   | tee artifacts/readiness/2026-05-10/config_balanced.json
-uv run binliquid operator capabilities --json \
+uv run imperaos operator capabilities --json \
   | tee artifacts/readiness/2026-05-10/operator_capabilities.json
 ```
 
@@ -207,16 +207,16 @@ make pilot-gate
 Ayrıca:
 
 ```bash
-uv run binliquid team validate --spec examples/team/restricted_pilot.yaml --json
-uv run binliquid team pilot-check \
+uv run imperaos team validate --spec examples/team/restricted_pilot.yaml --json
+uv run imperaos team pilot-check \
   --spec examples/team/restricted_pilot.yaml \
   --profile restricted \
   --mode deterministic \
   --report artifacts/team_pilot_report.json \
   --json
-uv run binliquid team replay \
+uv run imperaos team replay \
   --job-id <job_id> \
-  --root-dir .binliquid/team/jobs \
+  --root-dir .imperaos/team/jobs \
   --verify \
   --json
 ```
@@ -262,18 +262,18 @@ make enterprise-gate
 Ayrıca key-management drill’leri:
 
 ```bash
-uv run binliquid keys status --profile enterprise --json
-uv run binliquid keys rotate-plan \
+uv run imperaos keys status --profile enterprise --json
+uv run imperaos keys rotate-plan \
   --profile enterprise \
   --next-key-id enterprise-signing-next \
   --json
-uv run binliquid security baseline --profile enterprise --json
-uv run binliquid metrics snapshot --profile enterprise --json
-uv run binliquid ga readiness \
+uv run imperaos security baseline --profile enterprise --json
+uv run imperaos metrics snapshot --profile enterprise --json
+uv run imperaos ga readiness \
   --profile enterprise \
   --report artifacts/ga_readiness_report.json \
   --json
-uv run binliquid keys verify \
+uv run imperaos keys verify \
   --profile enterprise \
   --path artifacts/ga_readiness_report.json \
   --json
@@ -322,7 +322,7 @@ HSM/PKCS#11 breadth hâlâ post-v1 deferred kalır.
 **Aday smoke-soak:**
 
 ```bash
-uv run binliquid qualification run \
+uv run imperaos qualification run \
   --profile enterprise \
   --mode mixed \
   --soak-hours 6 \
@@ -333,7 +333,7 @@ uv run binliquid qualification run \
 **Release-candidate soak:**
 
 ```bash
-uv run binliquid qualification run \
+uv run imperaos qualification run \
   --profile enterprise \
   --mode mixed \
   --soak-hours 24 \
@@ -343,7 +343,7 @@ uv run binliquid qualification run \
 
 **2026-05-11 durum:** 24h release-candidate soak LaunchAgent olarak
 başlatıldı. Run id: `rc24h-20260511T153314Z`. Çalışma klasörü:
-`/private/tmp/binliquid_soak_rc24h-20260511T153314Z`. Supervisor status:
+`/private/tmp/imperaos_soak_rc24h-20260511T153314Z`. Supervisor status:
 `artifacts/qualification/supervisor/rc24h-20260511T153314Z/status.json`.
 Heartbeat `2026-05-11T15:36:09Z` itibarıyla güncel ve süreç `running`.
 Beklenen bitiş yaklaşık `2026-05-12T15:34Z` / `2026-05-12 18:34 Europe/Istanbul`.
@@ -373,7 +373,7 @@ SHA256:
 **Final pre-GA soak:**
 
 ```bash
-uv run binliquid qualification run \
+uv run imperaos qualification run \
   --profile enterprise \
   --mode mixed \
   --soak-hours 72 \
@@ -386,7 +386,7 @@ uv run binliquid qualification run \
 `status=interrupted`, `exit_code=130` olarak kaydedildi. Yeni dayanıklı run
 `scripts/launch_resilient_qualification_soak.sh` ile başlatıldı. Run id:
 `final72h-20260513T194220Z`. Çalışma klasörü:
-`/private/tmp/binliquid_soak_final72h-20260513T194220Z`. Run
+`/private/tmp/imperaos_soak_final72h-20260513T194220Z`. Run
 `2026-05-16T19:43:55Z` itibarıyla `status=completed_success`, `exit_code=0`
 ve boş stderr ile tamamlandı. 72h qualification raporu `qualification_status=pass`,
 `recommended_status=green`, `go_no_go=go`, imza doğrulaması PASS ve ana repo
@@ -598,18 +598,18 @@ Computer-use için ana kural:
 **Varsayılan kontroller:**
 
 ```bash
-uv run binliquid computer-use doctor --platform all --json
-uv run binliquid computer-use summary \
-  --root-dir .binliquid/team/jobs \
+uv run imperaos computer-use doctor --platform all --json
+uv run imperaos computer-use summary \
+  --root-dir .imperaos/team/jobs \
   --limit 20 \
   --json
-uv run binliquid operator capabilities --json
+uv run imperaos operator capabilities --json
 ```
 
 **Deterministic qualification:**
 
 ```bash
-uv run binliquid computer-use qualify \
+uv run imperaos computer-use qualify \
   --runtime vision-first \
   --suite smoke \
   --mode deterministic \
@@ -835,7 +835,7 @@ Durum: Hat B blocked. macOS signing/notarization credentials, Windows
 Authenticode signing credentials, signed RC evidence, and clean-machine smoke
 evidence hazır olmadan bu checklist işaretlenmeyecek. Ayrıntılı handoff:
 `docs/HAT_B_DESKTOP_RELEASE_HANDOFF_2026-05-10.md`. Tracking issue:
-https://github.com/bakiacikgoz/BinLiquidAI/issues/4.
+https://github.com/bakiacikgoz/ImperaOS/issues/4.
 
 ---
 

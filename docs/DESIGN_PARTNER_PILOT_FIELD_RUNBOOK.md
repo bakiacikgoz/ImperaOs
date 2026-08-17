@@ -12,7 +12,7 @@ This runbook is for a governed pilot rehearsal. It does not authorize target-cus
 ## Run
 
 ```bash
-uv run binliquid pilot workflow run \
+uv run imperaos pilot workflow run \
   --spec examples/pilot_workflows/enterprise_governed_memory_provider.yaml \
   --profile enterprise \
   --output-root artifacts/governed-pilot-workflow
@@ -21,7 +21,7 @@ uv run binliquid pilot workflow run \
 Then verify:
 
 ```bash
-uv run binliquid pilot workflow verify \
+uv run imperaos pilot workflow verify \
   --report artifacts/governed-pilot-workflow/latest/report.json
 ```
 

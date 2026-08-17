@@ -85,7 +85,7 @@ const visionCapability: ComputerUseVisionRuntimeCapability = {
 };
 
 const summary = {
-  contractVersion: '2.0',
+  contractVersion: '3.0',
   counts: {
     success: 1,
     blocked: 2,

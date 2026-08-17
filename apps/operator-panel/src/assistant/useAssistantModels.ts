@@ -26,6 +26,16 @@ export type AssistantModelDiscoveryState = {
   refresh: () => void;
 };
 
+export function canonicalAssistantProviderId(provider: AssistantProviderId | 'all'): AssistantProviderId | 'all' {
+  if (provider === 'ollama') {
+    return 'local-ollama';
+  }
+  if (provider === 'transformers') {
+    return 'local-transformers';
+  }
+  return provider;
+}
+
 export function useAssistantModels({
   settings,
   profile,
@@ -35,6 +45,7 @@ export function useAssistantModels({
   profile: string;
   provider: AssistantProviderId | 'all';
 }): AssistantModelDiscoveryState {
+  const canonicalProvider = canonicalAssistantProviderId(provider);
   const [response, setResponse] = useState<AssistantProviderModelsResponse | null>(null);
   const [status, setStatus] = useState<AssistantModelDiscoveryStatus>('idle');
   const [error, setError] = useState<AssistantModelDiscoveryError | null>(null);
@@ -47,12 +58,8 @@ export function useAssistantModels({
         bundledPythonPath: settings.bundledPythonPath,
         profile: settings.profile,
         rootDir: settings.rootDir,
-        assistantOpenAiApiKey: settings.assistantOpenAiApiKey ? 'set' : '',
-        assistantDeepSeekApiKey: settings.assistantDeepSeekApiKey ? 'set' : '',
       }),
     [
-      settings.assistantDeepSeekApiKey,
-      settings.assistantOpenAiApiKey,
       settings.bundledPythonPath,
       settings.cliPath,
       settings.mode,
@@ -69,14 +76,14 @@ export function useAssistantModels({
 
     listAssistantModels(settings, {
       profile,
-      provider,
+      provider: canonicalProvider,
       refresh: refreshToken > 0,
     })
       .then((payload) => {
         if (cancelled) {
           return;
         }
-        const models = flattenAssistantModels(payload, provider);
+        const models = flattenAssistantModels(payload, canonicalProvider);
         setResponse(payload);
         setStatus(models.length > 0 ? 'success' : 'empty');
       })
@@ -102,13 +109,16 @@ export function useAssistantModels({
     return () => {
       cancelled = true;
     };
-  }, [profile, provider, refreshToken, settingsFingerprint]);
+  }, [canonicalProvider, profile, refreshToken, settingsFingerprint]);
 
   const refresh = useCallback(() => {
     setRefreshToken((value) => value + 1);
   }, []);
 
-  const models = useMemo(() => (response ? flattenAssistantModels(response, provider) : []), [provider, response]);
+  const models = useMemo(
+    () => (response ? flattenAssistantModels(response, canonicalProvider) : []),
+    [canonicalProvider, response],
+  );
 
   return {
     status,

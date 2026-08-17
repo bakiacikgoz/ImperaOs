@@ -21,7 +21,7 @@ Windows x64 core CLI, operator panel, bundled runtime, and signed release-candid
 ```powershell
 pwsh apps/operator-panel/scripts/windows_installer_smoke.ps1 `
   -InstallerPath <path-to-nsis-exe> `
-  -ExpectedProductName "AegisOS Operator Panel" `
+  -ExpectedProductName "ImperaOS Operator Panel" `
   -OutputDir artifacts/windows-installer-smoke `
   -AllowUnsignedSmoke
 ```
@@ -36,7 +36,7 @@ Run this only with a signed installer on a clean or disposable Windows VM:
 pwsh apps/operator-panel/scripts/windows_installer_smoke.ps1 `
   -InstallerPath <signed-nsis-exe> `
   -ExpectedInstallerSha256 <signed-rc-installer-sha256> `
-  -ExpectedProductName "AegisOS Operator Panel" `
+  -ExpectedProductName "ImperaOS Operator Panel" `
   -OutputDir artifacts/windows-installer-smoke `
   -RunInstall `
   -CleanVm `
@@ -53,7 +53,7 @@ The smoke script writes:
 - `windows-installer-smoke.json`
 - `operator_capabilities.json` when an installed runtime is found
 - `doctor_balanced.json` when an installed runtime is found
-- `binliquid-version.txt` when an installed runtime is found
+- `imperaos-version.txt` when an installed runtime is found
 
 The expected report shape includes:
 

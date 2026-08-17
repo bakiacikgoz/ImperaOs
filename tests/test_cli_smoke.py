@@ -2,9 +2,9 @@ import json
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.governance.runtime import GovernanceRuntime
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.cli import app
+from imperaos.governance.runtime import GovernanceRuntime
+from imperaos.runtime.config import RuntimeConfig
 
 runner = CliRunner()
 
@@ -19,7 +19,7 @@ def test_doctor_reports_unhealthy_runtime(monkeypatch) -> None:
             },
         }
 
-    monkeypatch.setattr("binliquid.cli.check_provider_chain", fake_status)
+    monkeypatch.setattr("imperaos.cli.check_provider_chain", fake_status)
     result = runner.invoke(app, ["doctor", "--profile", "lite"])
 
     assert result.exit_code == 3
@@ -51,7 +51,7 @@ def test_benchmark_smoke_command(monkeypatch) -> None:
             "results": {"A": {"success_rate": 1.0}},
         }
 
-    monkeypatch.setattr("binliquid.cli.run_smoke_benchmark", fake_benchmark)
+    monkeypatch.setattr("imperaos.cli.run_smoke_benchmark", fake_benchmark)
     result = runner.invoke(app, ["benchmark", "smoke", "--mode", "A", "--profile", "lite"])
 
     assert result.exit_code == 0
@@ -85,7 +85,7 @@ def test_benchmark_smoke_passes_model_overrides(monkeypatch) -> None:
             "results": {"A": {"success_rate": 1.0}},
         }
 
-    monkeypatch.setattr("binliquid.cli.run_smoke_benchmark", fake_benchmark)
+    monkeypatch.setattr("imperaos.cli.run_smoke_benchmark", fake_benchmark)
     result = runner.invoke(
         app,
         [
@@ -137,7 +137,7 @@ def test_benchmark_team_command(monkeypatch) -> None:
             "success_rate": 1.0,
         }
 
-    monkeypatch.setattr("binliquid.cli.run_team_benchmark", fake_team_benchmark)
+    monkeypatch.setattr("imperaos.cli.run_team_benchmark", fake_team_benchmark)
     result = runner.invoke(
         app,
         [
@@ -175,7 +175,7 @@ def test_benchmark_team_command_passes_deterministic_mock(monkeypatch) -> None:
         captured["deterministic_mock"] = deterministic_mock
         return {"success_rate": 1.0}
 
-    monkeypatch.setattr("binliquid.cli.run_team_benchmark", fake_team_benchmark)
+    monkeypatch.setattr("imperaos.cli.run_team_benchmark", fake_team_benchmark)
     result = runner.invoke(
         app,
         [
@@ -198,7 +198,7 @@ def test_config_resolve_command(monkeypatch) -> None:
     def fake_resolve(**_: object):
         return RuntimeConfig.from_profile("lite"), {"llm_provider": "profile"}
 
-    monkeypatch.setattr("binliquid.cli.resolve_runtime_config", fake_resolve)
+    monkeypatch.setattr("imperaos.cli.resolve_runtime_config", fake_resolve)
     result = runner.invoke(app, ["config", "resolve", "--profile", "lite", "--json"])
 
     assert result.exit_code == 0
@@ -271,7 +271,7 @@ def test_operator_capabilities_contract() -> None:
     result = runner.invoke(app, ["operator", "capabilities", "--json"])
     assert result.exit_code == 0
     payload = json.loads(result.stdout)
-    assert payload["contractVersion"] == "2.0"
+    assert payload["contractVersion"] == "3.0"
     assert payload["commands"]["teamListJson"] is True
     assert payload["commands"]["approvalShowJson"] is True
     assert payload["commands"]["securityBaselineJson"] is True
@@ -300,8 +300,19 @@ def test_approval_show_redacts_snapshot(monkeypatch, tmp_path) -> None:
     assert decision.action.value == "require_approval"
     assert ticket is not None
 
-    monkeypatch.setattr("binliquid.cli._build_governance_runtime", lambda _cfg: runtime)
-    result = runner.invoke(app, ["approval", "show", "--id", ticket.approval_id, "--json"])
+    monkeypatch.setattr("imperaos.cli._build_governance_runtime", lambda _cfg: runtime)
+    result = runner.invoke(
+        app,
+        [
+            "approval",
+            "show",
+            "--id",
+            ticket.approval_id,
+            "--workspace-id",
+            "default",
+            "--json",
+        ],
+    )
 
     assert result.exit_code == 0
     payload = json.loads(result.stdout)

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from binliquid.control_plane.field_evidence import (
+from imperaos.control_plane.field_evidence import (
     STRICT_BLOCKED_CLAIMS,
     FieldEvidenceVerificationResult,
     OperatorAttestationValidationResult,
 )
-from binliquid.control_plane.strict_rc_promotion import evaluate_strict_rc_promotion
+from imperaos.control_plane.strict_rc_promotion import evaluate_strict_rc_promotion
 
 
 def test_strict_rc_promotion_missing_attestation_is_conditional() -> None:

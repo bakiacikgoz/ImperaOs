@@ -1,8 +1,8 @@
 import sqlite3
 from pathlib import Path
 
-from binliquid.memory.migration_planner import plan_legacy_memory_migration
-from binliquid.memory.workspace_models import LegacyMemoryMigrationPlanRequest
+from imperaos.memory.migration_planner import plan_legacy_memory_migration
+from imperaos.memory.workspace_models import LegacyMemoryMigrationPlanRequest
 
 
 def test_legacy_memory_migration_is_dry_run_and_hash_only(tmp_path: Path) -> None:

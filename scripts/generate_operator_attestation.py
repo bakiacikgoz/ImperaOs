@@ -9,8 +9,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.models import TargetEvidenceSession  # noqa: E402
-from binliquid.control_plane.operator_attestation import build_operator_attestation  # noqa: E402
+from imperaos.control_plane.models import TargetEvidenceSession  # noqa: E402
+from imperaos.control_plane.operator_attestation import build_operator_attestation  # noqa: E402
 
 
 def main() -> None:

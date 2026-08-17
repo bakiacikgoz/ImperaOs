@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "artifact-workspace.dependency-matrix/v1",
+  "verifiedAt": "2026-07-16",
+  "canonicalLockfile": "pnpm-lock.yaml",
+  "policies": {
+    "react": "19.x",
+    "csp": "required-no-unsafe-eval-no-remote-cdn",
+    "network": "offline-capable",
+    "licensedEditors": "forced-off-until-entitlement",
+    "stateOwner": "imperaos-external-store"
+  },
+  "packages": [
+    {"package":"@assistant-ui/react","version":"0.14.26","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"local-only","fallback":"legacy-assistant-workbench","source":"https://www.assistant-ui.com/docs/runtimes/custom/external-store"},
+    {"package":"ai","version":"6.0.228","license":"Apache-2.0","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"tauri-transport-only","fallback":"direct-imperaos-events","source":"https://ai-sdk.dev/docs/ai-sdk-ui/transport"},
+    {"package":"@ai-sdk/react","version":"3.0.230","license":"Apache-2.0","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"tauri-transport-only","fallback":"direct-imperaos-events","source":"https://ai-sdk.dev/docs/ai-sdk-ui/transport"},
+    {"package":"@assistant-ui/react-ai-sdk","version":"1.3.40","license":"MIT","phase":"optional","required":false,"licenseGate":"none","cspPolicy":"disabled-with-external-store","fallback":"@assistant-ui/react-external-store","source":"https://www.assistant-ui.com/docs/runtimes/ai-sdk/overview"},
+    {"package":"@blocknote/core","version":"0.51.4","license":"MPL-2.0","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"no-remote-embeds","fallback":"plain-markdown","source":"https://www.blocknotejs.org/docs/foundations/supported-formats"},
+    {"package":"@blocknote/react","version":"0.51.4","license":"MPL-2.0","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"no-remote-embeds","fallback":"plain-markdown","source":"https://www.blocknotejs.org/legal/terms-and-conditions"},
+    {"package":"@xyflow/react","version":"12.11.2","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"local-css-only","fallback":"textual-outline","source":"https://reactflow.dev/learn"},
+    {"package":"monaco-editor","version":"0.55.1","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"local-workers-no-cdn","fallback":"codemirror-6","source":"https://microsoft.github.io/monaco-editor/"},
+    {"package":"@monaco-editor/react","version":"4.7.0","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"loader-config-local-monaco","fallback":"codemirror-6","source":"https://github.com/suren-atoyan/monaco-react"},
+    {"package":"pptxgenjs","version":"4.0.1","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"arraybuffer-export-only","fallback":"json-export","source":"https://gitbrent.github.io/PptxGenJS/docs/integration/"},
+    {"package":"react-hook-form","version":"7.81.0","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"local-only","fallback":"controlled-react-state","source":"https://www.npmjs.com/package/react-hook-form"},
+    {"package":"zod","version":"4.4.3","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"local-only","fallback":"manual-guards","source":"https://zod.dev/"},
+    {"package":"@hookform/resolvers","version":"5.4.0","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"local-only","fallback":"backend-validation","source":"https://www.npmjs.com/package/@hookform/resolvers"},
+    {"package":"@rjsf/core","version":"6.6.2","license":"Apache-2.0","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"forced-off-until-csp-safe-validator","fallback":"custom-form-renderer","source":"https://rjsf-team.github.io/react-jsonschema-form/docs/"},
+    {"package":"@rjsf/utils","version":"6.6.2","license":"Apache-2.0","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"forced-off-until-csp-safe-validator","fallback":"custom-form-renderer","source":"https://rjsf-team.github.io/react-jsonschema-form/docs/"},
+    {"package":"@rjsf/validator-ajv8","version":"6.6.2","license":"Apache-2.0","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"probe-only-no-runtime-codegen","fallback":"custom-validator","source":"https://rjsf-team.github.io/react-jsonschema-form/docs/usage/validation/"},
+    {"package":"ajv","version":"8.20.0","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"no-runtime-codegen-in-renderer","fallback":"backend-authoritative-validation","source":"https://ajv.js.org/security.html"},
+    {"package":"ajv-formats","version":"3.0.1","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"allowlisted-formats-only","fallback":"backend-authoritative-validation","source":"https://ajv.js.org/packages/ajv-formats.html"},
+    {"package":"lucide-react","version":"1.24.0","license":"ISC","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"tree-shaken-local-icons","fallback":"text-labels","source":"https://lucide.dev/guide/packages/lucide-react"},
+    {"package":"react-resizable-panels","version":"4.12.2","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"local-only","fallback":"fixed-layout","source":"https://www.npmjs.com/package/react-resizable-panels"},
+    {"package":"dompurify","version":"3.4.12","license":"MPL-2.0 OR Apache-2.0","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"sanitize-before-render-export","fallback":"plain-text","source":"https://github.com/cure53/DOMPurify"},
+    {"package":"exceljs","version":"4.4.0","license":"MIT","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"arraybuffer-export-only","fallback":"csv-export","source":"https://github.com/exceljs/exceljs/releases/tag/v4.4.0"},
+    {"package":"@tauri-apps/plugin-dialog","version":"2.7.1","license":"MIT OR Apache-2.0","phase":"phase2","required":true,"licenseGate":"none","cspPolicy":"native-dialog-only","fallback":"export-disabled","source":"https://v2.tauri.app/plugin/dialog/"},
+    {"package":"handsontable","version":"18.0.0","license":"Commercial","phase":"deferred","required":false,"licenseGate":"commercial","cspPolicy":"forced-off-until-entitlement","fallback":"ag-grid-community-or-univer","source":"https://handsontable.com/docs/react-data-grid/license-key/"},
+    {"package":"@handsontable/react-wrapper","version":"18.0.0","license":"Commercial","phase":"deferred","required":false,"licenseGate":"commercial","cspPolicy":"forced-off-until-entitlement","fallback":"ag-grid-community-or-univer","source":"https://handsontable.com/docs/react-data-grid/license-key/"},
+    {"package":"tldraw","version":"5.2.5","license":"tldraw-commercial","phase":"deferred","required":false,"licenseGate":"commercial","cspPolicy":"forced-off-until-offline-entitlement","fallback":"excalidraw","source":"https://tldraw.dev/community/license"}
+  ]
+}

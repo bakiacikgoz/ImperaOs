@@ -40,7 +40,7 @@ describe('bridge tauri contract', () => {
     const { invoke, bridge } = await importBridgeWithInvoke({
       uiVersion: '0.5.0-beta.1',
       coreVersion: '0.4.1',
-      contractVersion: '2.0',
+      contractVersion: '3.0',
       capabilities: {},
       doctor: {},
     });
@@ -48,9 +48,9 @@ describe('bridge tauri contract', () => {
     await bridge.handshake({
       ...DEFAULT_SETTINGS,
       mode: 'external',
-      cliPath: '/usr/local/bin/binliquid',
+      cliPath: '/usr/local/bin/imperaos',
       profile: 'balanced',
-      rootDir: '.binliquid/team/jobs',
+      rootDir: '.imperaos/team/jobs',
     });
 
     expect(invoke).toHaveBeenCalledWith(
@@ -58,15 +58,15 @@ describe('bridge tauri contract', () => {
       expect.objectContaining({
         config: expect.objectContaining({
           mode: 'external',
-          cliPath: '/usr/local/bin/binliquid',
+          cliPath: '/usr/local/bin/imperaos',
           profile: 'balanced',
-          rootDir: '.binliquid/team/jobs',
+          rootDir: '.imperaos/team/jobs',
         }),
       }),
     );
   });
 
-  it('passes assistant API keys and remote provider flag through bridge config env', async () => {
+  it('never passes renderer provider secrets through bridge config env', async () => {
     const { invoke, bridge } = await importBridgeWithInvoke({
       contractVersion: 'operator-panel.assistant-provider-models/v4',
       profile: 'balanced',
@@ -75,32 +75,33 @@ describe('bridge tauri contract', () => {
       providers: [],
     });
 
+    const pollutedLegacySettings = {
+      ...DEFAULT_SETTINGS,
+      assistantOpenAiApiKey: 'sk-openai',
+      assistantDeepSeekApiKey: 'sk-deepseek',
+    } as typeof DEFAULT_SETTINGS & {
+      assistantOpenAiApiKey: string;
+      assistantDeepSeekApiKey: string;
+    };
     await bridge.listAssistantModels(
-      {
-        ...DEFAULT_SETTINGS,
-        assistantOpenAiApiKey: 'sk-openai',
-        assistantDeepSeekApiKey: 'sk-deepseek',
-      },
+      pollutedLegacySettings,
       { profile: 'balanced', provider: 'all' },
     );
 
-    expect(invoke).toHaveBeenCalledWith(
-      'bridge_assistant_provider_models',
-      expect.objectContaining({
-        config: expect.objectContaining({
-          env: expect.objectContaining({
-            BINLIQUID_REMOTE_PROVIDERS_ENABLED: 'true',
-            OPENAI_API_KEY: 'sk-openai',
-            DEEPSEEK_API_KEY: 'sk-deepseek',
-          }),
-        }),
-      }),
-    );
+    const call = invoke.mock.calls.find(([command]) => command === 'bridge_assistant_provider_models');
+    const config = (call?.[1] as { config?: { env?: Record<string, string> } }).config;
+    expect(config?.env).toMatchObject({
+      IMPERAOS_PROFILE_NAME: 'balanced',
+      IMPERAOS_TEAM_ARTIFACT_DIR: DEFAULT_SETTINGS.rootDir,
+    });
+    expect(config?.env).not.toHaveProperty('IMPERAOS_REMOTE_PROVIDERS_ENABLED');
+    expect(config?.env).not.toHaveProperty('OPENAI_API_KEY');
+    expect(config?.env).not.toHaveProperty('DEEPSEEK_API_KEY');
   });
 
   it('passes assistant provider and model options to the Tauri command', async () => {
     const { invoke, bridge } = await importBridgeWithInvoke({
-      contractVersion: '2.0',
+      contractVersion: '3.0',
       assistantTurnId: 'turn-tauri',
       sessionId: 'session-tauri',
       processId: 42,
@@ -147,7 +148,7 @@ describe('bridge tauri contract', () => {
 
   it('passes assistant cancel requests to the Tauri command', async () => {
     const { invoke, bridge } = await importBridgeWithInvoke({
-      contractVersion: '2.0',
+      contractVersion: '3.0',
       assistantTurnId: 'turn-tauri',
       sessionId: 'session-tauri',
       processId: 42,
@@ -193,7 +194,7 @@ describe('bridge tauri contract', () => {
   });
 
   it('passes config resolve provider and model overrides to the Tauri command', async () => {
-    const { invoke, bridge } = await importBridgeWithInvoke({ contract_version: '2.0', status: 'ok' });
+    const { invoke, bridge } = await importBridgeWithInvoke({ contract_version: '3.0', status: 'ok' });
 
     await bridge.resolveConfig(
       { ...DEFAULT_SETTINGS, profile: 'balanced' },
@@ -253,7 +254,7 @@ describe('bridge tauri contract', () => {
     await bridge.runInstallRehearsal(
       { ...DEFAULT_SETTINGS, profile: 'enterprise' },
       {
-        targetRoot: '.binliquid/rehearsal/design-partner',
+        targetRoot: '.imperaos/rehearsal/design-partner',
         output: 'artifacts/install-rehearsal/report.json',
         mode: 'source-cli',
       },
@@ -266,7 +267,7 @@ describe('bridge tauri contract', () => {
           profile: 'enterprise',
           timeoutMs: 120000,
         }),
-        targetRoot: '.binliquid/rehearsal/design-partner',
+        targetRoot: '.imperaos/rehearsal/design-partner',
         output: 'artifacts/install-rehearsal/report.json',
         mode: 'source-cli',
       }),
@@ -301,7 +302,7 @@ describe('bridge tauri contract', () => {
   });
 
   it('passes team submit model metadata and run identifiers to the Tauri command', async () => {
-    const { invoke, bridge } = await importBridgeWithInvoke({ contractVersion: '2.0', jobId: 'job-live' });
+    const { invoke, bridge } = await importBridgeWithInvoke({ contractVersion: '3.0', jobId: 'job-live' });
 
     await bridge.submitTeamRun(
       { ...DEFAULT_SETTINGS },
@@ -334,7 +335,7 @@ describe('bridge tauri contract', () => {
   });
 
   it('passes approval decide and execute actor args to the Tauri commands', async () => {
-    const { invoke, bridge } = await importBridgeWithInvoke({ contract_version: '2.0' });
+    const { invoke, bridge } = await importBridgeWithInvoke({ contract_version: '3.0' });
 
     await bridge.decideApproval({ ...DEFAULT_SETTINGS }, 'apr-1', false, 'qa-operator', 'operator rejected');
     await bridge.executeApproval({ ...DEFAULT_SETTINGS }, 'apr-1', 'qa-operator');
@@ -360,7 +361,7 @@ describe('bridge tauri contract', () => {
   });
 
   it('passes computer-use submit and control args to the Tauri commands', async () => {
-    const { invoke, bridge } = await importBridgeWithInvoke({ contractVersion: '2.0', jobId: 'job-cu' });
+    const { invoke, bridge } = await importBridgeWithInvoke({ contractVersion: '3.0', jobId: 'job-cu' });
 
     await bridge.submitComputerUseRun(
       { ...DEFAULT_SETTINGS },
@@ -413,16 +414,16 @@ describe('bridge tauri contract', () => {
   });
 
   it('passes artifact read and run export args to the Tauri commands', async () => {
-    const { invoke, bridge } = await importBridgeWithInvoke({ contractVersion: '2.0' });
+    const { invoke, bridge } = await importBridgeWithInvoke({ contractVersion: '3.0' });
 
-    await bridge.readArtifact({ ...DEFAULT_SETTINGS, rootDir: '.binliquid/jobs' }, 'job-1', 'status.json', 4096);
+    await bridge.readArtifact({ ...DEFAULT_SETTINGS, rootDir: '.imperaos/jobs' }, 'job-1', 'status.json', 4096);
     await bridge.exportRunArtifacts({ ...DEFAULT_SETTINGS }, 'job-1', './exports/job-1');
 
     expect(invoke).toHaveBeenNthCalledWith(
       1,
       'bridge_read_artifact',
       expect.objectContaining({
-        rootDir: '.binliquid/jobs',
+        rootDir: '.imperaos/jobs',
         jobId: 'job-1',
         artifactName: 'status.json',
         maxBytes: 4096,

@@ -1,7 +1,9 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { AssistantRuntimeProvider } from '@assistant-ui/react';
 
-import type { AssistantTurn } from '../../assistant/assistantTypes';
+import { useImperaAssistantUiRuntime } from '../../assistant/assistantUiRuntime';
+import type { AssistantSessionState, AssistantTurn } from '../../assistant/assistantTypes';
 import { renderOperatorPanel } from '../../test/render';
 import { AssistantTranscript } from './AssistantTranscript';
 
@@ -26,6 +28,7 @@ const baseTurn: AssistantTurn = {
     approval: null,
     referencedRuns: [],
     referencedArtifacts: [],
+    parts: [],
     metrics: null,
     warning: null,
     error: null,
@@ -34,21 +37,50 @@ const baseTurn: AssistantTurn = {
 
 const noop = () => undefined;
 
-function renderTranscript(turns: AssistantTurn[]) {
-  return renderOperatorPanel(
-    <AssistantTranscript
-      turns={turns}
-      approvalDisabled={false}
-      approvalDisabledReason=""
-      emptyRunLabel="No run"
-      debugRawEnabled={false}
-      onReviewApproval={noop}
-      onApprove={noop}
-      onReject={noop}
-      onExecute={noop}
-      onRegenerate={noop}
-    />,
+function RuntimeTranscript({
+  turns,
+  onOpenArtifact = noop,
+}: {
+  turns: AssistantTurn[];
+  onOpenArtifact?: (artifactId: string) => void;
+}) {
+  const state: AssistantSessionState = {
+    sessionId: 'session-1',
+    turns,
+    activeTurnId: turns.at(-1)?.id ?? null,
+    status: turns.at(-1)?.status ?? 'idle',
+    selectedRunIds: [],
+    referencedArtifacts: [],
+    pendingApprovalId: null,
+    error: null,
+  };
+  const runtime = useImperaAssistantUiRuntime({
+    state,
+    onNew: noop,
+    onCancel: noop,
+    onRegenerate: noop,
+  });
+  return (
+    <AssistantRuntimeProvider runtime={runtime}>
+      <AssistantTranscript
+        turns={turns}
+        approvalDisabled={false}
+        approvalDisabledReason=""
+        emptyRunLabel="No run"
+        debugRawEnabled={false}
+        onReviewApproval={noop}
+        onApprove={noop}
+        onReject={noop}
+        onExecute={noop}
+        onRegenerate={noop}
+        onOpenArtifact={onOpenArtifact}
+      />
+    </AssistantRuntimeProvider>
   );
+}
+
+function renderTranscript(turns: AssistantTurn[]) {
+  return renderOperatorPanel(<RuntimeTranscript turns={turns} />);
 }
 
 describe('AssistantTranscript sticky scrolling', () => {
@@ -111,6 +143,25 @@ describe('AssistantTranscript sticky scrolling', () => {
     HTMLElement.prototype.scrollTo = originalScrollTo;
   });
 
+  it('renders the legacy projection without an assistant-ui provider when cutover is disabled', () => {
+    renderOperatorPanel(
+      <AssistantTranscript
+        turns={[baseTurn]}
+        approvalDisabled={false}
+        approvalDisabledReason=""
+        emptyRunLabel="No run"
+        debugRawEnabled={false}
+        assistantUiRuntimeEnabled={false}
+        onReviewApproval={noop}
+        onApprove={noop}
+        onReject={noop}
+        onExecute={noop}
+        onRegenerate={noop}
+      />,
+    );
+    expect(screen.getByText('Working...')).toBeInTheDocument();
+  });
+
   it('follows the newest turn to the bottom when a new turn appears', () => {
     renderTranscript([baseTurn]);
 
@@ -128,7 +179,7 @@ describe('AssistantTranscript sticky scrolling', () => {
     scrollHeightValue = 1500;
 
     rerender(
-      <AssistantTranscript
+      <RuntimeTranscript
         turns={[
           {
             ...baseTurn,
@@ -138,15 +189,6 @@ describe('AssistantTranscript sticky scrolling', () => {
             },
           },
         ]}
-        approvalDisabled={false}
-        approvalDisabledReason=""
-        emptyRunLabel="No run"
-        debugRawEnabled={false}
-        onReviewApproval={noop}
-        onApprove={noop}
-        onReject={noop}
-        onExecute={noop}
-        onRegenerate={noop}
       />,
     );
 
@@ -165,5 +207,31 @@ describe('AssistantTranscript sticky scrolling', () => {
     await user.click(screen.getByRole('button', { name: 'Jump to latest' }));
 
     expect(scrollToMock).toHaveBeenCalledWith(expect.objectContaining({ top: 1000 }));
+  });
+
+  it('forwards committed artifact card actions through the runtime transcript', async () => {
+    const onOpenArtifact = vi.fn();
+    const artifactTurn: AssistantTurn = {
+      ...baseTurn,
+      assistantMessage: {
+        ...baseTurn.assistantMessage,
+        referencedArtifacts: [
+          {
+            name: 'Project brief',
+            artifactId: 'artifact-project-brief',
+            revisionId: 'revision-1',
+            kind: 'document',
+            openable: true,
+          },
+        ],
+      },
+    };
+    const { user } = renderOperatorPanel(
+      <RuntimeTranscript turns={[artifactTurn]} onOpenArtifact={onOpenArtifact} />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Open Project brief' }));
+
+    expect(onOpenArtifact).toHaveBeenCalledWith('artifact-project-brief');
   });
 });

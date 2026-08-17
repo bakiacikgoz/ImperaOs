@@ -3,7 +3,10 @@ import type {
   AssistantProviderModelCandidate,
   AssistantProviderModelsProvider,
 } from '../../assistant/modelDiscovery';
-import type { AssistantModelDiscoveryState } from '../../assistant/useAssistantModels';
+import {
+  canonicalAssistantProviderId,
+  type AssistantModelDiscoveryState,
+} from '../../assistant/useAssistantModels';
 import { assistantUiText, translateAssistantText, type UiLocale } from '../../i18n';
 import type { AssistantRuntimeSettings } from '../../settings';
 
@@ -14,11 +17,28 @@ type AssistantModelPickerProps = {
   onRuntimeSettingsChange: (next: Partial<AssistantRuntimeSettings>) => void;
 };
 
-const LEGACY_PROVIDER_VALUES = ['', 'auto', 'ollama', 'transformers'];
+const PROVIDER_VALUES = ['', 'auto', 'ollama', 'transformers', 'local-transformers', 'local-ollama'];
 const FALLBACK_VALUES = ['', 'transformers', 'ollama', 'local-transformers', 'local-ollama'];
 
 function providerFromSettings(settings: AssistantRuntimeSettings): AssistantProviderId | 'default' {
   return settings.assistantProvider.trim() || 'default';
+}
+
+function providerFromDiscovery(
+  provider: AssistantProviderId | 'default',
+  discoveredProviders: AssistantProviderModelsProvider[],
+): AssistantProviderId | 'default' {
+  if (provider === 'default') {
+    return provider;
+  }
+  const canonicalProvider = canonicalAssistantProviderId(provider);
+  const discoveredProvider = discoveredProviders.find(
+    (item) =>
+      item.provider === provider ||
+      item.provider === canonicalProvider ||
+      item.legacyProvider === provider,
+  );
+  return discoveredProvider?.provider ?? provider;
 }
 
 function modelsForProvider(
@@ -57,19 +77,22 @@ export function AssistantModelPicker({
   onRuntimeSettingsChange,
 }: AssistantModelPickerProps) {
   const text = assistantUiText[locale];
-  const provider = providerFromSettings(runtimeSettings);
   const discoveredProviders = modelDiscovery?.providers ?? [];
+  const provider = providerFromDiscovery(providerFromSettings(runtimeSettings), discoveredProviders);
   const providerOptions: AssistantProviderModelsProvider[] = [
-    ...LEGACY_PROVIDER_VALUES.map((value) => ({
+    ...PROVIDER_VALUES.filter(
+      (value) =>
+        !discoveredProviders.some(
+          (item) => item.provider === value || item.legacyProvider === value,
+        ),
+    ).map((value) => ({
       provider: value,
       displayName: value ? value : text.useProfileDefault,
       available: true,
       selectedByConfig: false,
       models: [],
     })),
-    ...discoveredProviders.filter(
-      (item) => !LEGACY_PROVIDER_VALUES.includes(item.provider) && !LEGACY_PROVIDER_VALUES.includes(item.legacyProvider ?? ''),
-    ),
+    ...discoveredProviders,
   ];
   const selectedProviderRecord = discoveredProviders.find((item) => item.provider === provider);
   const selectedModels = provider === 'default' ? [] : modelsForProvider(modelDiscovery?.models ?? [], provider);
@@ -114,7 +137,7 @@ export function AssistantModelPicker({
         <span>{text.provider}</span>
         <select
           aria-label="Assistant provider"
-          value={runtimeSettings.assistantProvider}
+          value={provider === 'default' ? '' : provider}
           onChange={(event) => updateProvider(event.target.value)}
         >
           {providerOptions.map((item) => (
@@ -140,7 +163,7 @@ export function AssistantModelPicker({
             >
               <option value="">{text.useProfileDefault}</option>
               {selectedModels.map((model) => (
-                <option key={`${model.provider}:${model.id}`} value={model.id}>
+                <option key={`${model.provider}:${model.id}`} value={model.id} disabled={!model.installed}>
                   {modelOptionLabel(model, locale)}
                 </option>
               ))}
@@ -167,7 +190,7 @@ export function AssistantModelPicker({
             >
               <option value="">{text.useProfileDefault}</option>
               {selectedModels.map((model) => (
-                <option key={`${model.provider}:${model.id}`} value={model.id}>
+                <option key={`${model.provider}:${model.id}`} value={model.id} disabled={!model.installed}>
                   {modelOptionLabel(model, locale)}
                 </option>
               ))}
@@ -194,7 +217,7 @@ export function AssistantModelPicker({
             >
               <option value="">{text.useProfileDefault}</option>
               {selectedModels.map((model) => (
-                <option key={`${model.provider}:${model.id}`} value={model.id}>
+                <option key={`${model.provider}:${model.id}`} value={model.id} disabled={!model.installed}>
                   {modelOptionLabel(model, locale)}
                 </option>
               ))}
@@ -225,7 +248,17 @@ export function AssistantModelPicker({
           onChange={(event) => updateRuntimeSetting('assistantFallbackProvider', event.target.value)}
         >
           {FALLBACK_VALUES.map((value) => (
-            <option key={value || 'default'} value={value}>
+            <option
+              key={value || 'default'}
+              value={value}
+              disabled={Boolean(
+                value &&
+                  discoveredProviders.find(
+                    (item) =>
+                      item.provider === canonicalAssistantProviderId(value) || item.legacyProvider === value,
+                  )?.available === false,
+              )}
+            >
               {optionLabel(value)}
             </option>
           ))}

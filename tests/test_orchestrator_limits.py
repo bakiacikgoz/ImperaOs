@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from binliquid.core.llm_ollama import StubLLM
-from binliquid.core.orchestrator import Orchestrator
-from binliquid.core.planner import PlannerRun
-from binliquid.experts.base import ExpertBase
-from binliquid.router.rule_router import RuleRouter
-from binliquid.runtime.config import RuntimeConfig, RuntimeLimits
-from binliquid.schemas.models import (
+from imperaos.core.llm_ollama import StubLLM
+from imperaos.core.orchestrator import Orchestrator
+from imperaos.core.planner import PlannerRun
+from imperaos.experts.base import ExpertBase
+from imperaos.router.rule_router import RuleRouter
+from imperaos.runtime.config import RuntimeConfig, RuntimeLimits
+from imperaos.schemas.models import (
     ExpertName,
     ExpertRequest,
     ExpertResult,
@@ -15,8 +15,8 @@ from binliquid.schemas.models import (
     ResponseMode,
     TaskType,
 )
-from binliquid.schemas.reason_codes import ReasonCode
-from binliquid.telemetry.tracer import Tracer
+from imperaos.schemas.reason_codes import ReasonCode
+from imperaos.telemetry.tracer import Tracer
 
 
 class StaticPlanner:
@@ -74,7 +74,7 @@ def _config(max_tool_calls: int = 1, max_recursion_depth: int = 2) -> RuntimeCon
         privacy_mode=True,
         enable_persistent_memory=False,
         web_enabled=False,
-        trace_dir=".binliquid/test-traces",
+        trace_dir=".imperaos/test-traces",
         limits=limits,
     )
 

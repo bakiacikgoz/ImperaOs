@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from binliquid.model_providers.models import DataClass, ProviderRouteShadowRequest
-from binliquid.model_providers.registry import resolve_model_provider_registry
-from binliquid.model_providers.router_shadow import recommend_provider_shadow
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.model_providers.models import DataClass, ProviderRouteShadowRequest
+from imperaos.model_providers.registry import resolve_model_provider_registry
+from imperaos.model_providers.router_shadow import recommend_provider_shadow
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_router_shadow_confidential_prefers_local_without_override() -> None:

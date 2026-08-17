@@ -2,7 +2,7 @@
 
 ## Supported Positioning
 
-AegisOS is positioned as a:
+ImperaOS is positioned as a:
 
 > chat-first operator-grade AI workstation with a governed computer-use runtime
 
@@ -19,7 +19,7 @@ This implies:
 
 ## Not Supported
 
-AegisOS should not be presented as:
+ImperaOS should not be presented as:
 
 - a consumer novelty chatbot
 - a generic autonomous agent framework

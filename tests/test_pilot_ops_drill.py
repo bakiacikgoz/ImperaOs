@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.control_plane.pilot_ops_drill import run_pilot_ops_drill
+from imperaos.control_plane.pilot_ops_drill import run_pilot_ops_drill
 
 
 def test_pilot_ops_drill_passes_with_safe_runner(tmp_path: Path) -> None:

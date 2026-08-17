@@ -6,7 +6,7 @@ claim-guard blocks for unsupported desktop or computer-use claims.
 
 ## Scope
 
-This baseline defines the minimum acceptable security posture for `enterprise` profile deployments of BinLiquid / AegisOS.
+This baseline defines the minimum acceptable security posture for `enterprise` profile deployments of ImperaOS / ImperaOS.
 It applies to self-hosted, single-tenant installations where the runtime and its stores are under enterprise operator control.
 
 ## Secure Defaults
@@ -82,7 +82,7 @@ Enterprise startup must abort if any of the following are true:
 ## Validation Command
 
 ```bash
-uv run binliquid security baseline --profile enterprise --json
+uv run imperaos security baseline --profile enterprise --json
 ```
 
 Expected outcome:

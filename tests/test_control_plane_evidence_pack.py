@@ -3,10 +3,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.control_plane.evidence_pack import EvidencePackBuilder
-from binliquid.control_plane.registry import AgentRegistry, load_agent_spec
-from binliquid.control_plane.run_coordinator import ControlPlaneRunCoordinator
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.control_plane.evidence_pack import EvidencePackBuilder
+from imperaos.control_plane.registry import AgentRegistry, load_agent_spec
+from imperaos.control_plane.run_coordinator import ControlPlaneRunCoordinator
+from imperaos.runtime.config import RuntimeConfig
 
 
 def _config(tmp_path: Path) -> RuntimeConfig:

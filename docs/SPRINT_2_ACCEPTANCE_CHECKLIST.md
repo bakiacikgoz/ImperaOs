@@ -5,7 +5,7 @@ Date: 2026-03-13
 ## Contract Freeze
 
 - `PASS` Capability schema, preview fixture bundle, run summary/detail, approval detail, tail events, artifact payloads, and device action snapshot are typed and checked.
-  Evidence: `binliquid/contracts/operator_panel.py`, `tests/test_operator_contracts.py`
+  Evidence: `imperaos/contracts/operator_panel.py`, `tests/test_operator_contracts.py`
 - `PASS` Shared preview fixtures are contract-shaped and backed by checked-in examples.
   Evidence: `contracts/operator_panel/fixtures/operator_panel_preview.json`, `apps/operator-panel/src/previewFixtures.ts`
 - `PASS` Contract schemas are generated into the repo.

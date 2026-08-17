@@ -19,11 +19,11 @@ enable_persistent_memory = true
 memory_ttl_days = 30
 fast_path_regret_window = 2
 fast_path_regret_threshold = 0.2
-env_prefix = "BINLIQUID"
+env_prefix = "IMPERAOS"
 web_enabled = false
 workspace_root = "."
-trace_dir = ".binliquid/traces"
-router_dataset_path = ".binliquid/research/router_dataset.jsonl"
+trace_dir = ".imperaos/enterprise/traces"
+router_dataset_path = ".imperaos/enterprise/research/router_dataset.jsonl"
 
 [limits]
 expert_timeout_ms = 3000
@@ -47,7 +47,7 @@ conf_bonus = 0.2
 task_bias_overrides = {}
 
 [memory]
-db_path = ".binliquid/enterprise/memory.sqlite3"
+db_path = ".imperaos/enterprise/memory.sqlite3"
 v3_enabled = false
 v3_authority_mode = "local"
 raw_prompt_persistence = false
@@ -90,7 +90,7 @@ enabled = false
 mode = "local"
 default_workspace_id = "default"
 default_principal_id = "agent-local"
-db_path = ".binliquid/workspace_memory.sqlite3"
+db_path = ".imperaos/enterprise/workspace_memory.sqlite3"
 raw_content_persistence = false
 network_listener_enabled = false
 migration_apply_enabled = false
@@ -140,8 +140,8 @@ retry_strategy = "failure_aware"
 enabled = true
 policy_path = "config/policies/enterprise.toml"
 policy_fail_mode = "fail_closed"
-approval_store_path = ".binliquid/enterprise/governance/approvals.sqlite3"
-audit_dir = ".binliquid/enterprise/audit"
+approval_store_path = ".imperaos/enterprise/governance/approvals.sqlite3"
+audit_dir = ".imperaos/enterprise/audit"
 pii_redaction_enabled = true
 approval_ttl_seconds = 86400
 decision_engine_version = "v0.5-enterprise"
@@ -151,8 +151,8 @@ enabled = true
 max_parallel_tasks = 2
 max_total_tasks = 64
 max_handoff_depth = 8
-checkpoint_db_path = ".binliquid/enterprise/team/checkpoints.sqlite3"
-artifact_dir = ".binliquid/enterprise/team/jobs"
+checkpoint_db_path = ".imperaos/enterprise/team/checkpoints.sqlite3"
+artifact_dir = ".imperaos/enterprise/team/jobs"
 
 [security]
 mode = "enterprise"
@@ -164,9 +164,9 @@ restricted_vs_admin_boundary = true
 enabled = true
 mode = "external_assertion"
 required_for_mutations = true
-assertion_path = ".binliquid/identity/current_assertion.json"
-break_glass_assertion_path = ".binliquid/identity/break_glass_assertion.json"
-trusted_keys_dir = ".binliquid/keys/trusted"
+assertion_path = ".imperaos/enterprise/identity/current_assertion.json"
+break_glass_assertion_path = ".imperaos/enterprise/identity/break_glass_assertion.json"
+trusted_keys_dir = ".imperaos/enterprise/keys/trusted"
 allow_break_glass = true
 max_clock_skew_seconds = 60
 permission_model_version = "1.0"
@@ -174,25 +174,25 @@ permission_model_version = "1.0"
 [keys]
 provider = "local_file"
 current_key_id = "enterprise-signing-current"
-private_key_path = ".binliquid/keys/private/current_key.json"
-trusted_public_keys_dir = ".binliquid/keys/trusted"
-key_manifest_path = ".binliquid/keys/manifest.json"
+private_key_path = ".imperaos/enterprise/keys/private/current_key.json"
+trusted_public_keys_dir = ".imperaos/enterprise/keys/trusted"
+key_manifest_path = ".imperaos/enterprise/keys/manifest.json"
 managed_signer_command = []
 allow_env_hmac_compat = false
 
 [observability]
-metrics_dir = ".binliquid/enterprise/metrics"
+metrics_dir = ".imperaos/enterprise/metrics"
 file_snapshot_enabled = true
-prometheus_textfile_path = ".binliquid/enterprise/metrics/binliquid.prom"
+prometheus_textfile_path = ".imperaos/enterprise/metrics/imperaos.prom"
 http_exporter_enabled = false
 http_bind = "127.0.0.1:9464"
 
 [maintenance]
-maintenance_flag_path = ".binliquid/enterprise/maintenance.lock"
-backup_dir = ".binliquid/enterprise/backups"
-restore_dir = ".binliquid/enterprise/restores"
-migration_dir = ".binliquid/enterprise/migrations"
-support_bundle_dir = ".binliquid/enterprise/support"
+maintenance_flag_path = ".imperaos/enterprise/maintenance.lock"
+backup_dir = ".imperaos/enterprise/backups"
+restore_dir = ".imperaos/enterprise/restores"
+migration_dir = ".imperaos/enterprise/migrations"
+support_bundle_dir = ".imperaos/enterprise/support"
 
 [computer_use]
 enabled = true

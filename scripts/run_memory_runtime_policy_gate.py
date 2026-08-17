@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from binliquid.memory.runtime_policy_evaluator import run_policy_evaluation
+from imperaos.memory.runtime_policy_evaluator import run_policy_evaluation
 
 
 def main() -> None:

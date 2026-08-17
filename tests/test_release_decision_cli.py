@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
+from imperaos.cli import app
 
 
 def test_release_decision_build_cli_writes_conditional_pack(tmp_path, monkeypatch) -> None:

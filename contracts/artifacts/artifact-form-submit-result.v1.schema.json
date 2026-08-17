@@ -1,0 +1,105 @@
+{
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-form-submit-result.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "actionHash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actionhash"
+    },
+    "approvalId": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approvalid"
+    },
+    "artifactId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "continuationAction": {
+      "enum": [
+        "none",
+        "require_approval"
+      ],
+      "title": "Continuationaction",
+      "type": "string"
+    },
+    "disposition": {
+      "enum": [
+        "created",
+        "idempotent_replay"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "reasonCode": {
+      "enum": [
+        "FORM_CONTINUATION_NOT_REQUIRED",
+        "FORM_CONTINUATION_APPROVAL_REQUIRED"
+      ],
+      "title": "Reasoncode",
+      "type": "string"
+    },
+    "responseSha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Responsesha256",
+      "type": "string"
+    },
+    "schemaRevisionId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Schemarevisionid",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "accepted",
+        "pending_continuation"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "submissionId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Submissionid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "submissionId",
+    "artifactId",
+    "schemaRevisionId",
+    "status",
+    "responseSha256",
+    "continuationAction",
+    "reasonCode",
+    "disposition"
+  ],
+  "title": "ArtifactFormSubmissionResult",
+  "type": "object",
+  "x-imperaos-contract": "artifact-form-submit-result.v1"
+}

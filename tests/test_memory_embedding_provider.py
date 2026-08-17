@@ -1,6 +1,6 @@
-from binliquid.memory.models import sha256_text
-from binliquid.memory.semantic.embedding_provider import DeterministicFixtureEmbeddingProvider
-from binliquid.memory.semantic.models import EmbeddingRequest
+from imperaos.memory.models import sha256_text
+from imperaos.memory.semantic.embedding_provider import DeterministicFixtureEmbeddingProvider
+from imperaos.memory.semantic.models import EmbeddingRequest
 
 
 def test_embedding_provider_is_deterministic_and_hash_only() -> None:

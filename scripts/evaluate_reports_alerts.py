@@ -11,14 +11,15 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from binliquid.control_plane.reports import build_reports_alerts_logs_manifest
-from binliquid.control_plane.snapshot import build_control_plane_snapshot
+from imperaos.control_plane.reports import build_reports_alerts_logs_manifest
+from imperaos.control_plane.snapshot import build_control_plane_snapshot
+from imperaos.runtime.paths import CONTROL_PLANE_STATE_ROOT
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate reports, alerts, and logs manifest.")
     parser.add_argument("--profile", default="enterprise")
-    parser.add_argument("--root-dir", default=".binliquid/control-plane")
+    parser.add_argument("--root-dir", default=CONTROL_PLANE_STATE_ROOT)
     parser.add_argument("--evidence-root", default="artifacts")
     parser.add_argument("--output-dir", default="artifacts/design-partner-rc/reports-alerts-logs")
     args = parser.parse_args()

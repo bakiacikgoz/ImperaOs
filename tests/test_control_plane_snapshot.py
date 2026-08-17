@@ -6,9 +6,9 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.models import ControlPlaneSnapshot
-from binliquid.control_plane.snapshot import classify_data_source
+from imperaos.cli import app
+from imperaos.control_plane.models import ControlPlaneSnapshot
+from imperaos.control_plane.snapshot import classify_data_source
 
 runner = CliRunner()
 

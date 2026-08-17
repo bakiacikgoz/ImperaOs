@@ -49,6 +49,10 @@ def test_product_complete_closure_gate_passes_when_required_checks_pass(
         "evidence": "pass",
         "macosLocalTrial": "not_run",
     }
+    assert all(
+        report["readinessEvidence"][key]["status"] == "pass"
+        for key in gate.REQUIRED_READINESS
+    )
     assert (tmp_path / "product_complete_closure_report.json").exists()
     assert (tmp_path / "product_complete_pr_body.md").exists()
 

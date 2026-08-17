@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from threading import Thread
 
-from binliquid.team.checkpoint_store import TeamCheckpointStore
+from imperaos.team.checkpoint_store import TeamCheckpointStore
 
 
 def test_team_checkpoint_store_parallel_upserts(tmp_path) -> None:

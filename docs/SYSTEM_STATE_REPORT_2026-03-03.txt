@@ -1,4 +1,4 @@
-AegisOS / BinLiquid v0.4.0
+ImperaOS / ImperaOS v0.4.0
 Comprehensive System State Report
 Date: 2026-03-03
 Repository: repo root
@@ -27,11 +27,11 @@ Current status at report time:
 2.1 Version and package metadata
 - pyproject version updated to 0.4.0
 - package __version__ updated to 0.4.0
-- project description updated for AegisOS v0.4 Team Runtime
+- project description updated for ImperaOS v0.4 Team Runtime
 
 2.2 CLI entry points
-- Existing command: binliquid
-- Added alias command: aegis
+- Existing command: imperaos
+- Added alias command: imperaos
 
 2.3 Dependency updates
 - Added PyYAML dependency for YAML team spec support
@@ -41,7 +41,7 @@ Current status at report time:
 3) Delivered Scope vs v0.4 Plan
 ====================================================================
 Delivered core items:
-- Team Runtime layer (new package: binliquid/team/*)
+- Team Runtime layer (new package: imperaos/team/*)
 - Team run data models (team/job/task/handoff/audit envelope)
 - Parallel dependency-aware scheduler (DAG-ready execution model)
 - Team CLI command group
@@ -67,15 +67,15 @@ Out-of-scope items still intentionally excluded:
 
 4.2 New Team Runtime layer
 New package files:
-- binliquid/team/models.py
-- binliquid/team/scheduler.py
-- binliquid/team/supervisor.py
-- binliquid/team/handoff.py
-- binliquid/team/memory_scope.py
-- binliquid/team/artifacts.py
-- binliquid/team/replay.py
-- binliquid/team/checkpoint_store.py
-- binliquid/team/__init__.py
+- imperaos/team/models.py
+- imperaos/team/scheduler.py
+- imperaos/team/supervisor.py
+- imperaos/team/handoff.py
+- imperaos/team/memory_scope.py
+- imperaos/team/artifacts.py
+- imperaos/team/replay.py
+- imperaos/team/checkpoint_store.py
+- imperaos/team/__init__.py
 
 Responsibilities:
 - models.py: team/job/task/handoff/event/envelope typed contracts
@@ -102,7 +102,7 @@ Responsibilities:
 ====================================================================
 5) Data Contracts and Schema Details
 ====================================================================
-5.1 Team contracts (binliquid/team/models.py)
+5.1 Team contracts (imperaos/team/models.py)
 - AgentDefinition
   Fields: agent_id, role, allowed_task_types, profile_name, model_overrides,
           memory_scope_access, tool_policy_profile, approval_mode
@@ -125,9 +125,9 @@ Responsibilities:
 
 5.2 Governance model expansion
 Updated files:
-- binliquid/governance/models.py
-- binliquid/governance/policy.py
-- binliquid/governance/runtime.py
+- imperaos/governance/models.py
+- imperaos/governance/policy.py
+- imperaos/governance/runtime.py
 
 Added governance phases:
 - HANDOFF
@@ -150,7 +150,7 @@ Runtime methods added:
 - GovernanceRuntime.evaluate_memory_write(...)
 
 5.3 Reason codes (additive)
-Updated: binliquid/schemas/reason_codes.py
+Updated: imperaos/schemas/reason_codes.py
 Added:
 - HANDOFF_DENY
 - TEAM_DEADLOCK
@@ -159,7 +159,7 @@ Added:
 - MEMORY_SCOPE_DENY
 
 5.4 Memory persistence schema expansion
-Updated: binliquid/memory/persistent_store.py
+Updated: imperaos/memory/persistent_store.py
 
 New columns in memories table:
 - scope
@@ -184,20 +184,20 @@ Thread-safety implementation:
 6) CLI Surface (Current)
 ====================================================================
 6.1 Team commands
-- binliquid team init --output <path>
-- binliquid team validate --spec <team.{yaml|json|toml}> --json
-- binliquid team run --spec <path> --once "<request>" [--profile] [--provider] [--json]
-- binliquid team status --job-id <id> --root-dir <dir> --json
-- binliquid team logs --job-id <id> --root-dir <dir> --json-stream
-- binliquid team replay --job-id <id> --root-dir <dir>
-- binliquid team artifacts --job-id <id> --root-dir <dir> --export <dir>
+- imperaos team init --output <path>
+- imperaos team validate --spec <team.{yaml|json|toml}> --json
+- imperaos team run --spec <path> --once "<request>" [--profile] [--provider] [--json]
+- imperaos team status --job-id <id> --root-dir <dir> --json
+- imperaos team logs --job-id <id> --root-dir <dir> --json-stream
+- imperaos team replay --job-id <id> --root-dir <dir>
+- imperaos team artifacts --job-id <id> --root-dir <dir> --export <dir>
 
 6.2 Benchmark commands
 - Existing: benchmark smoke|ablation|energy
 - New: benchmark team --suite smoke|quality --spec <team spec>
 
 6.3 Artifact writer extension
-Updated: binliquid/telemetry/artifacts_writer.py
+Updated: imperaos/telemetry/artifacts_writer.py
 Added artifact summary type:
 - team_summary.json
 
@@ -205,7 +205,7 @@ Added artifact summary type:
 7) Config and Policy Defaults
 ====================================================================
 7.1 Runtime config additions
-Updated: binliquid/runtime/config.py
+Updated: imperaos/runtime/config.py
 Added TeamRuntimeConfig with:
 - enabled
 - max_parallel_tasks
@@ -237,7 +237,7 @@ DENY/REQUIRE_APPROVAL and dependency chain cannot proceed.
 8) Team Artifacts, Replay, and Checkpoints
 ====================================================================
 8.1 Per-job artifact files
-Default location (configurable): .binliquid/team/jobs/<job_id>/
+Default location (configurable): .imperaos/team/jobs/<job_id>/
 Files:
 - status.json
 - events.jsonl
@@ -282,7 +282,7 @@ Files:
 ====================================================================
 Validation date: 2026-03-03
 Provider check command:
-- uv run binliquid doctor --profile balanced --provider auto
+- uv run imperaos doctor --profile balanced --provider auto
 Result highlights:
 - selected_provider: ollama
 - status: healthy
@@ -310,7 +310,7 @@ Completed job evidence (job-d91158e774e2):
 
 10.2 Team benchmark live validation
 Command (real provider):
-- uv run binliquid benchmark team --profile balanced --suite smoke --spec <live spec> --task-limit 1 --provider ollama
+- uv run imperaos benchmark team --profile balanced --suite smoke --spec <live spec> --task-limit 1 --provider ollama
 Result:
 - success_rate: 1.0
 - blocked_rate: 0.0

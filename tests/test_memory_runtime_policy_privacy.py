@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-from binliquid.memory.runtime_bridge import RuntimeMemoryRequest
-from binliquid.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
+from imperaos.memory.runtime_bridge import RuntimeMemoryRequest
+from imperaos.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
 
 
 def test_memory_runtime_policy_evidence_never_contains_raw_query_or_secret(tmp_path: Path) -> None:

@@ -1,0 +1,46 @@
+{
+  "$defs": {
+    "PrincipalType": {
+      "enum": [
+        "user",
+        "assistant",
+        "system",
+        "import"
+      ],
+      "title": "PrincipalType",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-rpc-principal.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "principalId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Principalid",
+      "type": "string"
+    },
+    "principalType": {
+      "$ref": "#/$defs/PrincipalType"
+    },
+    "roles": {
+      "items": {
+        "maxLength": 128,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Roles",
+      "type": "array"
+    }
+  },
+  "required": [
+    "principalId",
+    "principalType"
+  ],
+  "title": "RpcPrincipal",
+  "type": "object",
+  "x-imperaos-contract": "artifact-rpc-principal.v1"
+}

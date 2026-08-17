@@ -1,0 +1,56 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-form-submit-command.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifactId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Idempotencykey",
+      "type": "string"
+    },
+    "persistencePolicy": {
+      "default": "none",
+      "enum": [
+        "none",
+        "redacted",
+        "encrypted"
+      ],
+      "title": "Persistencepolicy",
+      "type": "string"
+    },
+    "response": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Response",
+      "type": "object"
+    },
+    "schemaRevisionId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Schemarevisionid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifactId",
+    "schemaRevisionId",
+    "response",
+    "idempotencyKey"
+  ],
+  "title": "SubmitArtifactFormCommand",
+  "type": "object",
+  "x-imperaos-contract": "artifact-form-submit-command.v1"
+}

@@ -42,8 +42,8 @@
       "type": "boolean"
     },
     "schemaVersion": {
-      "const": "binliquid-non-developer-operator-attestation/v1",
-      "default": "binliquid-non-developer-operator-attestation/v1",
+      "const": "imperaos-non-developer-operator-attestation/v2",
+      "default": "imperaos-non-developer-operator-attestation/v2",
       "title": "Schemaversion",
       "type": "string"
     },

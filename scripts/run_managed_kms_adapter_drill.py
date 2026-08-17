@@ -13,16 +13,16 @@ from typing import Any
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-from binliquid.enterprise.signing import (
+from imperaos.enterprise.signing import (
     fingerprint_public_key,
     key_status,
     rotate_plan,
     verify_signed_artifact,
     write_signed_json,
 )
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.runtime.config import RuntimeConfig
 
-SCHEMA_VERSION = "binliquid-managed-kms-adapter-drill/v1"
+SCHEMA_VERSION = "imperaos-managed-kms-adapter-drill/v2"
 
 
 def _now_iso() -> str:
@@ -169,7 +169,7 @@ def run_drill(
     trusted_dir = output_root / "trusted_public_keys"
     trusted_dir.mkdir(parents=True)
 
-    with tempfile.TemporaryDirectory(prefix="binliquid-managed-kms-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="imperaos-managed-kms-") as tmp:
         tmp_dir = Path(tmp)
         current_key = _generate_key(key_id)
         next_key = _generate_key(next_key_id)

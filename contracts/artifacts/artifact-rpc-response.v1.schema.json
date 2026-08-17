@@ -1,0 +1,100 @@
+{
+  "$defs": {
+    "JsonValue": {},
+    "RpcError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "default": false,
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "RpcError",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.imperaos.local/artifacts/artifact-rpc-response.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": {
+      "const": "1.0",
+      "title": "Contractversion",
+      "type": "string"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RpcError"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "ok": {
+      "title": "Ok",
+      "type": "boolean"
+    },
+    "requestId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Requestid",
+      "type": "string"
+    },
+    "result": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Result"
+    },
+    "serverSequence": {
+      "minimum": 1,
+      "title": "Serversequence",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "contractVersion",
+    "requestId",
+    "ok",
+    "serverSequence"
+  ],
+  "title": "RpcResponse",
+  "type": "object",
+  "x-imperaos-contract": "artifact-rpc-response.v1"
+}

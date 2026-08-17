@@ -1,0 +1,11 @@
+# Artifact Workspace Security Boundary
+
+The backend is authoritative for identity, workspace membership, RBAC, policy, data class, content validation, expected revision, idempotency, approval, license capability, and export authorization. Renderer checks improve UX but never grant authority. Each RPC request is bound to a trusted actor and workspace; caller-supplied actor, path, classification downgrade, capability, or approval state is rejected or ignored.
+
+The sidecar uses framed stdio with bounded request and response sizes, strict method allowlists, deadlines, cancellation, and non-secret error envelopes. It has no TCP listener. Tauri allows only named artifact commands. Native exports require a one-time backend ticket bound to artifact, revision, format, basename, maximum bytes, expected SHA-256, actor, workspace, and expiry. Commit, cancel, and failure transitions are audited; renderer paths are never accepted.
+
+Content schemas are fail-closed in Python and TypeScript. Forms reject unsupported schemas, prototype-chain references, cycles, excess depth/nodes/bytes, and invalid allowed formats; backend revalidates every response. Code artifacts are text-only with `executionPolicy=deny`; no execution, terminal, extension host, LSP network, or remote import resolver exists. Flow, spreadsheet, canvas, and slides exports neutralize formula/script injection and use bounded workers.
+
+CSP keeps scripts local and forbids `unsafe-eval`. Workers are local or bounded `blob:` workers emitted by the application bundle. Editors and assistant transports do not make direct provider or arbitrary external requests. Prompts receive only bounded, purpose-specific artifact context after classification policy; temp prompt files are create-new, permission-restricted, registered, cleaned on success/cancel/error, and stale-cleaned.
+
+Logs and metrics contain IDs, kinds, operation names, result codes, durations, and sizes—not content, prompts, form answers, secrets, absolute paths, license evidence, or reusable hashes. Cross-workspace probes, CSP/no-network checks, backend revalidation, ticket replay, and license-forgery tests are mandatory release evidence. Any failure is a no-ship condition and triggers global disable plus evidence capture.

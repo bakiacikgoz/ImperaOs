@@ -55,7 +55,7 @@ Operators should treat any missing native metadata as not approved for native ro
 Run the offline native conformance matrix:
 
 ```bash
-uv run python -m binliquid provider native conformance run \
+uv run python -m imperaos provider native conformance run \
   --profile enterprise \
   --provider-kind all \
   --offline \
@@ -65,7 +65,7 @@ uv run python -m binliquid provider native conformance run \
 Verify the saved native evidence:
 
 ```bash
-uv run python -m binliquid provider native conformance verify \
+uv run python -m imperaos provider native conformance verify \
   --input artifacts/model-provider-governance/native-v2/anthropic_messages_native_adapter_report.json \
   --json
 ```
@@ -94,8 +94,8 @@ Do not run a live OpenAI Responses canary unless all of these are true:
 - evidence output path is isolated for review
 - the result is treated as canary evidence, not production approval
 
-Do not run a live Anthropic Messages canary unless `BINLIQUID_PROVIDER_LIVE_CANARY=1`,
-`BINLIQUID_ANTHROPIC_LIVE_CANARY=1`, explicit CLI live intent, budget checks, and host
+Do not run a live Anthropic Messages canary unless `IMPERAOS_PROVIDER_LIVE_CANARY=1`,
+`IMPERAOS_ANTHROPIC_LIVE_CANARY=1`, explicit CLI live intent, budget checks, and host
 allowlist checks all pass.
 
 ## Blockers

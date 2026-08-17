@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from binliquid.control_plane.external_contracts import ExternalActionRequest
-from binliquid.control_plane.external_gateway import ExternalAgentGateway
-from binliquid.control_plane.registry import AgentRegistry, load_agent_spec
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.control_plane.external_contracts import ExternalActionRequest
+from imperaos.control_plane.external_gateway import ExternalAgentGateway
+from imperaos.control_plane.registry import AgentRegistry, load_agent_spec
+from imperaos.runtime.config import RuntimeConfig
 
 
 def test_external_gateway_denies_unenrolled_external_agent(tmp_path: Path) -> None:

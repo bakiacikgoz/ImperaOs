@@ -3,7 +3,7 @@ import subprocess
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
+from imperaos.cli import app
 
 runner = CliRunner()
 
@@ -19,7 +19,7 @@ def test_provider_models_lists_ollama_models_without_pulling(monkeypatch) -> Non
             stderr="",
         )
 
-    monkeypatch.setattr("binliquid.cli.subprocess.run", fake_run)
+    monkeypatch.setattr("imperaos.cli.subprocess.run", fake_run)
 
     result = runner.invoke(
         app,
@@ -82,7 +82,7 @@ def test_provider_models_reports_unavailable_ollama(monkeypatch) -> None:
     def fake_run(*_: object, **__: object) -> subprocess.CompletedProcess[str]:
         raise FileNotFoundError("ollama")
 
-    monkeypatch.setattr("binliquid.cli.subprocess.run", fake_run)
+    monkeypatch.setattr("imperaos.cli.subprocess.run", fake_run)
 
     result = runner.invoke(
         app,

@@ -5,9 +5,9 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from binliquid.cli import app
-from binliquid.control_plane.beta_pack import generate_design_partner_beta_pack
-from binliquid.runtime.config import RuntimeConfig
+from imperaos.cli import app
+from imperaos.control_plane.beta_pack import generate_design_partner_beta_pack
+from imperaos.runtime.config import RuntimeConfig
 
 runner = CliRunner()
 

@@ -22,7 +22,7 @@ Options:
   -h, --help           Show this help
 
 If RUN_DIR is omitted, the script searches for the newest supervised soak under
-the current repo and /private/tmp/binliquid_soak_*.
+the current repo and /private/tmp/imperaos_soak_*.
 EOF
 }
 
@@ -86,7 +86,7 @@ if local_root.exists():
     run_dirs.extend(path for path in local_root.iterdir() if path.is_dir())
 tmp_root = roots[1]
 if tmp_root.exists():
-    for workspace in tmp_root.glob("binliquid_soak_*"):
+    for workspace in tmp_root.glob("imperaos_soak_*"):
         supervisor = workspace / "artifacts" / "qualification" / "supervisor"
         if supervisor.exists():
             run_dirs.extend(path for path in supervisor.iterdir() if path.is_dir())
@@ -111,7 +111,7 @@ fi
 if [[ -z "${RUN_DIR}" || ! -d "${RUN_DIR}" ]]; then
   echo "No supervised qualification soak run directory found." >&2
   echo "Pass it explicitly, for example:" >&2
-  echo "  scripts/watch_qualification_soak.sh --run-dir /private/tmp/binliquid_soak_.../artifacts/qualification/supervisor/rc24h-..." >&2
+  echo "  scripts/watch_qualification_soak.sh --run-dir /private/tmp/imperaos_soak_.../artifacts/qualification/supervisor/rc24h-..." >&2
   exit 2
 fi
 
@@ -232,7 +232,7 @@ def pid_state(value: object) -> str:
 supervisor_state = pid_state(supervisor_pid)
 child_state = pid_state(child_pid)
 
-print("BinLiquid Qualification Soak Monitor")
+print("ImperaOS Qualification Soak Monitor")
 print("=" * 72)
 print(f"Run id      : {run_id}")
 print(f"Status      : {status_text}    Exit: {exit_code}")

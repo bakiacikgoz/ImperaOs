@@ -1,10 +1,10 @@
 from pathlib import Path
 
-from binliquid.core.llm_ollama import StubLLM
-from binliquid.core.orchestrator import Orchestrator
-from binliquid.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
-from binliquid.router.rule_router import RuleRouter
-from binliquid.telemetry.tracer import Tracer
+from imperaos.core.llm_ollama import StubLLM
+from imperaos.core.orchestrator import Orchestrator
+from imperaos.memory.runtime_policy_fixtures import build_memory_runtime_policy_fixture
+from imperaos.router.rule_router import RuleRouter
+from imperaos.telemetry.tracer import Tracer
 
 
 class UnusedPlanner:

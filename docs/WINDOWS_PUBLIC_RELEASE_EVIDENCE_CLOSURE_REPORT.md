@@ -181,11 +181,11 @@ result: pass
 powershell -NoProfile -ExecutionPolicy Bypass -File apps/operator-panel/scripts/build_bundled_runtime_windows.ps1 -Arch x64 -PythonBin .venv\Scripts\python.exe
 result: pass
 
-powershell -NoProfile -ExecutionPolicy Bypass -File apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 -RuntimeDir apps/operator-panel/src-tauri/resources/binliquid-runtime
-result: pass, manifest=pass, binliquid_version=0.4.1
+powershell -NoProfile -ExecutionPolicy Bypass -File apps/operator-panel/scripts/verify_bundled_runtime_windows.ps1 -RuntimeDir apps/operator-panel/src-tauri/resources/imperaos-runtime
+result: pass, manifest=pass, imperaos_version=0.4.1
 
 corepack pnpm --dir apps/operator-panel exec tauri build --debug --no-bundle
-result: pass, produced apps/operator-panel/src-tauri/target/debug/aegisos_operator_panel.exe
+result: pass, produced apps/operator-panel/src-tauri/target/debug/imperaos_operator_panel.exe
 
 PowerShell parser checks for signing and smoke scripts
 result: pass
